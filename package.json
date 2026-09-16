@@ -1,0 +1,20 @@
+{
+  "name": "bluey",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Personal Codex skills and MCP servers.",
+  "packageManager": "pnpm@12.4.2",
+  "engines": {
+    "node": ">=26.8.2 <27",
+    "pnpm": ">=12"
+  },
+  "scripts": {
+    "build": "corepack pnpm -r --if-present run build",
+    "check": "corepack pnpm check:skills && corepack pnpm build && corepack pnpm test",
+    "check:skills": "node scripts/check-skills.mjs",
+    "test": "corepack pnpm -r --if-present run test"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0"
+  }
+}

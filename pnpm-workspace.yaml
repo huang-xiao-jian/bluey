@@ -1,0 +1,5 @@
+packages:
+  - "mcps/*"
+
+allowBuilds:
+  esbuild: true
