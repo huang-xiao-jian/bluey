@@ -22,3 +22,18 @@ templates/          Copyable starting points for new capabilities
 scripts/            Repository checks and developer utilities
 docs/               Conventions and operating notes
 ```
+
+## Development
+
+The repository is a pnpm workspace orchestrated by Turborepo. Package builds use
+tsdown and tests use Vitest. Run the shared tasks from the repository root:
+
+```sh
+pnpm build
+pnpm test
+pnpm typecheck
+pnpm check
+```
+
+Workspace packages belong in `mcps/*` or `packages/*`. Turbo caches package task
+outputs and runs dependency builds before each package's tests.

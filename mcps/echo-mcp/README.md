@@ -12,4 +12,4 @@ A minimal, read-only MCP server for verifying this repository's local MCP develo
 pnpm --filter @bluey/echo-mcp dev
 ```
 
-For Codex configuration, build the package and invoke `dist/index.js` through `node` as described in [the repository MCP notes](../../docs/mcp-development.md).
+For Codex configuration, build the package and invoke `dist/index.mjs` through `node` as described in [the repository MCP notes](../../docs/mcp-development.md).
