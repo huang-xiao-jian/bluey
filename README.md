@@ -25,15 +25,19 @@ docs/               Conventions and operating notes
 
 ## Development
 
-The repository is a pnpm workspace orchestrated by Turborepo. Package builds use
-tsdown and tests use Vitest. Run the shared tasks from the repository root:
+See [Development tooling](docs/development-tooling.md) for workspace commands,
+package scripts, and validation requirements.
 
-```sh
-pnpm build
-pnpm test
-pnpm typecheck
-pnpm check
-```
+## Included capabilities
 
-Workspace packages belong in `mcps/*` or `packages/*`. Turbo caches package task
-outputs and runs dependency builds before each package's tests.
+### Skills
+
+- [analyze-business-concepts](skills/analyze-business-concepts/SKILL.md):
+  Extract and document business concepts from business-source material.
+- [analyze-business-rules](skills/analyze-business-rules/SKILL.md): Organize
+  business requirements into a four-layer constraint model.
+
+### MCP servers
+
+- [@bluey/echo-mcp](mcps/echo-mcp/README.md): Read-only `echo` tool used to
+  verify the local MCP development setup.
