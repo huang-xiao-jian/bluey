@@ -1,56 +1,56 @@
 # cli-first-mcp-architecture
 
-## 上下文
+## Context
 
-项目需要同时满足 `CLI` 命令行工具和 `MCP` 服务器两种交互需求，但尚未确定统一的架构组织方式，如果放任自然开发，势必导入业务逻辑散落在 `MCP` / `CLI` 各处，增加维护成本，且影响业务交付的稳定性，难以进行持续性迭代。
+The project must support both a `CLI` and an `MCP` server, but it has not yet established a common architecture. Without one, business logic will become scattered across `MCP` and `CLI` implementations, increasing maintenance cost, reducing delivery stability, and making continuous iteration difficult.
 
-## 决策
+## Decision
 
-- 单个 `Package` 内同时支持 `CLI` 和 `MCP` 双模式，且 `CLI` 作为项目的主形态，`MCP` 作为 `CLI` 的一个子命令（`mcp`）启动
-- 业务逻辑做到 `CLI` 和 `MCP` 上下文无关，严格关注业务功能交付
+- Support both `CLI` and `MCP` modes in each package. The `CLI` is the primary form of the project, and `MCP` starts as its `mcp` subcommand.
+- Keep business logic independent of both `CLI` and `MCP` contexts, with a strict focus on delivering business capabilities.
 
-## 后果
+## Consequences
 
-### 正向
+### Positive
 
-- 项目天然具备独立的 `CLI` 价值，`MCP` 只是其中一个子命令，用户心智负担小
-- 业务逻辑只需实现一次，能够集中迭代维护
-- 核心业务代码与传输层解耦，可独立测试
+- The project has standalone `CLI` value by design; `MCP` is only one subcommand, which reduces the user's cognitive load.
+- Business logic is implemented once and can be iterated on and maintained centrally.
+- Core business code is decoupled from transport layers and can be tested independently.
 
-### 负向
+### Negative
 
-- 依赖高层级架构设计，确保 `CLI` 和 `MCP` 适配层不混入业务逻辑
-- 项目强制依赖 `MCP` 相关库，即使纯 `CLI` 用户也会安装，增加存储空间占用
+- Requires higher-level architectural design to ensure that neither the `CLI` nor `MCP` adapter layer contains business logic.
+- The project must depend on `MCP` libraries even for `CLI`-only users, increasing installed footprint.
 
-### 示例对比
+### Example Comparison
 
-| 场景         | 决策前                               | 决策后                                 |
-| ------------ | ------------------------------------ | -------------------------------------- |
-| 用户安装     | 需要分别安装 CLI 包和 MCP 包         | 只需安装一个包，通过子命令切换模式     |
-| 新增工具     | 需要在 CLI 项目和 MCP 项目各实现一次 | 核心层实现一次，两个适配层各调用一次   |
-| 业务逻辑测试 | 需要分别模拟 CLI 环境和 MCP 环境     | 直接测试核心层纯函数，无需模拟任何环境 |
+| Scenario | Before the decision | After the decision |
+| --- | --- | --- |
+| User installation | Install the CLI and MCP packages separately. | Install one package and select a mode through a subcommand. |
+| Adding a tool | Implement it once in the CLI project and once in the MCP project. | Implement it once in the core layer; invoke it through each adapter layer. |
+| Testing business logic | Simulate CLI and MCP environments separately. | Test pure core-layer functions directly, with no environment simulation. |
 
-## 替代方案
+## Alternatives
 
-### 方案一：拆分为两个独立 `package`
+### Alternative 1: Split into two independent packages
 
-将 `CLI` 和 `MCP` 分别做成两个 npm 包，各自实现业务逻辑。
+Implement the `CLI` and `MCP` as separate npm packages, each with its own business-logic implementation.
 
-**否决原因**：业务逻辑重复实现，维护成本翻倍；而且用户需要进行主动决策，增加心智负担。
+**Reason rejected**: Business logic would be implemented twice, doubling maintenance cost. Users would also need to make an explicit choice, increasing cognitive load.
 
-### 方案二：`MCP-first`，`CLI` 作为 `MCP` 的薄封装
+### Alternative 2: MCP-first, with the CLI as a thin MCP wrapper
 
-以 `MCP` `服务器为主形态，CLI` 通过调用 `JSON-RPC` 接口实现。
+Make the `MCP` server the primary form and have the `CLI` call its `JSON-RPC` interface.
 
-**否决原因**：`CLI` 用户需要理解 `MCP` 协议概念，且数据传递效率低下。
+**Reason rejected**: `CLI` users would need to understand `MCP` protocol concepts, and data transfer would be less efficient.
 
-### 方案三：通过环境变量区分模式
+### Alternative 3: Select modes with an environment variable
 
-不使用子命令，而是通过 `MCP_MODE=true` 环境变量来区分启动模式。
+Do not use a subcommand; use the `MCP_MODE=true` environment variable to select the startup mode.
 
-**否决原因**：环境变量隐式切换行为，不符合传统 `CLI` 项目的显式命令习惯；用户在终端中无法通过 `--help` 直观了解可用模式。
+**Reason rejected**: An environment variable changes behavior implicitly, which does not follow the explicit-command convention of traditional `CLI` projects. Users also cannot discover available modes directly through `--help`.
 
-## 撤销条件
+## Reversal Conditions
 
-- 当 `CLI` 和 `MCP` 的业务逻辑差异大到无法共享时，考虑拆分
-- 当 `MCP` 协议发生重大变化导致适配层复杂度剧增时，重新评估
+- Consider splitting the package when `CLI` and `MCP` business logic diverge enough that it cannot be shared.
+- Reevaluate the decision when a major `MCP` protocol change causes the adapter layer's complexity to increase substantially.

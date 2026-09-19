@@ -1,29 +1,29 @@
-# [简短的决策标题]
+# [Short Decision Title]
 
-## 上下文
+## Context
 
-[描述触发该决策的业务或技术背景，以及当前面临的具体痛点或需要解决的问题。]
+[Describe the business or technical background that triggered the decision, together with the specific pain points or problem to solve.]
 
-## 决策
+## Decision
 
-**[明确陈述核心决策。]**
+**[State the core decision unambiguously.]**
 
-<!-- 此处可选展开决策细节，用于复杂的场景 -->
+<!-- Optionally expand on the decision for complex situations. -->
 
-## 后果
+## Consequences
 
-- **正面**：[描述该决策带来的积极影响]
-- **负面**：[描述该决策可能带来的风险或成本]
+- **Positive**: [Describe the positive impact of the decision.]
+- **Negative**: [Describe the risks or costs introduced by the decision.]
 
-### 示例对比
+### Example Comparison
 
-<!-- 可选：提供代码块或简短说明，展示决策的实际应用效果 -->
+<!-- Optional: Use a code block or brief explanation to illustrate the practical effect of the decision. -->
 
-## 替代方案
+## Alternatives
 
-1. [替代方案一] → [简述否决理由]
-2. [替代方案二] → [简述否决理由]
+1. [Alternative 1] → [Brief reason for rejection]
+2. [Alternative 2] → [Brief reason for rejection]
 
-## 撤销条件（可选）
+## Reversal Conditions (Optional)
 
-1. [撤销条件] → [简述撤销理由]
+1. [Reversal condition] → [Brief reason for reversal]

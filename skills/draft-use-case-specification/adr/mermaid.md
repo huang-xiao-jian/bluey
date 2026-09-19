@@ -1,24 +1,24 @@
-# Use Mermaid to Express Business Workflows in Use-Case Specifications
+# Use Mermaid to Express the Business Workflow in Use-Case Specifications
 
 ## Context
 
-Traditional use-case specifications describe workflows in separate textual sections for the basic flow, alternative flows, and exception flows. This approach creates redundant information, makes branching logic difficult to understand, and increases maintenance cost. Introducing Mermaid requires a revised definition of workflow representation and document structure.
+Traditional use-case specifications describe the business workflow in separate textual sections for the basic flow, alternative flows, and exception flows. This approach creates redundant information, makes branching logic difficult to understand, and increases maintenance cost. Introducing Mermaid requires a revised definition of Business Workflow representation and document structure.
 
 ## Decision
 
-**Adopt Mermaid as the sole standard for expressing workflows in use-case specifications.**
+**Adopt Mermaid as the sole standard for expressing the Business Workflow in use-case specifications.**
 
 Core conventions:
 
 1. **Use Mermaid diagrams as the primary workflow representation**
-   - Every use-case specification must use a Mermaid flowchart to describe its business workflow.
+   - Every use-case specification must use a Mermaid flowchart to describe its Business Workflow.
    - The diagram must completely express the main success scenario, alternative scenarios, and exception scenarios.
    - **Workflow nodes must retain identifiers** (for example, `N1`, `N2`, `N3`, and so on) so that business rules and supplementary descriptions can reference them directly.
    - When a node requires further explanation, reference its identifier in the "Business Rules" section (for example, "N2: When no flight is available, prompt the traveler to change the date").
 2. **Remove standalone textual flow sections**
    - Do not separately write "basic flow," "alternative flow," or "exception flow" sections.
 3. **Separate the responsibilities of diagrams and rules**
-   - **The diagram represents the business workflow**: paths, branches, and transitions.
+   - **The diagram represents the Business Workflow**: paths, branches, and transitions.
    - **Text refines the logic**: business rules, constraints, and calculation logic.
 
 ## Consequences
@@ -26,7 +26,7 @@ Core conventions:
 - **Positive**: Specifications are more concise, have lower maintenance cost, and are easier to read.
 - **Negative**: Team members must become familiar with Mermaid syntax; its learning curve is low.
 
-### Comparison Example
+### Example Comparison
 
 **Traditional approach (redundant):**
 

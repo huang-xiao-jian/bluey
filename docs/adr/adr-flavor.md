@@ -1,45 +1,45 @@
-# ADR 撰写规范
+# ADR Authoring Convention
 
-## 上下文
+## Context
 
-架构决策是项目演进的核心资产，需要可追溯的记录。当前缺乏统一格式导致不同 `ADR` 结构各异、阅读成本高、新人上手困难、决策上下文丢失。需要确立标准模板，保证架构决策的规范性与一致性。
+Architecture decisions are core assets in a project's evolution and require traceable records. The absence of a common format results in inconsistent `ADR` structures, higher reading costs, a more difficult onboarding experience, and lost decision context. A standard template is required to make architecture decisions consistent and well documented.
 
-## 决策
+## Decision
 
-**采用统一的 ADR 模板与撰写规范作为项目内所有 ADR 的标准格式。**
+**Adopt a common ADR template and authoring convention as the standard format for every ADR in this project.**
 
-核心约定：
+Core conventions:
 
-1. **文件命名规范**
-   - 格式严格约定为 `{简短英文标题}.md`，标题使用小写英文单词，单词间用连字符 `-` 连接，例如：`use-mermaid-for-flow.md`。
-2. **文件存放目录**
-   - 默认统一存放 `ADR` 在项目根目录的 `docs/adr/` 目录下。
-   - 禁止在项目其他位置存放 `ADR` 文档，除非用户明确说明存储位置。
-3. **文档结构**
-   - 必须包含章节：**上下文**、**决策**、**后果**、**替代方案**，且顺序不可变更。
-   - 可选包含章节：**撤销条件**、**决策置信度**
-   - **后果** 章节内允许嵌套可选章节 **示例对比**
-4. **章节撰写要求**
-   - **上下文**：清晰描述触发决策的业务或技术背景，以及当前面临的痛点。
-   - **决策**：明确陈述核心决策，复杂场景下进一步展开细节。
-   - **后果**：使用 **正面** 与 **负面** 两个维度，描述决策对项目带来的影响。
-   - **示例对比** 用以比较决策前后的差异
-   - **替代方案**：列出曾考虑但未采纳的方案，并简述否决理由。
-   - **撤销条件**：明确定义“当什么条件发生改变时，需要重新评估此决策”。
-   - **决策置信度**：记录团队对该决策的置信度。
+1. **File-naming convention**
+   - Use the exact format `{short-english-title}.md`. The title uses lowercase English words separated by hyphens, for example, `use-mermaid-for-flow.md`.
+2. **File location**
+   - Store `ADR` documents in `docs/adr/` at the project root by default.
+   - Do not store `ADR` documents elsewhere in the project unless the user explicitly specifies another location.
+3. **Document structure**
+   - Include these sections in this exact order: **Context**, **Decision**, **Consequences**, and **Alternatives**.
+   - The **Reversal Conditions** and **Decision Confidence** sections are optional.
+   - The **Consequences** section may contain an optional **Example Comparison** subsection.
+4. **Section-writing requirements**
+   - **Context**: Clearly describe the business or technical background that triggered the decision and the current pain points.
+   - **Decision**: State the core decision unambiguously; expand on the details for complex situations.
+   - **Consequences**: Describe the decision's impact on the project in **Positive** and **Negative** dimensions.
+   - **Example Comparison**: Compare the situation before and after the decision.
+   - **Alternatives**: List options that were considered but rejected, with a brief reason for rejecting each.
+   - **Reversal Conditions**: Define clearly which changed conditions require the decision to be reevaluated.
+   - **Decision Confidence**: Record the team's confidence in the decision.
 
-参考材料：
+References:
 
-- [ADR 案例](./references/adr-flavor-example.md)
-- [ADR 模板](./references/adr-flavor-template.md)
+- [ADR example](./references/adr-flavor-example.md)
+- [ADR template](./references/adr-flavor-template.md)
 
-## 后果
+## Consequences
 
-- **正面**：统一格式降低阅读和理解成本，决策历史可追溯，新人可快速上手，代码审查时 ADR 一致性可自动化检查。
-- **负面**：初期需要学习成本，格式约束可能限制某些特殊场景的表达灵活性。
+- **Positive**: A consistent format reduces the cost of reading and understanding ADRs, preserves traceable decision history, accelerates onboarding, and enables automated ADR-consistency checks during code review.
+- **Negative**: Initial learning is required, and the format constraints may limit expression in some exceptional situations.
 
-## 替代方案（已否决）
+## Alternatives
 
-1. 不统一格式，各团队自由决定 → 导致格式混乱、阅读成本高。
-2. 使用 Wiki 页面管理 → 版本控制困难、难以追溯变更历史。
-3. 使用专用 ADR 工具（如 adr-tools） → 引入额外依赖，对小型项目过重。
+1. Do not standardize the format; allow each team to decide → creates inconsistent formats and high reading costs.
+2. Manage ADRs in wiki pages → version control and change-history tracing become difficult.
+3. Use a dedicated ADR tool, such as `adr-tools` → adds a dependency that is excessive for a small project.
