@@ -1,4 +1,4 @@
-# Development tooling
+# Development Guideline
 
 This document defines the repository's workspace tooling, package scripts, and
 validation commands.

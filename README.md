@@ -18,14 +18,13 @@ This repository deliberately targets one primary agent: **Codex**. It does not a
 ```text
 skills/             Source-of-truth skill packages
 mcps/               Independently runnable MCP servers
-templates/          Copyable starting points for new capabilities
 scripts/            Repository checks and developer utilities
 docs/               Conventions and operating notes
 ```
 
 ## Development
 
-See [Development tooling](docs/development-tooling.md) for workspace commands,
+See [Development guideline](docs/development-guideline.md) for workspace commands,
 package scripts, and validation requirements.
 
 ## Included capabilities
