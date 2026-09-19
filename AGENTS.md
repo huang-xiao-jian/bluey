@@ -13,3 +13,7 @@ Follow the repository documentation before creating or changing a capability:
   style and presentation rules for repository documentation.
 - [MCP development notes](docs/mcp-development.md) cover the local development
   and Codex-connection workflow for MCP servers.
+
+Review the ADRs when necessary:
+
+- [The mandory flavor to write ADR](./docs/adr/adr-flavor.md)
