@@ -1,53 +1,53 @@
-<!-- $[]$ 为模板占位标识 -->
+<!-- $[]$ marks a template placeholder. -->
 
-# $[业务用例]$
+# $[Business Use Case]$
 
-## 参与者
+## Actors
 
-- **主要参与者**：**$[Actor]$**
-- **次要参与者**：**$[Actor]$**
+- **Primary Actor**: **$[Actor]$**
+- **Supporting Actor**: **$[Actor]$**
 
-## 简要描述
+## Brief Description
 
-<!-- 用 1-2 句话概括用例的业务目标和价值 -->
+<!-- Summarize the use case's business goal and value in one or two sentences. -->
 
-## 前置条件
+## Preconditions
 
-<!-- 执行用例前必须满足的条件（可验证） -->
+<!-- Conditions that must be met before the use case can begin; each must be verifiable. -->
 
-1. $[条件一]$
+1. $[Condition 1]$
 2. ...
 
-## 业务流程
+## Business Workflow
 
-## 后置条件
+## Postconditions
 
-<!-- 用例成功结束后系统必须保证的状态 -->
+<!-- States that the system must guarantee after the use case ends. -->
 
-**成功场景**：
+**Success scenario:**
 
-1. $[后置条件说明]$
+1. $[Postcondition]$
 2. ...
 
-**失败场景**：
+**Failure scenario:**
 
-1. $[后置条件说明]$
+1. $[Postcondition]$
 2. ...
 
-## 业务规则
+## Business Rules
 
-<!-- 通过流程图节点编号引用，明确各节点的业务规则和约束条件 -->
+<!-- Reference workflow-node identifiers to state the business rules and constraints at each node. -->
 
-- **$[规则名称]$**：$[引用节点]$，$[规则描述]$
+- **$[Rule Name]$**: $[Referenced Node]$, $[Rule Description]$
 
-## 特殊要求
+## Special Requirements
 
-- **性能**：
-- **安全性**：
-- **可用性**：
+- **Performance**:
+- **Security**:
+- **Availability**:
 
-## 扩展点（可选）
+## Extension Points (Optional)
 
-<!-- 标识未来可能扩展的功能节点-->
+<!-- Identify workflow nodes that may support future extensions. -->
 
-- $[引用节点]$：$[扩展点描述]$
+- $[Referenced Node]$: $[Extension Description]$

@@ -1,42 +1,42 @@
 ---
 name: analyze-business-rules
-description: 将零散的、不清晰的规则描述，转换为结构化的、清晰的规则描述。基于四层约束模型对业务规则进行分层梳理，适用于业务需求分析、业务规则治理等场景。当用户提到"梳理业务规则""规则分层""约束建模"等关键词时触发。
+description: Transform fragmented or ambiguous rule descriptions into clear, structured business rules. Use for business requirements analysis, business-rule governance, or requests to organize business rules, layer rules, or model constraints.
 ---
 
-# 业务规则分析
+# Business Rule Analysis
 
-## 输入
+## Input
 
-用户必须提供一份明确的需求文档，文档内部内容格式不限，支持用例分析、用户故事、工作流定义等等。
+The user must provide a clear requirements document. Its format is unrestricted and may be a use-case analysis, user story, workflow definition, or similar material.
 
-| 异常判断               | 处理策略                                         |
-| ---------------------- | ------------------------------------------------ |
-| 输入文档不涉及业务描述 | 拒绝执行，提示用户输入与业务规则相关的内容       |
-| 输入文档字数 < 100     | 拒绝执行，提示用户提供更详细的需求文档           |
-| 输入文档内容模糊不清   | 拒绝执行，提示用户补充更明确的需求描述，禁止推断 |
-
----
-
-## 边界说明
-
-- **不包含交互层约束**："删除前二次确认"等纯交互行为，不属于业务规则范畴。
-- **不包含外部约束**：法律法规等外部约束，若业务未将其纳入系统内化逻辑，则不在此分析范围内。
+| Condition | Handling strategy |
+| --- | --- |
+| The input document contains no business description | Decline the task and ask the user for material related to business rules. |
+| The input document contains fewer than 100 words | Decline the task and ask the user for a more detailed requirements document. |
+| The input document is ambiguous | Decline the task and ask the user to provide a clearer requirements description. Do not infer missing details. |
 
 ---
 
-## 四层约束模型
+## Scope Boundaries
 
-### 结构性约束 —— 定义"业务对象是什么"
+- **Excludes interaction-layer constraints**: Pure interaction behavior, such as requiring a second confirmation before deletion, is not a business rule.
+- **Excludes external constraints**: External constraints, such as laws and regulations, are out of scope unless the business has incorporated them into the system's internal logic.
 
-最底层的静态约束，生长在业务概念的定义里，随概念走，不共享。
+---
 
-**包含三类：**
+## Four-Layer Constraint Model
 
-- **字段级约束**：单一属性的限制。如：标题不超过 40 字符、金额不能为负、身份证号格式校验。
-- **关系级约束**：对象之间的引用与依赖。如：订单必须关联有效用户 ID、删除部门前必须先移除其下所有员工。
-- **状态级约束**：对象生命周期内的状态枚举与流转路径。使用 Mermaid 状态图格式表达。
+### 1. Structural Constraints — Define What a Business Object Is
 
-**示例：**
+The lowest-level static constraints. They belong to the definition of a business concept, travel with that concept, and are not shared.
+
+**Includes three categories:**
+
+- **Attribute constraints**: Restrictions on an individual attribute. For example, a title must not exceed 40 characters, an amount must not be negative, or an identity-document number must match a format.
+- **Relationship constraints**: References and dependencies between objects. For example, an order must reference a valid user ID, or all employees must be removed before a department is deleted.
+- **State constraints**: The states and transition paths in an object's lifecycle. Express these with a Mermaid state diagram.
+
+**Example:**
 
 ```mermaid
 stateDiagram-v2
@@ -50,59 +50,57 @@ stateDiagram-v2
 
 ---
 
-### 2. 行为性约束 —— 定义"动作能不能做"
+### 2. Behavioral Constraints — Define Whether an Action May Be Performed
 
-约束的是业务行为的触发与执行，是跨对象、跨概念的动态校验。
+These constrain the triggering and execution of business actions. They are dynamic validations that span objects and concepts.
 
-**典型场景：**
+**Typical scenarios:**
 
-- **前置条件校验**：如：用户注销前必须无余额、无借款；创建日程需校验时间冲突。
-- **执行权限校验**：如：只有部门经理可审批本部门报销单。
-- **后置条件校验**：如：任务被其他任务引用为前置依赖时不允许删除；同一时间一个商品只能参与一个促销活动。
-
----
-
-### 3. 推导性约束 —— 定义"标准怎么动态变化"
-
-基于已知事实动态推导出新的规则或结论，让系统具备适应复杂环境的能力。
-
-**典型场景：**
-
-- **动态阈值推导**：VIP 客户免运费门槛低于普通用户；
-- **属性推导**：根据批次合格率和交付及时率推导供应商等级；根据仓储温度推导物料剩余保质期。
-- **自适应规则**：按月重复时若目标月无对应日期（如 1 月 31 日→2 月），自动取该月最后一天。
+- **Precondition validation**: For example, a user must have no balance or outstanding loan before closing an account; creating a calendar event must validate time conflicts.
+- **Authorization validation**: For example, only a department manager may approve that department's expense report.
+- **Postcondition validation**: For example, a task cannot be deleted when another task references it as a prerequisite; a product may participate in only one promotion at a time.
 
 ---
 
-### 4. 资源性约束 —— 定义"系统能承载多少"
+### 3. Derivation Constraints — Define How Criteria Change Dynamically
 
-来自系统自身的物理或逻辑上限，决定业务运转的天花板。
+Derive new rules or conclusions dynamically from known facts, allowing the system to adapt to complex conditions.
 
-**典型场景：**
+**Typical scenarios:**
 
-- **容量约束**：单用户任务数量上限 500 条；
-- **速率约束**：API 限流；每秒最多处理 1000 笔订单。
-- **配额约束**：每用户每天最多发送 10 条短信；每部门每月报销额度不超过 5 万元。
-
----
-
-## 操作步骤
-
-当需要梳理业务规则时，按以下步骤执行：
-
-1. **验证输入**：检查输入是否符合要求。若不满足，拒绝执行，且给出提示信息。
-2. **识别业务概念**：列出系统中涉及的核心业务对象（如任务、订单、用户）。
-3. **逐层填充约束**：
-   - 针对每个业务概念，写出其结构性约束（字段 + 关系 + 状态机）。状态机使用 Mermaid 状态图表达。
-   - 梳理跨概念的动作，写出行为性约束。
-   - 识别需要动态判断的场景，写出推导性约束。
-   - 识别系统容量边界，写出资源性约束。
-4. **结构化输出**：按四层模型分层，以结构化列表形式输出，状态描述使用 Mermaid 状态图为主，必要时辅以自然语言说明。
+- **Dynamic threshold derivation**: A VIP customer has a lower free-shipping threshold than a standard customer.
+- **Attribute derivation**: Derive a supplier rating from batch pass rates and delivery timeliness; derive a material's remaining shelf life from storage temperature.
+- **Adaptive rules**: For a monthly recurrence, if the target month has no corresponding date (for example, January 31 → February), automatically use the last day of that month.
 
 ---
 
-## 参考案例
+### 4. Resource Constraints — Define System Capacity
 
-[案例输入](./references/material.md) --> [案例输出](./references/artifact.md)
+These arise from the system's physical or logical limits and set the ceiling for business operations.
+
+**Typical scenarios:**
+
+- **Capacity constraints**: A user may have no more than 500 tasks.
+- **Rate constraints**: API rate limiting; process no more than 1,000 orders per second.
+- **Quota constraints**: A user may send no more than 10 SMS messages per day; a department's monthly expense-reimbursement quota must not exceed 50,000.
 
 ---
+
+## Workflow
+
+When organizing business rules, follow these steps:
+
+1. **Validate the input**: Check whether the input meets the requirements. If it does not, decline the task and explain why.
+2. **Identify business concepts**: List the core business objects in the system (for example, tasks, orders, and users).
+3. **Populate each constraint layer**:
+   - For each business concept, document its structural constraints (attributes, relationships, and state machine). Use a Mermaid state diagram for the state machine.
+   - Identify actions spanning concepts and document their behavioral constraints.
+   - Identify scenarios requiring dynamic evaluation and document their derivation constraints.
+   - Identify system-capacity boundaries and document their resource constraints.
+4. **Produce structured output**: Organize the output by the four-layer model. Use a structured list, favor Mermaid state diagrams for state descriptions, and add natural-language explanations where needed.
+
+---
+
+## Reference Example
+
+[Example input](./references/material.md) --> [Example output](./references/artifact.md)

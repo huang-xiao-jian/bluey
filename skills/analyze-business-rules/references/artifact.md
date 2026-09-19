@@ -1,53 +1,51 @@
-## 结构性约束
+## Structural Constraints
 
-**商品对象**
+**Product**
 
-- **字段级约束**
-  - 商品名称：不超过 200 字符
-  - 商品价格：必须 > 0，且为整数
-  - 商品库存：不能为负（≥ 0）
+- **Attribute constraints**
+  - Product name: No more than 200 characters.
+  - Product price: Must be an integer greater than 0.
+  - Product inventory: Must not be negative (≥ 0).
 
-- **关系级约束**
-  - 无（当前需求未涉及对象间引用）
+- **Relationship constraints**
+  - None (the current requirements contain no inter-object references).
 
-- **状态机约束**
-  - 状态枚举：草稿、上架、下架
-  - 流转路径：草稿 → 上架 → 下架
-  - 下架状态不可直接编辑，需先恢复为草稿
+- **State-machine constraints**
+  - States: Draft, Published, Unpublished.
+  - Transition path: Draft → Published → Unpublished.
+  - An Unpublished product cannot be edited directly; it must first return to Draft.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> 草稿
-    草稿 --> 上架
-    上架 --> 下架
-    下架 --> 草稿
+    [*] --> Draft
+    Draft --> Published
+    Published --> Unpublished
+    Unpublished --> Draft
 ```
 
 ---
 
-## 行为性约束
+## Behavioral Constraints
 
-- **前置条件校验**
-  - 发布商品：商品状态必须为"草稿"
-  - 编辑商品：商品状态必须为"草稿"
-  - 下架商品：商品状态必须为"上架"
+- **Precondition validation**
+  - Publish a product: The product must be in Draft.
+  - Edit a product: The product must be in Draft.
+  - Unpublish a product: The product must be Published.
 
-- **执行权限校验**
-  - 仅管理员可执行创建、编辑、发布、下架操作
+- **Authorization validation**
+  - Only administrators may create, edit, publish, or unpublish products.
 
-- **依赖/互斥校验**
-  - 同一时间一个商品只能有一个有效状态（互斥）
-
----
-
-## 推导性约束
-
-- 无（当前需求未涉及动态推导场景）
+- **Dependency and mutual-exclusion validation**
+  - A product can have only one active state at a time (mutually exclusive).
 
 ---
 
-## 资源性约束
+## Derivation Constraints
 
-- 无（当前需求未涉及系统容量/速率/配额限制）
+- None (the current requirements contain no dynamic derivation scenarios).
 
 ---
+
+## Resource Constraints
+
+- None (the current requirements contain no system capacity, rate, or quota limits).

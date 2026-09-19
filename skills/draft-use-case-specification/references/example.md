@@ -1,78 +1,78 @@
-# 预订机票
+# Book a Flight
 
-## 参与者
+## Actors
 
-- **主要参与者**：乘客
-- **次要参与者**：支付系统、航司库存系统
+- **Primary Actor**: Traveler
+- **Supporting Actors**: Payment System, Airline Inventory System
 
-## 简要描述
+## Brief Description
 
-乘客查询可用航班、选择航班并填写乘机人信息，完成支付后获得有效机票。
+The traveler searches for available flights, selects a flight, enters passenger details, and receives a valid ticket after payment is completed.
 
-## 前置条件
+## Preconditions
 
-1. 航司库存系统可正常访问
+1. The airline inventory system is available.
 
-## 业务流程
+## Business Workflow
 
 ```mermaid
 flowchart TD
-    N1[乘客输入出发地/目的地/出行日期/舱位等级] --> N2{有可用航班?}
-    N2 -- 是 --> N3[系统查询并展示可用航班列表]
-    N2 -- 否 --> N4[系统提示"该日期无可用航班"] --> N5[建议调整日期或选择邻近机场] --> N6[用例终止]
-    N3 --> N7[乘客选择航班及舱位]
-    N7 --> N8[系统展示价格明细（票价+机建费+燃油费）]
-    N8 --> N9[乘客填写乘机人信息（姓名/证件号/联系方式）]
-    N9 --> N10{乘机人信息校验通过?}
-    N10 -- 是 --> N11[系统校验乘机人信息，锁定座位（临时占座，有效期15分钟）]
-    N10 -- 否 --> N12[系统提示具体错误信息] --> N13[返回步骤N9修改信息]
-    N11 --> N14[乘客选择附加服务（选座/餐食/行李额）]
-    N14 --> N15[系统计算最终订单金额，应用会员折扣/优惠券]
-    N15 --> N16[乘客确认订单并提交支付]
-    N16 --> N17{支付成功?}
-    N17 -- 是 --> N18[系统调用航司库存系统出票]
-    N17 -- 否 --> N19[系统提示"支付失败"，保留订单状态为"待支付"] --> N20{15分钟内重新支付?}
-    N20 -- 是 --> N16
-    N20 -- 否 --> N21[订单自动取消，座位释放] --> N22[用例终止]
-    N18 --> N23{出票成功?}
-    N23 -- 是 --> N24[系统向乘客发送出票通知（航班号/时间/座位号/电子票号）] --> N25[用例成功结束]
-    N23 -- 否 --> N26[系统触发自动退款流程] --> N27[通知乘客"出票失败，款项1-3个工作日原路退回"] --> N28[用例终止]
+    N1[Traveler enters origin, destination, travel date, and fare class] --> N2{Are flights available?}
+    N2 -- Yes --> N3[System searches for and displays available flights]
+    N2 -- No --> N4[System informs the traveler that no flights are available for the selected date] --> N5[Suggest changing the date or choosing a nearby airport] --> N6[Use case ends]
+    N3 --> N7[Traveler selects a flight and fare class]
+    N7 --> N8[System displays the price breakdown: fare, passenger facility charge, and fuel surcharge]
+    N8 --> N9[Traveler enters passenger details: name, identity-document number, and contact information]
+    N9 --> N10{Are passenger details valid?}
+    N10 -- Yes --> N11[System validates passenger details and holds the seat temporarily for 15 minutes]
+    N10 -- No --> N12[System displays the specific error] --> N13[Return to N9 to amend the details]
+    N11 --> N14[Traveler selects ancillary services: seat selection, meal, or baggage allowance]
+    N14 --> N15[System calculates the final order amount and applies membership discounts or coupons]
+    N15 --> N16[Traveler confirms the order and submits payment]
+    N16 --> N17{Is payment successful?}
+    N17 -- Yes --> N18[System issues the ticket through the airline inventory system]
+    N17 -- No --> N19[System informs the traveler that payment failed and retains the order in Pending Payment] --> N20{Retry payment within 15 minutes?}
+    N20 -- Yes --> N16
+    N20 -- No --> N21[System cancels the order automatically and releases the seat] --> N22[Use case ends]
+    N18 --> N23{Is ticket issuance successful?}
+    N23 -- Yes --> N24[System sends a ticketing notification with flight number, time, seat number, and e-ticket number] --> N25[Use case succeeds]
+    N23 -- No --> N26[System starts an automatic refund] --> N27[Notify the traveler that ticketing failed and payment will be refunded to the original method in one to three business days] --> N28[Use case ends]
 ```
 
-## 后置条件
+## Postconditions
 
-**成功场景**：
+**Success scenario:**
 
-1. 生成订单号，订单状态为"已出票"
-2. 航司库存系统扣减对应座位
-3. 乘客收到出票通知（短信/邮件）
-4. 支付系统完成扣款
+1. An order number is generated and the order status is "Ticketed".
+2. The airline inventory system deducts the corresponding seat inventory.
+3. The traveler receives a ticketing notification by SMS or email.
+4. The payment system completes the charge.
 
-**失败场景**：
+**Failure scenario:**
 
-1. 订单未生成，座位未扣减
-2. 如已扣款则触发原路退款
+1. No order is generated and no seat inventory is deducted.
+2. If payment has been collected, a refund to the original payment method is initiated.
 
-## 业务规则
+## Business Rules
 
-- **临时占座有效期**：临时占座有效期15分钟，超时自动释放（引用节点：N11）
-- **支付超时规则**：支付超时15分钟未成功，订单自动取消（引用节点：N17）
-- **航班查询限制**：仅展示有可售座位的航班（引用节点：N2）
-- **订单航班限制**：同一订单所有乘客须选择同一航班（引用节点：N7）
-- **证件限购限制**：同一证件号同一航班限购1张经济舱机票（引用节点：N11）
-- **信息校验规则**：姓名与证件号须匹配；证件号格式校验（引用节点：N9）
-- **信息修改约束**：订单提交后，乘机人信息、航班信息不可修改（引用节点：N16）
-- **儿童与婴儿定价**：儿童票（2-12岁）按成人全价票50%计费，婴儿票（2岁以下）按10%计费（引用节点：N8）
-- **优惠叠加限制**：会员折扣与优惠券不可叠加使用（引用节点：N15）
-- **特殊餐食预订**：特殊餐食（素食、清真等）需提前24小时预订（引用节点：N14）
+- **Temporary seat-hold period**: The temporary seat hold lasts 15 minutes and is released automatically when it expires (node N11).
+- **Payment-timeout rule**: If payment is not completed within 15 minutes, the order is cancelled automatically (node N17).
+- **Flight-search restriction**: Display only flights with seats available for sale (node N2).
+- **Order-flight restriction**: Every passenger in the same order must select the same flight (node N7).
+- **Identity-document purchase limit**: The same identity-document number may purchase only one economy-class ticket on the same flight (node N11).
+- **Passenger-information validation**: The name must match the identity-document number, and the identity-document number format must be valid (node N9).
+- **Information-change constraint**: Passenger and flight information cannot be changed after the order is submitted (node N16).
+- **Child and infant pricing**: A child fare for ages 2–12 is 50% of the adult full fare; an infant fare for children under 2 is 10% (node N8).
+- **Promotion-combination restriction**: Membership discounts and coupons cannot be used together (node N15).
+- **Special-meal booking**: Special meals, such as vegetarian or halal meals, must be requested at least 24 hours in advance (node N14).
 
-## 特殊要求
+## Special Requirements
 
-- **性能**：航班查询响应时间 ≤ 2秒；支付回调处理 ≤ 5秒
-- **安全性**：乘机人证件信息加密存储；支付环节符合PCI DSS标准
-- **可用性**：系统可用性 ≥ 99.9%
+- **Performance**: Flight-search response time ≤ 2 seconds; payment-callback processing ≤ 5 seconds.
+- **Security**: Encrypt passenger identity-document information at rest; payment processing complies with PCI DSS.
+- **Availability**: System availability ≥ 99.9%.
 
-## 扩展点
+## Extension Points
 
-- N14：未来可支持"升舱服务""贵宾厅预约"等附加服务
-- N24：未来可支持推送至航司App、微信服务通知等多渠道
+- N14: Future support for cabin upgrades and lounge reservations.
+- N24: Future support for airline-app notifications, WeChat service notifications, and other channels.

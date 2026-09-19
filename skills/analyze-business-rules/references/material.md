@@ -1,3 +1,3 @@
-# 用户故事
+# User Story
 
-管理员可以创建、编辑、发布和下架商品。商品有名称、价格、库存三个字段。名称不能超过200字，价格必须大于0且为整数，库存不能为负。商品创建后状态为"草稿"，可以发布变为"上架"状态，上架的商品可以下架变为"下架"状态。已下架的商品不能直接编辑，需要先恢复为草稿。同一时间一个商品只能有一个有效状态。
+An administrator can create, edit, publish, and unpublish products. A product has three attributes: name, price, and inventory. Its name must not exceed 200 characters; its price must be a positive integer; and its inventory must not be negative. A newly created product is in the "Draft" state. It can be published, which changes its state to "Published". A published product can be unpublished, which changes its state to "Unpublished". An unpublished product cannot be edited directly and must first return to Draft. A product can have only one active state at a time.

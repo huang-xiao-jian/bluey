@@ -1,52 +1,52 @@
 ---
 name: analyze-business-concepts
-description: 从业务相关文档中，提取业务概念，编写业务概念描述文档。触发场景：用户要求梳理业务概念、定义业务概念、维护术语表。
+description: Extract business concepts from business-source material and create business-concept descriptions. Use when users ask to identify or define business concepts, or maintain a glossary.
 ---
 
 # analyze-business-concepts
 
-## 输入
+## Input
 
-用户必须提供一份明确业务相关文档，内容必须与业务高度相关。
+The user must provide a clear document that is strongly related to the business domain.
 
-### 异常处理
+### Exception Handling
 
-| 异常情况               | 处理策略                                         |
-| :--------------------- | :----------------------------------------------- |
-| 用户提供了技术设计文档 | 拒绝执行，提示用户输入与业务规则相关的内容       |
-| 输入文档内容模糊不清   | 拒绝执行，提示用户补充更明确的需求描述，禁止推断 |
+| Condition | Handling strategy |
+| :-- | :-- |
+| The user provides a technical design document | Decline the task and ask for material related to the business domain. |
+| The input document is ambiguous | Decline the task and ask the user to provide a clearer requirements description. Do not infer missing details. |
 
-## 核心原则
+## Core Principles
 
-1. **业务为中心**：描述使用自然语言，避免引入晦涩的技术概念，确保非技术干系人也能看懂。
-2. **最小可用**：关键要素"业务定义"、"核心属性"、"业务规则"必须齐全。
-3. **单一事实来源（SSOT）**：概念文档是术语的唯一权威来源，用例规约、技术实现中的概念定义必须与此保持一致。
-4. **引用而非复制**：跨概念引用时必须知名依赖业务概念的来源，业务概念文档内不复制属性定义，避免"一处修改、多处同步"。
-5. **明确的关系描述**：使用严格的 UML 预设关系，避免采用基于自然语言的简化描述
+1. **Business-focused**: Use natural language and avoid obscure technical concepts so that non-technical stakeholders can understand the description.
+2. **Minimum viable content**: A business definition, key attributes, and business rules must all be present.
+3. **Single source of truth (SSOT)**: The concept document is the authoritative source for terminology. Definitions in use-case specifications and technical implementations must remain consistent with it.
+4. **Reference rather than duplicate**: When referring across concepts, identify the source of the referenced business concept. Do not duplicate attribute definitions in concept documents, to avoid maintaining the same information in multiple places.
+5. **Precise relationship descriptions**: Use defined UML relationships rather than simplified natural-language descriptions.
 
-## 资源引用
+## Resources
 
-- [业务概念描述模板](assets/template.md)
-- [业务概念描述案例](references/example.md)
+- [Business-concept description template](assets/template.md)
+- [Business-concept description example](references/example.md)
 
-## 操作步骤
+## Workflow
 
-<!-- 业务概念提取策略为包含性的策略，并不需要严格参考 -->
+<!-- The concept-extraction strategy is inclusive and need not be followed rigidly. -->
 
-1. 提取业务概念：读取用户提供的内容，基于业务概念提取策略，自动提取候选“业务概念”
-2. 推断关联关系：根据识别的业务概念，分析业务层面上的关联关系
-3. 针对各个业务概念：
-   - 参考 **业务概念描述案例**、**业务概念描述模板**，细化业务概念的具体维度
-   - 基于 **业务概念描述模板** 生成 **业务概念描述** 文件内容
-   - 检查文件内容是否符合 **业务概念描述模板** 的约束条件
+1. Extract business concepts: Read the user-provided material and identify candidate business concepts using the extraction strategy.
+2. Infer relationships: Analyze business-level relationships among the identified concepts.
+3. For each business concept:
+   - Consult the **business-concept description example** and **business-concept description template** to refine the relevant dimensions.
+   - Generate the business-concept description from the **business-concept description template**.
+   - Verify that the result satisfies the constraints of the **business-concept description template**.
 
-### 业务概念提取策略
+### Business-Concept Extraction Strategy
 
-- 识别反复出现的名词性术语
-- 捕捉被赋予业务规则或约束的实体
-- 提取流程或用例中涉及的核心参与对象
-- 标记具有明确业务价值或业务边界的实体
+- Identify recurring noun terms.
+- Identify entities governed by business rules or constraints.
+- Extract core participants in processes or use cases.
+- Mark entities with a distinct business value or business boundary.
 
-## 输出约定
+## Output Convention
 
-业务概念描述必须基于模板生成，绝不允许擅自调整、优化模板！
+Generate every business-concept description from the template. Do not alter or optimize the template without authorization.

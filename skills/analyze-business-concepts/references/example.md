@@ -1,40 +1,40 @@
-# 航班方案报价单
+# Flight Offer
 
-## 前置依赖
+## Prerequisite Dependencies
 
-- [航段](./virtual-path/FLT-SEG-01.md)
-- [可售产品](./virtual-path/PROD-SALE-01.md)
+- [Flight Segment](./virtual-path/FLT-SEG-01.md)
+- [Sellable Product](./virtual-path/PROD-SALE-01.md)
 
-## 1. 业务定义
+## 1. Business Definition
 
-**航班方案报价单** 是指销售系统在特定时间点，向旅客展示的、包含具体航班信息、舱位等级、实时价格及附加权益的**可销售组合方案**。它是旅客下单的直接依据。
+At a specific point in time, a **Flight Offer** is a **sellable combination** presented by the sales system to a traveler. It contains specific flight information, fare class, real-time pricing, and ancillary benefits. It is the direct basis on which the traveler places an order.
 
-## 2. 同义词/别名
+## 2. Synonyms and Aliases
 
-- 报价方案
-- 可售航段
-- 运价组合
+- Offer
+- Sellable Flight Segment
+- Fare Combination
 
-## 3. 核心属性
+## 3. Key Attributes
 
-- ID：本次报价的唯一标识，用于下单时锁定价格
-- 航班号：承运航空公司的航班编号（如`CA6532`）
-- 舱位代码：物理舱位（如经济舱）与销售舱位（如V舱）的组合
-- 销售总价：包含机票基准价、机建燃油费及税费的最终支付金额
-- 有效期：该报价锁定的时间窗口（如15分钟）
+- ID: The unique identifier for this offer, used to lock the price when the order is placed.
+- Flight Number: The operating airline's flight identifier (for example, `CA6532`).
+- Fare Class Code: The combination of the physical cabin (for example, economy class) and the booking class (for example, V class).
+- Total Selling Price: The final amount payable, including the base fare, passenger facility charge, fuel surcharge, and taxes.
+- Validity Period: The period for which the offer is locked (for example, 15 minutes).
 
-## 4. 业务规则与约束
+## 4. Business Rules and Constraints
 
-1. **价格锁定规则**：**航班方案报价单** 具备明确的时效性，决不允许对过期内容下单
-2. **库存占座规则**：生成**航班方案报价单**时不占用实际库存，仅在旅客提交订单并校验通过后，才需要向库存运价中心发起"占座"请求。
-3. **合规过滤**：**航班方案报价单** 生成时需自动过滤不符合旅客身份（如学生票、军人优先）或公司差旅政策（如超标舱位）的选项。
+1. **Price-lock rule**: A **Flight Offer** has a defined validity period. An order must never be placed against an expired offer.
+2. **Inventory-hold rule**: Generating a **Flight Offer** does not consume actual inventory. Request a seat hold from the inventory and fare center only after the traveler submits the order and validation succeeds.
+3. **Eligibility filtering**: When a **Flight Offer** is generated, automatically filter out options that do not comply with the traveler's eligibility (for example, student fares or military priority) or the organization's travel policy (for example, an out-of-policy cabin).
 
-## 5. 关联关系
+## 5. Relationships
 
-- **聚合**：本概念包含**航段**数量为 `[1,5]`。
-- **泛化**：本概念是 **可售产品** 的一种特化类型。
+- **Aggregation**: This concept aggregates between `[1,5]` **Flight Segments**.
+- **Generalization**: This concept is a specialization of **Sellable Product**.
 
-## 6. 边界说明
+## 6. Scope Boundaries
 
-- **包括**：直飞航班、同航司中转联程航班。
-- **不包括**：跨航司的中转组合。
+- **Includes**: Nonstop flights and connecting itineraries operated by the same airline.
+- **Excludes**: Interline connection combinations.

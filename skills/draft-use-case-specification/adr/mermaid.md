@@ -1,64 +1,64 @@
-# 用例规约中使用 `mermaid` 表达业务流程
+# Use Mermaid to Express Business Workflows in Use-Case Specifications
 
-## 上下文
+## Context
 
-传统用例规约采用"基本事件流 + 备选事件流 + 异常事件流"的文字分章节方式描述业务流程，存在信息冗余、分支逻辑不直观、维护成本高的问题。引入 Mermaid 后，需要重新定义流程表达方式和文档结构。
+Traditional use-case specifications describe workflows in separate textual sections for the basic flow, alternative flows, and exception flows. This approach creates redundant information, makes branching logic difficult to understand, and increases maintenance cost. Introducing Mermaid requires a revised definition of workflow representation and document structure.
 
-## 决策
+## Decision
 
-**引入 Mermaid 作为用例规约中流程表达的唯一标准。**
+**Adopt Mermaid as the sole standard for expressing workflows in use-case specifications.**
 
-核心约定：
+Core conventions:
 
-1. **流程表达以 Mermaid 图为核心**
-   - 所有用例规约必须使用 `Mermaid` 流程图说明业务流程。
-   - 图中需完整表达主成功路径、可选路径、异常路径。
-   - **流程节点必须保留编号**（如 `N1`、`N2`、`N3`...），用于在业务规则或补充说明中直接映射引用。
-   - 如某节点逻辑需要补充说明，在"业务规则"章节中通过节点编号引用（如"N2：无可用航班时，提示用户调整日期"）。
-2. **删除独立的"事件流"文字章节**
-   - 不再单独编写"基本事件流""备选事件流""异常事件流"章节。
-3. **图与规则的分工**
-   - **图负责"业务流程"**：路径、分支、跳转关系。
-   - **文字负责"细化逻辑"**：业务规则、约束条件、计算逻辑。
+1. **Use Mermaid diagrams as the primary workflow representation**
+   - Every use-case specification must use a Mermaid flowchart to describe its business workflow.
+   - The diagram must completely express the main success scenario, alternative scenarios, and exception scenarios.
+   - **Workflow nodes must retain identifiers** (for example, `N1`, `N2`, `N3`, and so on) so that business rules and supplementary descriptions can reference them directly.
+   - When a node requires further explanation, reference its identifier in the "Business Rules" section (for example, "N2: When no flight is available, prompt the traveler to change the date").
+2. **Remove standalone textual flow sections**
+   - Do not separately write "basic flow," "alternative flow," or "exception flow" sections.
+3. **Separate the responsibilities of diagrams and rules**
+   - **The diagram represents the business workflow**: paths, branches, and transitions.
+   - **Text refines the logic**: business rules, constraints, and calculation logic.
 
-## 后果
+## Consequences
 
-- **正面**：文档更简洁，维护成本降低，可读性提升。
-- **负面**：团队成员需熟悉 `Mermaid` 语法（学习成本低）。
+- **Positive**: Specifications are more concise, have lower maintenance cost, and are easier to read.
+- **Negative**: Team members must become familiar with Mermaid syntax; its learning curve is low.
 
-### 示例对比
+### Comparison Example
 
-**传统方式（冗余）**：
+**Traditional approach (redundant):**
 
 ```text
-基本事件流：
-  1. 用户输入查询条件
-  2. 系统返回航班列表
-  3. 用户选择航班
+Basic flow:
+  1. The user enters search criteria.
+  2. The system returns a flight list.
+  3. The user selects a flight.
   ...
 
-备选事件流：
-  2a. 无可用航班
-    - 系统提示"无航班"
-    - 用例终止
+Alternative flow:
+  2a. No flights are available.
+    - The system informs the user that no flights are available.
+    - The use case ends.
 ```
 
-**新方式（图为主）**：
+**New approach (diagram first):**
 
 ```mermaid
 flowchart TD
-    N1[输入查询条件] --> N2{有可用航班?}
-    N2 -- 是 --> N3[展示航班列表]
-    N2 -- 否 --> N4[提示无航班] --> N5[用例终止]
-    N3 --> N6[用户选择航班]
+    N1[Enter search criteria] --> N2{Are flights available?}
+    N2 -- Yes --> N3[Display flight list]
+    N2 -- No --> N4[Inform user that no flights are available] --> N5[Use case ends]
+    N3 --> N6[User selects a flight]
 ```
 
-业务规则章节引用：
+Business Rules section references:
 
-- **N2**：仅展示有可售座位的航班
-- **N4**：建议用户调整日期或选择邻近机场
+- **N2**: Display only flights with seats available for sale.
+- **N4**: Suggest that the traveler change the date or choose a nearby airport.
 
-## 替代方案（已否决）
+## Rejected Alternatives
 
-1. 保留文字事件流 + 附加 `Mermaid` 图 → 信息重复，维护双倍工作量。
-2. 仅保留文字事件流 → 分支逻辑可读性差。
+1. Retain textual flow sections and add a Mermaid diagram → duplicate information and double the maintenance effort.
+2. Retain only textual flow sections → branching logic is difficult to read.

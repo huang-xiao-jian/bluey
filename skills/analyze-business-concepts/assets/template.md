@@ -1,44 +1,44 @@
-# [概念名称]
+# [Concept Name]
 
-## 前置依赖（可选）
+## Prerequisite Dependencies (Optional)
 
-<!-- 描述业务概念依赖，后续提及依赖的业务概念，必须使用 **xxx** 格式强调，无需再次声明引用地址 -->
+<!-- Describe dependencies on business concepts. When referring to a dependent concept later, emphasize it as **xxx**; do not repeat its link. -->
 
-- [概念名称](文件地址)
+- [Concept Name](file-path)
 
-## 1. 业务定义
+## 1. Business Definition
 
-业务概念详细定义...
+Detailed definition of the business concept...
 
-## 2. 近义词
+## 2. Synonyms and Aliases
 
-- [别名1]
-- [别名2]
+- [Synonym or alias 1]
+- [Synonym or alias 2]
 
-## 3. 核心属性
+## 3. Key Attributes
 
-<!-- 描述业务特征，而非技术层面的定义 -->
-<!-- 强需求技术层面的可视化，使用可选的 ”数据模型“ 章节 -->
+<!-- Describe business characteristics, not technical implementation details. -->
+<!-- If technical visualization is essential, use the optional "Data Model" section. -->
 
-- [属性名称]：[属性说明]
+- [Attribute Name]: [Attribute Description]
 
-### 3.1 数据模型
+### 3.1 Data Model
 
-<!-- 使用 Typescript 定义数据模型 -->
+<!-- Define the data model in TypeScript. -->
 
-## 4. 业务规则与约束
+## 4. Business Rules and Constraints
 
-1. [规则1]
-2. [规则2]
+1. [Rule 1]
+2. [Rule 2]
 
-## 5. 关联关系
+## 5. Relationships
 
-- **包含**：[它由哪些子概念组成？]
-- **属于**：[它归属于哪个父概念？]
-- **引用**：[它关联哪些独立概念？]
-- **泛化**：[它是否是另一个概念的特化/子类型？]
+- **Composition**: [Which constituent concepts does it contain?]
+- **Aggregation**: [Which broader concept does it belong to?]
+- **Association**: [Which independent concepts is it associated with?]
+- **Generalization**: [Is it a specialization or subtype of another concept?]
 
-## 6. 边界说明（可选）
+## 6. Scope Boundaries (Optional)
 
-- **包括**：[明确包含的场景]
-- **不包括**：[明确排除的场景，防止概念泛化]
+- **Includes**: [Scenarios explicitly in scope]
+- **Excludes**: [Scenarios explicitly out of scope, to prevent the concept from becoming overly broad]

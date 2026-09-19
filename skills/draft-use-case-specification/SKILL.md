@@ -1,57 +1,57 @@
 ---
 name: draft-use-case-specification
-description: 根据业务需求编写结构化的用例规约（Use Case Specification），当用户要求编写用例规约、需求规格说明、系统用例文档时使用。
+description: Draft a structured use-case specification from business requirements. Use when users request a use-case specification, requirements specification, or system use-case document.
 ---
 
-# draft-use-case-specification
+# Draft Use-Case Specification
 
-## 使用时机
+## When to Use
 
-- 用户明确要求"写一个XX功能的用例规约"
-- 用户提供了一段业务需求描述，需要转化为结构化的用例规约
+- The user explicitly asks to write a use-case specification for a feature.
+- The user provides a business-requirements description that must be converted into a structured use-case specification.
 
-## 输入
+## Input
 
-用户必须提供一份明确的需求文档，文档内部内容格式不限，支持用例分析、用户故事、工作流定义等等。
+The user must provide a clear requirements document. Its format is unrestricted and may be a use-case analysis, user story, workflow definition, or similar material.
 
-| 异常判断               | 处理策略                                         |
-| ---------------------- | ------------------------------------------------ |
-| 输入文档不涉及业务描述 | 拒绝执行，提示用户输入与业务规则相关的内容       |
-| 输入文档内容模糊不清   | 拒绝执行，提示用户补充更明确的需求描述，禁止推断 |
+| Condition | Handling strategy |
+| :-- | :-- |
+| The input document contains no business description | Decline the task and ask the user for material related to business rules. |
+| The input document is ambiguous | Decline the task and ask the user to provide a clearer requirements description. Do not infer missing details. |
 
-## 操作步骤
+## Workflow
 
-### 1. 理解需求
+### 1. Understand the Requirements
 
-根据需求描述，提取以下信息：
+Extract the following information from the requirements description:
 
-1. **用例名称**
-2. **参与者**
-3. **业务目标**
+1. **Use-case name**
+2. **Actors**
+3. **Business goal**
 
-| 异常情况                           | 处理策略                                         |
-| :--------------------------------- | :----------------------------------------------- |
-| 输入文档内容模糊，无法提取关键信息 | 拒绝执行，强制要求用户明确需求描述，禁止自行编造 |
+| Condition | Handling strategy |
+| :-- | :-- |
+| The input document is too ambiguous to extract key information | Decline the task and require a clearer requirements description. Do not invent missing details. |
 
-### 2. 理解关键 ADR
+### 2. Read the Key ADR
 
-- [mermaid for workflow](./adr/mermaid.md)
+- [Using Mermaid for workflows](./adr/mermaid.md)
 
-### 3. 编写用例规约
+### 3. Draft the Use-Case Specification
 
-遵循业务用例分析最佳实践，按照 `templates/use-case-template.md` 中的模板结构，逐项填充内容。
+Follow use-case analysis best practices. Complete each section using the structure in [the use-case template](assets/template.md).
 
-### 4. 清单自检
+### 4. Verify Against the Checklist
 
-输出前检查如下子项，如果不符合条件，必须进行修复
+Before returning the result, check every item below and correct any nonconformance:
 
-- [ ] 前置条件是否可验证？
-- [ ] 流程定义是否覆盖了主成功路径、可选路径和异常路径？
-- [ ] 流程节点是否都有编号？
-- [ ] 业务规则是否通过节点编号引用流程图？
-- [ ] 后置条件是否明确了系统状态？
-- [ ] 术语是否全文一致？
+- [ ] Are the preconditions verifiable?
+- [ ] Does the workflow cover the main success scenario, alternative scenarios, and exception scenarios?
+- [ ] Does every workflow node have an identifier?
+- [ ] Do business rules reference workflow nodes by identifier?
+- [ ] Do the postconditions state the resulting system state clearly?
+- [ ] Is terminology consistent throughout?
 
-## 输出约定
+## Output Convention
 
-业务概念描述必须基于模板生成，绝不允许擅自调整、优化模板！
+Generate every use-case specification from the template. Do not alter or optimize the template without authorization.
