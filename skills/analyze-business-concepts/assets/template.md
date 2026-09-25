@@ -2,43 +2,123 @@
 
 ## Prerequisite Dependencies (Optional)
 
-<!-- Describe dependencies on business concepts. When referring to a dependent concept later, emphasize it as **xxx**; do not repeat its link. -->
+> List the business concepts this concept depends on. When referring to a listed concept later, use its bold name without repeating the link.
+
+<!--
+Format:
 
 - [Concept Name](file-path)
 
+Example:
+
+- [Workspace](./workspace.md)
+-->
+
 ## 1. Business Definition
 
-Detailed definition of the business concept...
+> Define the business concept, its purpose, and the business value it represents.
+
+<!--
+Format:
+
+Concise prose describing the concept in business terms.
+
+Example:
+
+A Workspace is a bounded area in which a team organizes and manages related rules.
+-->
 
 ## 2. Synonyms and Aliases
 
-- [Synonym or alias 1]
-- [Synonym or alias 2]
+> List names that stakeholders use interchangeably for this concept.
+
+<!--
+Format:
+
+- {Synonym or alias}
+
+Example:
+
+- Project space
+-->
 
 ## 3. Key Attributes
 
-<!-- Describe business characteristics, not technical implementation details. -->
-<!-- If technical visualization is essential, use the optional "Data Model" section. -->
+> List business characteristics of the concept. Do not include technical implementation details.
 
-- [Attribute Name]: [Attribute Description]
+<!--
+Format:
 
-### 3.1 Data Model
+- **{Attribute Name}:** {Business meaning and constraints}
 
-<!-- Define the data model in TypeScript. -->
+Example:
+
+- **Status:** Indicates whether the Workspace is active or archived.
+-->
+
+### 3.1 Data Model (Optional)
+
+> Define the TypeScript data model only when a technical visualization is essential to understand the concept.
+
+<!--
+Format:
+
+```ts
+interface {ConceptName} {
+  {property}: {Type};
+}
+```
+
+Example:
+
+```ts
+interface Workspace {
+  id: string;
+  status: "active" | "archived";
+}
+```
+-->
 
 ## 4. Business Rules and Constraints
 
-1. [Rule 1]
-2. [Rule 2]
+> State the rules that govern how the concept may be created, changed, or used.
+
+<!--
+Format:
+
+1. {Business rule}
+
+Example:
+
+1. An archived Workspace cannot accept new Workspace Versions.
+-->
 
 ## 5. Relationships
 
-- **Composition**: [Which constituent concepts does it contain?]
-- **Aggregation**: [Which broader concept does it belong to?]
-- **Association**: [Which independent concepts is it associated with?]
-- **Generalization**: [Is it a specialization or subtype of another concept?]
+> Describe this concept's relationships to other business concepts using the authoritative relationship vocabulary.
+
+<!--
+Format:
+
+- **{Relationship Type}:** {Related concept and relationship description}
+
+Example:
+
+- **Composition:** A Workspace contains its Workspace Versions.
+-->
 
 ## 6. Scope Boundaries (Optional)
 
-- **Includes**: [Scenarios explicitly in scope]
-- **Excludes**: [Scenarios explicitly out of scope, to prevent the concept from becoming overly broad]
+> Identify what the concept explicitly includes and excludes so its meaning remains bounded.
+
+<!--
+Format:
+
+- **Includes:** {Scenarios explicitly in scope}
+- **Excludes:** {Scenarios explicitly out of scope}
+
+Example:
+
+- **Includes:** Configuration shared by a team.
+- **Excludes:** User-level personal preferences.
+-->
