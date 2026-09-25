@@ -45,3 +45,8 @@ package scripts, and validation requirements.
 
 - [@bluey/echo-mcp](mcps/echo-mcp/README.md): Read-only `echo` tool used to
   verify the local MCP development setup.
+
+## TODO
+
+- Reassess the value of the `analyze-business-rules` skill and decide whether
+  it should be retained, revised, or removed.

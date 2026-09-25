@@ -1,6 +1,4 @@
-<!-- $[]$ marks a template placeholder. -->
-
-# $[Business Use Case]$
+# {Use Case Name}
 
 ## Actors
 
@@ -9,8 +7,8 @@
 <!--
 Format:
 
-- **Primary Actor:** **$[Actor]$**
-- **Supporting Actor:** **$[Actor]$**
+- **Primary Actor:** **{Actor}**
+- **Supporting Actor:** **{Actor}**
 
 Example:
 
@@ -39,7 +37,7 @@ An administrator creates a Workspace so a team can organize its rule configurati
 <!--
 Format:
 
-1. $[Condition]$
+1. {Condition}
 
 Example:
 
@@ -53,7 +51,7 @@ Example:
 <!--
 Format:
 
-1. **$[Node ID]$**: $[Actor]$ $[Business action]$.
+1. **{Node ID}**: {Actor} {Business action}.
 
 Example:
 
@@ -71,11 +69,11 @@ Format:
 
 **Success scenario:**
 
-1. $[Postcondition]$
+1. {Postcondition}
 
 **Failure scenario:**
 
-1. $[Postcondition]$
+1. {Postcondition}
 
 Example:
 
@@ -95,7 +93,7 @@ Example:
 <!--
 Format:
 
-- **$[Rule Name]$**: $[Referenced Node]$, $[Rule Description]$
+- **{Rule Name}**: {Referenced Node}, {Rule Description}
 
 Example:
 
@@ -127,7 +125,7 @@ Example:
 <!--
 Format:
 
-- $[Referenced Node]$: $[Extension Description]$
+- {Referenced Node}: {Extension Description}
 
 Example:
 
