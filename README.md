@@ -35,6 +35,9 @@ package scripts, and validation requirements.
   Extract and document business concepts from business-source material.
 - [analyze-business-rules](skills/analyze-business-rules/SKILL.md): Organize
   business requirements into a four-layer constraint model.
+- [analyze-business-concept-relationship](skills/analyze-business-concept-relationship/SKILL.md):
+  Extract and document relationships among business concepts and use-case
+  specifications.
 - [draft-use-case-specification](skills/draft-use-case-specification/SKILL.md):
   Draft a structured use-case specification from business requirements.
 
