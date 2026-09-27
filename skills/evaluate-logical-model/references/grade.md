@@ -1,35 +1,35 @@
-# 逻辑模型自洽性评级
+# Logical Model Consistency Ratings
 
-明确评级：
+The available ratings are:
 
-- 无保留意见通过
-- 有保留意见通过
-- 不予通过
+- Pass Without Reservations
+- Pass With Reservations
+- Do Not Pass
 
-## 无保留意见通过
+## Pass Without Reservations
 
-所有定义的检查点全部"[通过]"，无任何问题
+Every defined checkpoint passes, with no issues identified.
 
-## 有保留意见通过
+## Pass With Reservations
 
-必须**同时满足**以下两个条件：
+Both of the following conditions must be met:
 
-1. **不通过项数量较少**：不通过的检查点数量 < 3 个。
-2. **不涉及致命缺陷**：不通过项不属于以下关键维度的致命问题：
-   - 关联逻辑矛盾（例如：基数设定与业务描述根本性冲突）
-   - 生命周期死锁（例如：状态流转存在无法退出的死胡同）
-   - 约束互相冲突（例如：两条规则直接矛盾导致模型无法自洽）
+1. **Few failed checkpoints**: Fewer than 3 checkpoints fail.
+2. **No critical defects**: The failed checkpoints do not include critical issues in the following dimensions:
+   - Relationship logic contradiction (for example, cardinality fundamentally conflicts with the business description)
+   - Lifecycle deadlock (for example, a state transition has a dead end with no exit)
+   - Conflicting constraints (for example, two rules directly contradict each other, making the model inconsistent)
 
-### 典型场景
+### Typical Scenarios
 
-- 术语不一致（如"手机号"与"联系电话"混用），但核心实体结构和关联关系正确
-- 个别属性定义缺失（如某个实体少了一个非关键属性），但不影响模型整体自洽性
-- 关联语义名称不够精确（如用"关联"代替具体业务动词），但基数和方向正确
+- Terminology is inconsistent (for example, "mobile number" and "contact phone" are mixed), while the core entity structure and relationships are correct.
+- An individual attribute definition is missing (for example, an entity lacks a noncritical attribute), but it does not affect the model's overall consistency.
+- A relationship semantic name is imprecise (for example, "related to" is used instead of a specific business verb), while cardinality and direction are correct.
 
-## 不予通过
+## Do Not Pass
 
-满足以下任一条件：
+Any of the following conditions is met:
 
-- 不通过项数量：大于等于 3 个
-- 致命缺陷：有（关联矛盾 / 生命周期死锁 / 约束冲突）
-- 影响范围：核心结构问题，影响模型可用性
+- Failed checkpoints: 3 or more
+- Critical defect: present (relationship contradiction, lifecycle deadlock, or constraint conflict)
+- Scope of impact: a core structural issue that affects model usability

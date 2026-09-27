@@ -1,95 +1,95 @@
-# 逻辑模型自洽性检查清单
+# Logical Model Consistency Evaluation Checklist
 
 ---
 
-## 评分说明
+## Scoring
 
-5 大核心检查维度，等权重，每个维度 20 分
+There are five equally weighted evaluation dimensions, each worth 20 points.
 
-| 维度            | 检查内容                                 |
-| --------------- | ---------------------------------------- |
-| 1. 实体完整性   | 实体定义清晰度、属性完备性、孤立实体检测 |
-| 2. 关联有效性   | 基数合理性、方向明确性、语义完整性       |
-| 3. 约束一致性   | 规则冲突检测、属性约束合理性             |
-| 4. 生命周期逻辑 | 状态闭环、前置条件可行性                 |
-| 5. 术语一致性   | 命名统一、抽象层级一致                   |
-
----
-
-## 1. 实体完整性
-
-### 检查点 1.1：实体是否有明确定义
-
-- **正向标准（通过）**：实体名称必须是业务概念（如"订单""用户""商品"），具有明确的业务含义。
-- **反向标准（不通过）**：实体名称为技术术语（如"表1""data_A""Entity_01"）或空名称，无法从名称判断其业务含义。
-
-### 检查点 1.2：每个实体是否至少有 2 个属性
-
-- **正向标准（通过）**：每个实体定义了 >= 2 个具有明确业务含义的属性，属性名称可反映其业务用途。
-- **反向标准（不通过）**：实体只定义了 1 个或 0 个属性，或属性名称无业务含义（如"字段1""data""info"）。
-
-### 检查点 1.3：是否存在孤立实体
-
-- **正向标准（通过）**：每个实体至少与其他 1 个实体存在关联关系，不存在完全孤立的实体。
-- **反向标准（不通过）**：存在与其他实体完全没有任何关联的"孤岛实体"，无法说明其在业务场景中的作用。
+| Dimension | Evaluation Focus |
+| --- | --- |
+| 1. Entity Completeness | Entity-definition clarity, attribute completeness, and isolated-entity detection |
+| 2. Relationship Validity | Cardinality reasonableness, direction clarity, and semantic completeness |
+| 3. Constraint Consistency | Business-rule conflict detection and attribute-constraint reasonableness |
+| 4. Lifecycle Logic | Closed state flow and precondition feasibility |
+| 5. Terminology Consistency | Naming consistency and abstraction-level consistency |
 
 ---
 
-## 2. 关联有效性
+## 1. Entity Completeness
 
-### 检查点 2.1：基数约束是否符合业务常识
+### Checkpoint 1.1: Is every entity clearly defined?
 
-- **正向标准（通过）**：实体间的基数设定（1:1、1:N、M:N）与业务描述一致，符合业务常识。
-- **反向标准（不通过）**：基数设定与业务语义矛盾（如业务描述明确"一个订单可以包含多种商品"，却将订单与商品定义为 1:1 关联）。
+- **Pass criteria**: Every entity name is a business concept (for example, "Order," "User," or "Product") with a clear business meaning.
+- **Fail criteria**: An entity name is a technical term (for example, "Table 1," "data_A," or "Entity_01") or is blank, making its business meaning unclear.
 
-### 检查点 2.2：关联方向是否明确
+### Checkpoint 1.2: Does every entity have at least two attributes?
 
-- **正向标准（通过）**：关联的主从关系或双向关系清晰可辨，能明确判断"谁拥有谁""谁引用谁"。
-- **反向标准（不通过）**：关联关系模糊，无法判断主从方向或关系方向（如仅表述为"实体A和实体B有关系"，未说明关系的指向性）。
+- **Pass criteria**: Every entity defines at least two attributes with clear business meanings, and each attribute name conveys its business purpose.
+- **Fail criteria**: An entity defines only zero or one attribute, or its attribute names have no business meaning (for example, "field1," "data," or "info").
 
-### 检查点 2.3：关联是否有业务语义名称
+### Checkpoint 1.3: Are there any isolated entities?
 
-- **正向标准（通过）**：每个关联都有明确的业务名称（如"包含""属于""创建""分配到"），能准确描述实体间的语义关系。
-- **反向标准（不通过）**：关联仅用"与...相关""有联系"等模糊表述，缺乏具体的业务语义名称。
-
----
-
-## 3. 约束一致性
-
-### 检查点 3.1：业务规则之间是否存在逻辑矛盾
-
-- **正向标准（通过）**：所有业务规则之间无逻辑冲突，所有规则可同时成立且不自相矛盾。
-- **反向标准（不通过）**：规则 A 与规则 B 存在直接矛盾（如规则 A 规定"订单必须付费后才能发货"，规则 B 规定"允许未付费订单直接发货"）。
-
-### 检查点 3.2：属性约束是否与业务描述冲突
-
-- **正向标准（通过）**：属性的枚举值、取值范围与业务语义一致，不存在与业务描述矛盾的限制。
-- **反向标准（不通过）**：属性约束与业务描述冲突（如"年龄"属性允许负数值，或"优先级"枚举值包含业务中未定义的"紧急"级别）。
+- **Pass criteria**: Every entity has a relationship with at least one other entity; no entity is completely isolated.
+- **Fail criteria**: An entity has no relationship with any other entity, so its role in the business scenario cannot be explained.
 
 ---
 
-## 4. 生命周期逻辑
+## 2. Relationship Validity
 
-### 检查点 4.1：状态流转是否形成闭环
+### Checkpoint 2.1: Does cardinality match business expectations?
 
-- **正向标准（通过）**：每个非终态都有明确的后续状态路径可达终态，终态不可逆，不存在无法退出的"死胡同"状态。
-- **反向标准（不通过）**：存在无法退出的"死胡同"状态（如某状态无任何出向流转），或状态流转形成无法终止的无限循环。
+- **Pass criteria**: Relationship cardinality (1:1, 1:N, or M:N) is consistent with the business description and business expectations.
+- **Fail criteria**: Cardinality conflicts with the business semantics (for example, the description states that an order can contain multiple products, but the Order-to-Product relationship is defined as 1:1).
 
-### 检查点 4.2：状态变更的前置条件是否具备可行性
+### Checkpoint 2.2: Is relationship direction clear?
 
-- **正向标准（通过）**：每个状态变更的前置条件在模型中均有对应的实体或属性支撑，前置条件可被验证。
-- **反向标准（不通过）**：状态变更依赖模型中未定义的外部条件（如要求"发货"前必须"有库存"，但模型中未定义"库存"实体或库存属性）。
+- **Pass criteria**: The ownership/dependency direction or bidirectional nature of each relationship is clear, so it is possible to determine who owns or references whom.
+- **Fail criteria**: A relationship is ambiguous: its ownership/dependency or directional semantics cannot be determined (for example, it only says "Entity A and Entity B are related" without specifying the direction).
+
+### Checkpoint 2.3: Does every relationship have a business-semantic name?
+
+- **Pass criteria**: Every relationship has a clear business-semantic name (for example, "contains," "belongs to," "creates," or "is assigned to") that accurately describes the relationship between entities.
+- **Fail criteria**: A relationship uses only vague wording such as "is related to" or "has a connection with," without a specific business-semantic name.
 
 ---
 
-## 5. 术语一致性
+## 3. Constraint Consistency
 
-### 检查点 5.1：同一概念是否使用统一词汇
+### Checkpoint 3.1: Do any business rules contradict each other?
 
-- **正向标准（通过）**：同一业务概念在所有实体中使用相同的术语名称，无同义异词现象。
-- **反向标准（不通过）**：同一概念在不同实体中使用不同词汇（如"用户"实体中用"手机号"，"订单"实体中用"联系电话"，语义相同但术语不一致）。
+- **Pass criteria**: Business rules do not conflict; every rule can hold at the same time without contradiction.
+- **Fail criteria**: Rule A directly contradicts Rule B (for example, Rule A requires an order to be paid before shipment, while Rule B allows an unpaid order to be shipped).
 
-### 检查点 5.2：抽象层级是否统一
+### Checkpoint 3.2: Do attribute constraints conflict with the business description?
 
-- **正向标准（通过）**：所有实体和属性处于同一抽象层级，均为业务概念描述，未混杂技术实现细节。
-- **反向标准（不通过）**：宏观业务概念与微观技术字段混杂（如将"用户ID（自增主键）""VARCHAR(50)"与"订单金额""创建时间"并列作为属性描述）。
+- **Pass criteria**: Attribute enumerations and value ranges align with the business semantics; no restriction conflicts with the business description.
+- **Fail criteria**: An attribute constraint conflicts with the business description (for example, an Age attribute permits negative values, or a Priority enumeration includes an undefined "Urgent" level).
+
+---
+
+## 4. Lifecycle Logic
+
+### Checkpoint 4.1: Do state transitions form a closed state flow?
+
+- **Pass criteria**: Every non-terminal state has a defined subsequent transition path to a terminal state, terminal states are irreversible, and no dead-end state exists.
+- **Fail criteria**: A dead-end state exists (for example, a state has no outgoing transition), or state transitions form a non-terminating infinite loop.
+
+### Checkpoint 4.2: Are state-change preconditions feasible?
+
+- **Pass criteria**: Every state-change precondition is supported by an entity or attribute in the model and can be verified.
+- **Fail criteria**: A state change depends on an external condition that the model does not define (for example, shipment requires available inventory, but the model defines neither an Inventory entity nor an inventory attribute).
+
+---
+
+## 5. Terminology Consistency
+
+### Checkpoint 5.1: Does each concept use consistent terminology?
+
+- **Pass criteria**: The same business concept uses the same term in all entities, without synonymous alternatives.
+- **Fail criteria**: The same concept uses different terms in different entities (for example, a User entity uses "phone number" while an Order entity uses "contact number" for the same concept).
+
+### Checkpoint 5.2: Is the abstraction level consistent?
+
+- **Pass criteria**: All entities and attributes are described at the same abstraction level as business concepts, without implementation details mixed in.
+- **Fail criteria**: High-level business concepts are mixed with low-level technical fields (for example, "User ID (auto-increment primary key)" or "VARCHAR(50)" appears alongside "Order Amount" and "Created At" as attributes).

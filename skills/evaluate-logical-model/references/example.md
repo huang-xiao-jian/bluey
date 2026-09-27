@@ -1,117 +1,164 @@
-# 业务逻辑模型评估报告
+# Business Logical Model Evaluation Report
 
 ---
 
-## 案例 A：通过
+## Example A: Pass
 
-### 输入模型
+### Input Model
 
-用户描述了一个"个人日程助手"的逻辑模型，包含以下业务概念：
+The user describes a logical model for a "Personal Schedule Assistant" with the following business concepts:
 
-**实体定义：**
+**Entity Definitions:**
 
-- **用户**：唯一标识、用户名、联系方式
-- **日程**：唯一标识、标题、描述、开始时间、结束时间、状态、优先级、所属分类、创建时间
-- **提醒**：唯一标识、关联日程、提醒触发时间、提醒方式
-- **分类**：唯一标识、分类名称、颜色标记
+- **User**: unique identifier, username, contact information
+- **Schedule**: unique identifier, title, description, start time, end time, status, priority, category, created at
+- **Reminder**: unique identifier, related schedule, trigger time, reminder method
+- **Category**: unique identifier, category name, color marker
 
-**关联关系：**
+**Relationships:**
 
-- 用户 1:N 日程（一个用户可以创建多个日程，一个日程只能属于一个用户）
-- 日程 1:N 提醒（一个日程可以设置多个提醒，一个提醒只属于一个日程）
-- 分类 1:N 日程（一个分类下可以有多个日程，一个日程属于一个分类）
+- User 1:N Schedule (a user can create multiple schedules; each schedule belongs to exactly one user)
+- Schedule 1:N Reminder (a schedule can have multiple reminders; each reminder belongs to exactly one schedule)
+- Category 1:N Schedule (a category can contain multiple schedules; each schedule belongs to one category)
 
-**业务规则：**
+**Business Rules:**
 
-- 日程的开始时间不能晚于结束时间
-- 同一用户的两个日程在时间上不能重叠
-- 分类名称在同一个用户下必须唯一
-- 优先级取值范围为：高 / 中 / 低
+- A schedule's start time cannot be later than its end time.
+- Two schedules belonging to the same user cannot overlap in time.
+- A category name must be unique for the same user.
+- Priority values are High, Medium, or Low.
 
-**生命周期：**
+**Lifecycle:**
 
-- 日程状态流转：待办 -> 进行中 -> 已完成 / 已取消
-- 已完成和已取消为终态，不可逆
-- 提醒的触发时间必须早于日程的开始时间
+- Schedule state transition: Pending -> In Progress -> Completed / Canceled
+- Completed and Canceled are irreversible terminal states.
+- A reminder's trigger time must precede its schedule's start time.
 
-### 预期输出
+### Expected Output
 
-```md
-## 综合评级
-
-**评级：无保留意见通过**
-
-## 审计清单
-
-- 实体完整性（3项）：4个实体均有明确业务含义名称、每个实体属性 >= 2 条、无孤立实体。
-- 关联有效性（3项）：基数设定符合业务常识、关联方向清晰（用户创建日程、日程拥有提醒）、关联均有业务语义名称。
-- 约束一致性（2项）：规则之间无逻辑矛盾、属性约束与业务描述一致。
-- 生命周期逻辑（2项）：状态流转形成闭环（待办->进行中->完成/取消）、终态不可逆、前置条件有模型支撑。
-- 术语一致性（2项）：同一概念术语统一、抽象层级一致（均为业务概念描述）。
-```
+~~~~md
+# Business Logical Model Evaluation Report
 
 ---
 
-## 案例 B：不通过（输入 + 预期输出）
+## Overall Rating
 
-### 输入模型
+**Rating**: Pass Without Reservations
 
-用户描述了一个"电商订单系统"的逻辑模型，包含以下业务概念：
+**Summary**: The model's entities, relationships, constraints, lifecycle, and terminology are internally consistent and can proceed to the next phase.
 
-**实体定义：**
+---
 
-- **客户**：客户ID、客户名称、联系电话
-- **订单**：订单编号、客户ID、下单时间、总金额、状态
-- **商品**：商品编号、商品名称、单价、库存数量
-- **物流记录**：物流单号、订单编号、发货时间、签收时间
+## Audit Checklist
 
-**关联关系：**
+> The dimension-level ratings and section order must exactly match this template. Do not reorder or remove sections, and keep the internal format of each section consistent.
 
-- 客户 1:N 订单（一个客户可以下多个订单）
-- 订单 1:1 商品（一个订单包含一个商品）
-- 物流记录 与 订单 有关联（未明确方向）
+- ✅ Entity Completeness
+- ✅ Relationship Validity
+- ✅ Constraint Consistency
+- ✅ Lifecycle Logic
+- ✅ Terminology Consistency
 
-**业务规则：**
+### Entity Completeness
 
-- 订单总金额必须大于 0
-- 允许创建总金额为 0 的赠品订单
-- 订单状态流转：待支付 -> 已支付 -> 已发货 -> 已完成
-- 物流记录必须在订单发货后创建
+### Relationship Validity
 
-**术语使用：**
+### Constraint Consistency
 
-- 客户实体中使用"联系电话"
-- 订单实体中使用"手机"字段关联客户
+### Lifecycle Logic
 
-### 预期输出
+### Terminology Consistency
 
-```md
-## 综合评级
+---
 
-**评级：不予通过**
+## Additional Notes
 
-## 审计清单
+> No additional notes are required.
+~~~~
 
-### 实体完整性
+---
 
-- **存在孤立实体风险**：物流记录实体仅与订单有关联，但关联方向不明确，且物流记录中缺少与商品或客户的直接关联路径，其在业务闭环中的作用不清晰。
+## Example B: Do Not Pass (Input and Expected Output)
 
-### 关联有效性
+### Input Model
 
-- **基数约束不符合业务常识**：订单与商品定义为 1:1 关联，但电商场景下一个订单通常包含多种商品，基数设定与业务语义矛盾。
-- **关联方向不明确**，物流记录与订单的关联仅表述为"有关联"，未明确是"物流记录引用订单"还是"订单拥有物流记录"，主从关系模糊。
+The user describes a logical model for an "E-commerce Order System" with the following business concepts:
 
-### 约束一致性
+**Entity Definitions:**
 
-- **业务规则之间存在逻辑矛盾**：规则"订单总金额必须大于 0"、"允许创建总金额为 0 的赠品订单"直接冲突，两者无法同时成立
+- **Customer**: customer ID, customer name, phone number
+- **Order**: order number, customer ID, order time, total amount, status
+- **Product**: product number, product name, unit price, inventory quantity
+- **Shipping Record**: tracking number, order number, shipped at, received at
 
-### 生命周期逻辑
+**Relationships:**
 
-- **状态流转未形成闭环**：订单状态流转为"待支付 -> 已支付 -> 已发货 -> 已完成"，但未定义"已取消"状态的进入条件。用户取消订单时状态如何流转？存在业务场景下的"死胡同"
+- Customer 1:N Order (a customer can place multiple orders)
+- Order 1:1 Product (an order contains one product)
+- Shipping Record is related to Order (direction not specified)
 
-### 术语一致性
+**Business Rules:**
 
-**同一概念未使用统一词汇**：客户实体中使用"联系电话"，订单实体中使用"手机"字段来关联客户，同一业务概念使用了不同术语。
-```
+- An order's total amount must be greater than 0.
+- A gift order with a total amount of 0 is allowed.
+- Order state transition: Pending Payment -> Paid -> Shipped -> Completed
+- If a customer cancels a paid order, it enters a Cancellation Requested state with no defined subsequent transition.
+- A Shipping Record must be created after the order is shipped.
+
+**Terminology:**
+
+- The Customer entity uses "phone number."
+- The Order entity uses a "contact number" field to reference the customer.
+
+### Expected Output
+
+~~~~md
+# Business Logical Model Evaluation Report
+
+---
+
+## Overall Rating
+
+**Rating**: Do Not Pass
+
+**Summary**: The model has issues with relationship cardinality, business constraints, lifecycle logic, and terminology consistency, so it cannot proceed to the next phase.
+
+---
+
+## Audit Checklist
+
+> The dimension-level ratings and section order must exactly match this template. Do not reorder or remove sections, and keep the internal format of each section consistent.
+
+- ✅ Entity Completeness
+- ⚠️ Relationship Validity
+- ⚠️ Constraint Consistency
+- ⚠️ Lifecycle Logic
+- ⚠️ Terminology Consistency
+
+### Entity Completeness
+
+### Relationship Validity
+
+- **Cardinality conflicts with business expectations:** The Order-to-Product relationship is defined as 1:1, but an order in an e-commerce scenario normally contains multiple products. Its cardinality conflicts with the business semantics.
+- **Relationship direction is unclear:** The Shipping Record-to-Order relationship is described only as "related to," without stating whether the Shipping Record references the Order or the Order owns the Shipping Record. The ownership/dependency direction is ambiguous.
+
+### Constraint Consistency
+
+- **Business rules contradict each other:** The rules "an order's total amount must be greater than 0" and "a gift order with a total amount of 0 is allowed" directly conflict and cannot both hold.
+
+### Lifecycle Logic
+
+- **State transitions do not form a closed state flow:** A paid order can enter the Cancellation Requested state, but that state has no defined subsequent transition to a terminal state. It is a dead-end state.
+
+### Terminology Consistency
+
+- **A single concept does not use consistent terminology:** The Customer entity uses "phone number," while the Order entity uses a "contact number" field for the same concept.
+
+---
+
+## Additional Notes
+
+> No assumptions were made about information that the input does not define; the issues above are based only on the provided model description.
+~~~~
 
 ---

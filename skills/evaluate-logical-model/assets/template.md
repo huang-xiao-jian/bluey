@@ -1,58 +1,58 @@
-# 业务逻辑模型评估报告
+# Business Logical Model Evaluation Report
 
 ---
 
-## 综合评级
+## Overall Rating
 
-**评级**：{评级结果}
+**Rating**: {Rating}
 
-**简评**：{简要总结业务逻辑模型的整体质量，指出核心问题或肯定核心优势}
+**Summary**: {Briefly summarize the overall quality of the business logical model, identifying its core issues or strengths.}
 
 ---
 
-## 审计清单
+## Audit Checklist
 
-> 检查维度级别的评级说明，章节必须严格保持与模板一致，不允许调整顺序或者删除，章节内部格式规范一致
+> The dimension-level ratings and section order must exactly match this template. Do not reorder or remove sections, and keep the internal format of each section consistent.
 
 <!--
-Annotation:
+Status:
 
-- ✅ 无审计问题
-- ⚠️ 存在审计问题
+- ✅ No audit issues
+- ⚠️ Audit issues identified
 -->
 
-- ✅ 实体完整性
-- ⚠️ 关联有效性
-- ⚠️ 约束一致性
-- ⚠️ 生命周期逻辑
-- ✅ 术语一致性
+- ✅ Entity Completeness
+- ⚠️ Relationship Validity
+- ⚠️ Constraint Consistency
+- ⚠️ Lifecycle Logic
+- ✅ Terminology Consistency
 
-### 实体完整性
+### Entity Completeness
 
 <!--
-Annotation:
+Status:
 
-- 仅保留未通过检查点的描述
+- Only retain descriptions of failed checkpoints.
 
 Format:
 
-- **{关联检查点}:** {说明为什么检查点不满足要求。聚焦问题本身，不给出修改建议。}
+- **{Checkpoint}:** {Explain why the checkpoint is not satisfied. Focus on the issue itself; do not provide remediation advice.}
 
 Example:
 
-- **存在孤立实体风险**：物流记录实体仅与订单有关联，但关联方向不明确，且物流记录中缺少与商品或客户的直接关联路径，其在业务闭环中的作用不清晰。
+- **Isolated entity risk:** The Shipping Record entity has a relationship only with Order, but its direction is unclear. It also has no direct path to Product or Customer, so its role in the business flow is unclear.
 -->
 
-### 关联有效性
+### Relationship Validity
 
-### 约束一致性
+### Constraint Consistency
 
-### 生命周期逻辑
+### Lifecycle Logic
 
-### 术语一致性
+### Terminology Consistency
 
 ---
 
-## 补充说明
+## Additional Notes
 
-> 保留评估过程存在需要单独说明的信息，可选
+> Use this optional section only for information from the evaluation process that needs separate explanation.

@@ -1,46 +1,46 @@
 ---
 name: evaluate-logical-model
-description: 检查业务逻辑模型的设计，仅当用户明确要求评估业务逻辑模型质量时使用
+description: Use only when the user explicitly asks to evaluate the quality of a business logical model
 ---
 
-# 业务逻辑模型审计
+# Business Logical Model Evaluation
 
-## 核心原则
+## Core Principles
 
-1. **解耦性**：严禁将用户的描述强行套入关系数据库的表结构思维。关注业务实体、语义关联与生命周期，而非外键或物理存储。
-2. **非完备性处理**：用户输入的可能只是初步构想。对于缺失的信息，应在报告中指出"待明确"，而不是强行假设。
-3. **只审计不修改**：输出必须是评估报告，严禁直接重写或修改用户的原始模型文件。
+1. **Decoupling**: Do not force the user's description into a relational-table mindset. Focus on business entities, semantic relationships, and lifecycles rather than foreign keys or physical storage.
+2. **Incomplete inputs**: The user's input may be only an initial concept. Identify missing information as "requires clarification" in the report instead of making assumptions.
+3. **Evaluate without modifying**: The output must be an evaluation report. Do not rewrite or modify the user's original model.
 
-## 参考文件
+## Reference Files
 
-- [逻辑模型审计标准](./references/criteria.md)，定义逻辑模型审计的具体判定标准
-- [逻辑模型评级标准](./references/grade.md)，定义逻辑模型审计的最终评级判定标准
-- [参考案例](./references/example.md)，遵循逻辑模型自洽性标准评估，提供参考的"正面"和"负面"案例
-- [输出模板](./assets/template.md)
+- [Logical Model Evaluation Criteria](./references/criteria.md), which define the detailed evaluation dimensions and criteria
+- [Logical Model Rating Criteria](./references/grade.md), which define the final rating criteria
+- [Reference Examples](./references/example.md), which provide positive and negative examples evaluated for logical-model consistency
+- [Output Template](./assets/template.md)
 
-## 输入
+## Input
 
-- **输入形式**：自然语言描述的业务模型
-- **最低门槛**：实体数量 >= 3 个，每个实体属性 >= 2 条。
+- **Format**: A natural-language description of a business model
+- **Minimum threshold**: At least 3 entities, with at least 2 attributes per entity.
 
-## 检查范围
+## Evaluation Scope
 
-- 单实体内部自洽
-- 实体间的关联自洽
+- Internal consistency of each entity
+- Consistency of relationships between entities
 
-## 工作流程
+## Workflow
 
-1. **解析输入**：提取用户描述中的业务实体、属性、关联关系及业务规则
-2. **验证输入**：检查输入内容是否满足最低门槛要求，不满足则直接输出"不予通过"报告，简要说明原因
-3. **加载审计标准**：读取 **逻辑模型审计标准** 获取详细的检查维度与判定标准
-4. **逐项审计**：对照审计标准，逐个检查点进行逻辑推演
-5. **加载评级标准**：读取 **逻辑模型审计标准** 获取详细的检查维度与判定标准
-6. **综合评级**：根据检查结果评定最终评级
-7. **加载输出模板**：读取 `references/report-template.md` 获取报告输出格式。
-8. **生成最终报告**：按照模板格式输出报告。
+1. **Parse the input**: Extract business entities, attributes, relationships, and business rules from the user's description.
+2. **Validate the input**: Check whether the input meets the minimum threshold. If it does not, issue a **Do Not Pass** report and briefly explain why.
+3. **Load the evaluation criteria**: Read the **Logical Model Evaluation Criteria** for detailed dimensions and decision criteria.
+4. **Evaluate each item**: Reason through every checkpoint against the evaluation criteria.
+5. **Load the rating criteria**: Read the **Logical Model Rating Criteria** for the final rating rules.
+6. **Assign an overall rating**: Determine the final rating from the evaluation results.
+7. **Load the output template**: Read `assets/template.md` for the report format.
+8. **Generate the final report**: Produce the report in the template's format.
 
-### 特别说明
+### Special Note
 
-当最终评级为"有保留意见通过"时，应明确指出具体问题所在以及建议，例如：
+When the final rating is **Pass With Reservations**, explicitly identify the issues and provide recommendations. For example:
 
-> "模型核心结构自洽，实体定义清晰，关联关系合理。但存在术语不一致（'手机号'与'联系电话'混用）和个别关联语义名称模糊的问题，建议修正后再进入物理建模阶段。"
+> "The model's core structure is consistent, its entities are clearly defined, and its relationships are reasonable. However, terminology is inconsistent (for example, 'mobile number' and 'contact phone' are used interchangeably), and some relationship semantics are ambiguous. Resolve these issues before proceeding to physical modeling."
