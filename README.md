@@ -40,6 +40,8 @@ package scripts, and validation requirements.
   specifications.
 - [draft-use-case-specification](skills/draft-use-case-specification/SKILL.md):
   Draft a structured use-case specification from business requirements.
+- [evaluate-logical-model](skills/evaluate-logical-model/SKILL.md): Evaluate
+  the quality of a business logical model without modifying it.
 
 ### MCP servers
 
