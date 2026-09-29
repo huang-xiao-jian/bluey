@@ -22,19 +22,12 @@ scripts/            Repository checks and developer utilities
 docs/               Conventions and operating notes
 ```
 
-## Development
-
-See [Development guideline](docs/development-guideline.md) for workspace commands,
-package scripts, and validation requirements.
-
 ## Included capabilities
 
 ### Skills
 
 - [analyze-business-concepts](skills/analyze-business-concepts/SKILL.md):
   Extract and document business concepts from business-source material.
-- [analyze-business-rules](skills/analyze-business-rules/SKILL.md): Organize
-  business requirements into a four-layer constraint model.
 - [analyze-business-concept-relationship](skills/analyze-business-concept-relationship/SKILL.md):
   Extract and document relationships among business concepts and use-case
   specifications.
@@ -48,7 +41,7 @@ package scripts, and validation requirements.
 - [@bluey/echo-mcp](mcps/echo-mcp/README.md): Read-only `echo` tool used to
   verify the local MCP development setup.
 
-## TODO
+### In Consideration
 
-- Reassess the value of the `analyze-business-rules` skill and decide whether
-  it should be retained, revised, or removed.
+- [analyze-business-rules](skills/analyze-business-rules/SKILL.md): Organize
+  business requirements into a four-layer constraint model.
