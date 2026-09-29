@@ -14,6 +14,8 @@ multi-agent roles, routing, or orchestration.
 - [Development guideline](docs/development-guideline.md) defines the workspace
   structure, package scripts, and validation commands.
 
+## ADRs
+
 Review the ADRs when necessary:
 
-- [The mandory flavor to write ADR](./docs/adr/adr-flavor.md)
+- [Dual mode architecture for CLI and MCP](./docs/adr/cli-first-mcp-architecture.md)

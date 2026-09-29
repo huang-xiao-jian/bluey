@@ -34,18 +34,36 @@ The pipeline will create an auditable release record for every deployment.
 
 ## Consequences
 
-> Describe the positive impact of the decision and the risks or costs it introduces.
+### Positive
+
+> Describe the positive impact of the decision.
 
 <!--
 Format:
 
-- **Positive:** {Positive impact}
-- **Negative:** {Risk or cost}
+- {Positive impact 1}
+- {Positive impact 2}
+- ...
 
 Example:
 
-- **Positive:** Reduces manual coordination and improves release traceability.
-- **Negative:** Requires teams to maintain pipeline configuration.
+- Reduces manual coordination and improves release traceability.
+-->
+
+### Negative
+
+> Describe the negative impact of the decision and the risks or costs it introduces.
+
+<!--
+Format:
+
+- {Negaitve impact or Risk or cost 1}
+- {Negaitve impact or Risk or cost 2}
+- ...
+
+Example:
+
+- Requires teams to maintain pipeline configuration.
 -->
 
 ### Example Comparison (Optional)
