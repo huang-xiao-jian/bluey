@@ -12,6 +12,11 @@ description: Draft a formal architecture decision record or migrate a legacy ADR
 
 Do not use this skill for general technical documentation, brainstorming a decision, or evaluating whether a decision is correct.
 
+Annotations:
+
+- **Negative**: "We decide to use Mongodb instead of Mysql", because it doesn't mention keyword "ADR" at all
+- **Positive**: "We decide to use Mongodb instead of Mysql, now draft a decision document", it mentions keyword similar to ADR
+
 ## Inputs
 
 > A "legacy ADR" is any existing decision record that does not follow the formal structure defined in this skill but is still semantically an ADR.
