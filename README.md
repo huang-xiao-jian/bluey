@@ -31,8 +31,6 @@ docs/               Conventions and operating notes
 - [analyze-business-concept-relationship](skills/analyze-business-concept-relationship/SKILL.md):
   Extract and document relationships among business concepts and use-case
   specifications.
-- [analyze-business-rules](skills/analyze-business-rules/SKILL.md): Organize
-  business requirements into a four-layer constraint model.
 - [draft-formal-adr](skills/draft-formal-adr/SKILL.md): Draft a formal
   architecture decision record or migrate a legacy ADR into the formal format.
 - [draft-use-case-specification](skills/draft-use-case-specification/SKILL.md):
@@ -44,3 +42,8 @@ docs/               Conventions and operating notes
 
 - [@bluey/echo-mcp](mcps/echo-mcp/README.md): Read-only `echo` tool used to
   verify the local MCP development setup.
+
+### In Consideration
+
+- [analyze-business-rules](skills/analyze-business-rules/SKILL.md): Organize
+  business requirements into a four-layer constraint model.
