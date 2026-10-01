@@ -68,8 +68,11 @@ mcps/echo-mcp/
 ### Composition root
 
 `src/index.ts` is the only composition root. It constructs one `EchoText` use
-case and gives it to the selected adapter. It does not declare CLI commands,
-register MCP tools, format output, or contain business rules.
+case, creates the MCP server with that use case, and injects a narrow
+`McpServerStarter` port into the CLI command tree. The port's implementation
+connects the already-created MCP server to stdio. `index.ts` does not declare
+CLI commands, register individual MCP tools, format output, or contain business
+rules.
 
 ### Domain
 
@@ -93,12 +96,13 @@ types.
 
 `src/cli/program.ts` builds the Commander command tree, including `echo` and
 `mcp`, help, and version metadata. `echo-command.ts` maps parsed CLI values to
-the application DTO and presents successful output. `mcp-command.ts` starts the
-MCP stdio adapter. `cli-error-presenter.ts` maps known application errors to
+the application DTO and presents successful output. `mcp-command.ts` depends
+only on the `McpServerStarter` port and invokes it when the `mcp` command is
+selected. `cli-error-presenter.ts` maps known application errors to
 human-readable stderr output and stable nonzero exit codes.
 
 The CLI adapter owns command-line syntax and presentation. It does not define
-business validation or call the domain directly.
+business validation, call the domain directly, or import an MCP module.
 
 ### MCP adapter
 
@@ -132,13 +136,18 @@ or unsupported JSON-RPC is left to the MCP SDK.
 ## Dependency direction
 
 ```text
-index → cli / mcp → application → domain
-                 ↘ application ← mcp / cli
+index → cli → application → domain
+  └──→ mcp → application → domain
+        ↑
+        └── `McpServerStarter` implementation injected into CLI
 ```
 
 The diagram denotes imports and calls, not data ownership. `index` may import
 every package module to compose them. Each adapter may import application
 contracts. Application may import domain. The reverse directions are forbidden.
+The CLI adapter defines or consumes only the narrow `McpServerStarter` port; it
+does not import the MCP adapter. The composition root supplies the port's MCP
+implementation.
 
 ## Error model
 
@@ -183,7 +192,9 @@ and [MCP convention](../../conventions/mcp.md) rather than duplicating them.
 ## Acceptance criteria
 
 - No domain or application module imports CLI, MCP, or Node process APIs.
-- CLI and MCP invoke the same use case instance and do not call each other.
+- CLI and MCP invoke the same use case instance and do not import each other.
+- The CLI `mcp` command depends only on an injected `McpServerStarter` port;
+  its MCP implementation is composed in `src/index.ts`.
 - All expected validation failures have adapter-appropriate behavior.
 - MCP mode never emits non-protocol text to stdout.
 - The built executable and real stdio MCP protocol are covered by integration
