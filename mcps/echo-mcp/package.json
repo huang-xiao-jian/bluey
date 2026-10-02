@@ -13,13 +13,12 @@
   },
   "scripts": {
     "build": "tsdown",
-    "dev": "tsx src/index.ts",
-    "start": "node dist/index.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit --project tsconfig.json"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
+    "commander": "^15.0.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {

@@ -1,21 +1,26 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { z } from "zod";
+import { Command } from "commander";
 
-export const server = new McpServer({ name: "bluey-echo", version: "0.1.0" });
+import { EchoHandler } from "./cli/echo";
+import { McpHandler } from "./cli/mcp";
 
-server.registerTool(
-  "echo",
-  {
-    title: "Echo text",
-    description: "Returns supplied text unchanged. This tool has no side effects.",
-    inputSchema: {
-      text: z.string().min(1).max(4_000).describe("Text to return unchanged."),
-    },
-  },
-  async ({ text }) => ({ content: [{ type: "text", text }] }),
-);
+const program = new Command();
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  await server.connect(new StdioServerTransport());
-}
+program
+  .command("echo <text>")
+  .description("reflect incoming text unchanged.")
+  .action(async (text: string) => {
+    const handler = new EchoHandler();
+
+    await handler.run(text);
+  });
+
+program
+  .command("mcp")
+  .description("start the MCP server over for AI Agent.")
+  .action(async () => {
+    const handler = new McpHandler();
+
+    await handler.run();
+  });
+
+await program.parseAsync();
