@@ -1,7 +1,7 @@
 import { Command } from "commander";
 
-import { EchoHandler } from "./cli/echo";
-import { McpHandler } from "./cli/mcp";
+import { EchoHandler } from "./facade/echo";
+import { McpHandler } from "./facade/mcp";
 
 const program = new Command();
 
