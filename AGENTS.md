@@ -9,6 +9,8 @@ multi-agent roles, routing, or orchestration.
   naming, scope, package structure, documentation, and review.
 - [MCP server convention](docs/conventions/mcp.md) defines the rules for MCP
   server naming, scope, package structure, tools, safety, versioning, and review.
+- [MCP development convention](docs/conventions/mcp-development.md) defines the
+  development workflow and implementation guidance for MCP servers.
 - [Document convention](docs/conventions/document.md) defines the default
   style and presentation rules for repository documentation.
 
