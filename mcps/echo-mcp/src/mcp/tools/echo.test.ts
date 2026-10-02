@@ -12,16 +12,16 @@ describe("Echo MCP tool", () => {
   it("accepts text at the maximum supported length", () => {
     const text = "a".repeat(4_000);
 
-    expect(EchoInputSchema.safeParse({ text }).success).toBe(true);
+    expect(() => EchoInputSchema.parse({ text })).not.toThrow();
   });
 
   it("rejects empty text", () => {
-    expect(EchoInputSchema.safeParse({ text: "" }).success).toBe(false);
+    expect(() => EchoInputSchema.parse({ text: "" })).toThrow();
   });
 
   it("rejects text longer than the maximum supported length", () => {
     const text = "a".repeat(4_001);
 
-    expect(EchoInputSchema.safeParse({ text }).success).toBe(false);
+    expect(() => EchoInputSchema.parse({ text })).toThrow();
   });
 });

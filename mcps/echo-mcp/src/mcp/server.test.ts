@@ -1,5 +1,5 @@
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { Client } from "@modelcontextprotocol/sdk/client";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { setupMcpServer } from "./server";
 
@@ -8,7 +8,8 @@ describe("Echo MCP server", () => {
   let server: ReturnType<typeof setupMcpServer>;
 
   beforeEach(async () => {
-    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    const [clientTransport, serverTransport] =
+      InMemoryTransport.createLinkedPair();
 
     server = setupMcpServer();
     client = new Client({ name: "echo-mcp-test", version: "1.0.0" });

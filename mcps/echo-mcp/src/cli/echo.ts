@@ -1,11 +1,7 @@
-import { echo } from "../capability/echo";
-
-function print(text: string) {
-  console.log(text);
-}
+import { echo } from "../core/echo";
 
 export class EchoHandler {
   async run(text: string) {
-    print(echo(text));
+    console.log(echo(text));
   }
 }

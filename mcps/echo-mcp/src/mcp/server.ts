@@ -1,16 +1,16 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
-import { EchoTool, EchoInputSchema, EchoOutputSchema, EchoInput } from "./echo";
+import { EchoTool, EchoInput } from "./tools/echo";
 
 export function setupMcpServer(): McpServer {
   const server = new McpServer({ name: "bluey-echo", version: "0.1.0" });
 
   server.registerTool(
-    "echo",
+    EchoTool.name,
     {
-      title: "Echo text",
-      description: "reflect supplied text unchanged.",
-      inputSchema: EchoInputSchema,
-      outputSchema: EchoOutputSchema,
+      title: EchoTool.title,
+      description: EchoTool.description,
+      inputSchema: EchoTool.inputSchema,
+      outputSchema: EchoTool.outputSchema,
     },
     async (input) => {
       const result = await EchoTool.callback(input);
