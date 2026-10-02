@@ -1,5 +1,11 @@
 # MCP Server Development Guide
 
+## Vital Tech
+
+- `@modelcontextprotocol/sdk`
+- `commander`
+- `zod`
+
 ## Architecture Design
 
 ```Plaintext
