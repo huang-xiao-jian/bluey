@@ -11,7 +11,7 @@ In a **Specification-Driven Development** workflow, business documents are the t
 ## Epic Story
 
 **As a** specification document author and maintainer
-**I want** to quickly detect dead links in a specified file, files matching a specified pattern, or a file reference graph, and output a check report on demand
+**I want** to check the Markdown files I choose, optionally follow their file references, and output a report on demand
 **So that** I can promptly discover and repair invalid references
 
 ## Business Metrics
@@ -34,14 +34,14 @@ Raw link check reports must comply with the [Link Check Report Rules](rules/link
 
 Trigger a check → Detect dead links → Generate a raw report → Format the report → Output the report → Locate and repair
 
-Maintainers trigger checks in different scenarios, including a single file, a reference chain, and a file collection. After detection succeeds, the system generates a raw link check report and proceeds to formatting and output. If detection does not succeed, the system discards the result. The current formatting stage outputs the raw report directly; its capabilities can be extended later. Maintainers can view the report in the terminal or save it to a specified path before locating and repairing issues.
+Maintainers select one or more Markdown files and choose whether to follow references to other Markdown files. After detection succeeds, the system generates a raw link check report and proceeds to formatting and output. If detection does not succeed, the system discards the result. The current formatting stage outputs the raw report directly; its capabilities can be extended later. Maintainers can view the report in the terminal or save it to a specified path before locating and repairing issues.
 
 ### Journey Stages
 
 1. **Trigger a check**
-   - User action: Specify a check scope (a single file, a reference-chain starting point, or a file collection).
-   - System response: Parse the input and determine the files to check.
-   - System output: A list of files to check.
+   - User action: Choose the Markdown files to check and whether to follow their references.
+   - System response: Determine which Markdown files to check.
+   - System output: A list of Markdown files actually checked.
 
 2. **Detect dead links**
    - System response: Categorize and validate links in the files.
@@ -73,7 +73,7 @@ Maintainers trigger checks in different scenarios, including a single file, a re
   - [Detect dead local file links](stories/detect-local-file-links.md)
   - [Detect dead in-file anchor links](stories/detect-in-file-anchor-links.md)
   - [Detect dead cross-file anchor links](stories/detect-cross-file-anchor-links.md)
-- [Detect dead links in a file reference chain](stories/detect-links-in-reference-chain.md)
+- [Detect dead links recursively through file references](stories/detect-links-in-reference-chain.md)
 - [Detect dead links in a file collection](stories/detect-links-in-file-collection.md)
 - [Generate a raw link check report](stories/generate-link-check-report.md)
 - [Format a link check report](stories/format-link-check-report.md)
