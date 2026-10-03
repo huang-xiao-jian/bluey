@@ -14,6 +14,8 @@
 
 **Then** the report records this check's scope
 
+**And** the report's scope issue collection is empty
+
 **And** the report's dead link record collection is empty
 
 ### Scenario 2: Detection succeeds with dead links
@@ -38,9 +40,21 @@
 
 **And** the report does not precompute a total number of dead links, grouping, sorting, or summaries
 
-### Scenario 4: Detection does not succeed
+### Scenario 4: Selection produces issues and no files
 
-**Given** this link check does not complete successfully
+**Given** include selectors produce scope issues and select no files
+
+**When** a raw link check report is generated
+
+**Then** the report's file scope is empty
+
+**And** the report contains every scope issue
+
+**And** the report's dead link record collection is empty
+
+### Scenario 5: The check cannot produce a trustworthy result
+
+**Given** the request cannot establish a valid project context or an unexpected failure prevents the check from producing a trustworthy result
 
 **When** a raw link check report is generated
 
@@ -52,8 +66,8 @@
 
 - A raw link check report must comply with the [Link Check Report Rules](../rules/link-check-report-format.md).
 
-- A raw link check report aggregates only the check scope and dead link record collection. It does not reevaluate link validity or determine how results are presented, stored, or delivered.
+- A raw link check report aggregates only the check scope, which contains files and selector issues, and the dead link record collection. It does not reevaluate selector or link validity or determine how results are presented, stored, or delivered.
 
-- Generate a raw link check report only when link checking completes successfully. If link checking does not complete successfully, discard the result immediately.
+- Selector issues and an empty file scope are valid monitoring results and always produce a raw report. Discard the result only when the check cannot establish a valid project context or cannot produce a trustworthy result because of an unexpected failure.
 
 - Every record in the dead link record collection must comply with the [Dead Link Record Reporting Rules](../rules/dead-link-record-format.md).

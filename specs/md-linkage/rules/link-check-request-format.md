@@ -22,7 +22,7 @@ interface LinkCheckRequest {
 
 ## Field Descriptions
 
-- **Include**: A non-empty list of file selectors. A selector without glob metacharacters is a literal file path; a selector with glob metacharacters is a glob expression. Match every selector relative to the project root. The union of matches forms the starting file set.
+- **Include**: A non-empty list of file selectors. A selector without glob metacharacters is a literal file path; a selector with glob metacharacters is a glob expression. Resolve relative selectors from the project root and accept absolute selectors only when they remain inside the project root. The union of valid matches forms the starting file set.
 
 - **Exclude**: File selectors with the same syntax and base as `include`. Remove their matches from the starting set and, in recursive mode, from files discovered through links. An omitted or empty list excludes nothing.
 
@@ -40,7 +40,13 @@ interface LinkCheckRequest {
 
 ## Selection Rules
 
-- Selectors use `/` as the path separator and are relative to `projectRoot`. Reject absolute selectors and selectors that resolve outside the root. A literal selector must name an existing Markdown file. A glob may match zero or more Markdown files; a request whose final starting set is empty fails before detection. Duplicate matches are checked once.
+- Selectors use `/` as the path separator. Resolve a relative selector from `projectRoot`. Accept an absolute selector when its literal path or glob search base is inside `projectRoot`. Every selected file must also remain inside the root after filesystem path resolution.
+
+- Resolve each `include` selector independently. An absolute or relative include selector that resolves outside the root, a literal selector that does not name an existing Markdown file, and a glob that matches no Markdown files each produce a scope issue. Continue checking files selected by the remaining selectors. If no files are selected, continue with an empty check scope and generate a report. Selection issues do not make the check fail.
+
+- A selector issue records the original selector and a stable reason in `scope.issues`, according to the [Link Check Report Rules](link-check-report-format.md). Duplicate matches are checked once, but each problematic selector produces its own scope issue.
+
+- Use `selector-outside-project-root` when a selector resolves outside the root, `literal-file-not-found` when a literal file does not exist, `literal-file-not-markdown` when a literal identifies a non-Markdown file, `glob-no-match` when a valid glob selects no Markdown files, and `invalid-glob` when a glob is syntactically invalid. These outcomes are non-fatal.
 
 - A glob can select files at any directory depth, so no separate scan directory, file extension filter, or collection request field is needed. Glob metacharacters follow standard glob syntax (`*`, `**`, `?`, and character classes); escape a metacharacter to use it in a literal file name. Selection includes only `.md` files. Other files are never check targets.
 
@@ -48,7 +54,9 @@ interface LinkCheckRequest {
 
 - In `recursive` mode, `projectRoot` also bounds traversal. Follow only existing local `.md` link targets whose resolved filesystem paths remain inside the root and are not matched by `exclude`. This also prevents a symlink from expanding the check outside the project. Validate a link to a target outside the root, but do not check that target's contents. An excluded file can still be validated as a link target; it is simply not added to the check scope.
 
-- For either mode, `scope.files` and every dead link record's `sourceFile` are paths relative to the resolved `projectRoot`. Only checked files appear in `scope.files`; linked targets that are merely validated do not. Return no report when request validation, selection, or detection fails.
+- For either mode, `scope.files` and every dead link record's `sourceFile` are paths relative to the resolved `projectRoot`, including files selected through absolute selectors. Only checked files appear in `scope.files`; linked targets that are merely validated do not. Selector issues and an empty scope are reportable results, not request or detection failures.
+
+- When valid include matches are all removed by `exclude`, generate a report with an empty `scope.files`. This produces no scope issue because every include selector was resolved successfully.
 
 ## JSON Examples
 

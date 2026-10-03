@@ -44,8 +44,8 @@ Maintainers select one or more Markdown files and choose whether to follow refer
 
 1. **Trigger a check**
    - User action: Choose the Markdown files to check and whether to follow their references.
-   - System response: Determine which Markdown files to check.
-   - System output: A list of Markdown files actually checked.
+   - System response: Determine which Markdown files to check and retain non-fatal selector issues.
+   - System output: A list of Markdown files actually checked and any scope issues. An empty file list still proceeds through the journey.
 
 2. **Detect dead links**
    - System response: Categorize and validate links in the files.
@@ -53,7 +53,7 @@ Maintainers select one or more Markdown files and choose whether to follow refer
 
 3. **Generate a raw report**
    - Prerequisite: Dead link detection has completed successfully.
-   - System response: Aggregate the check scope and dead link record collection.
+   - System response: Aggregate the check scope, including selector issues, and the dead link record collection.
    - System output: A raw link check report that complies with the [Link Check Report Rules](rules/link-check-report-format.md).
    - Alternate flow: If dead link detection does not complete successfully, the system discards the result, does not generate a raw report, and does not proceed to formatting or output.
 

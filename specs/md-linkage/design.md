@@ -2,9 +2,9 @@
 
 ## Package Selections
 
-- **`tinyglobby`**: Expands project-relative include and exclude selectors. It
-  provides the required glob behavior with a smaller dependency surface than
-  `globby` or `fast-glob`.
+- **`tinyglobby`**: Expands project-relative and permitted absolute include and
+  exclude selectors. It provides the required glob behavior with a smaller
+  dependency surface than `globby` or `fast-glob`.
 - **`mdast-util-from-markdown`**: Parses CommonMark into a syntax tree so links
   and headings can be detected without fragile regular expressions. The
   higher-level `remark` processing pipeline is unnecessary for this use case.
