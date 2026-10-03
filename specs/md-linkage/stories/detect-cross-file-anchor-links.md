@@ -62,13 +62,17 @@
 
 **Then** the link does not produce a dead link record
 
-### Scenario 5: The target is not a Markdown file
+### Scenario 5: Duplicate target headings use GitHub-compatible suffixes
 
-**Given** a specified Markdown file contains a cross-file anchor link to an existing non-Markdown file
+**Given** a target Markdown file contains two standard Markdown headings whose visible text is `Rules`
 
-**When** dead link detection runs for that file
+**And** a specified Markdown file contains a cross-file anchor link to `#rules-1` in that target file
 
-**Then** the link produces one dead link record with the `cross-file-anchor-not-found` reason
+**When** dead link detection runs for the specified file
+
+**Then** the link resolves to the second `Rules` heading in the target file
+
+**And** the link does not produce a dead link record
 
 ## Business Rules
 
@@ -78,7 +82,7 @@
 
 - Target anchors support only standard Markdown headings in the target file, not custom anchors such as HTML `id` attributes.
 
-- Only `.md` and `.mdx` target files can contain supported headings. An existing non-Markdown file does not satisfy a cross-file anchor.
+- Generate target heading anchors from the visible plain text of standard Markdown headings using GitHub-compatible slugging rules. Process headings in document order so duplicate headings receive GitHub-compatible numeric suffixes, such as `rules` and `rules-1`.
 
 - Always confirm that the target file exists before validating a cross-file anchor link. If the target file does not exist, do not continue to validate the target anchor.
 

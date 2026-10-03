@@ -42,11 +42,11 @@ interface LinkCheckRequest {
 
 - Selectors use `/` as the path separator and are relative to `projectRoot`. Reject absolute selectors and selectors that resolve outside the root. A literal selector must name an existing Markdown file. A glob may match zero or more Markdown files; a request whose final starting set is empty fails before detection. Duplicate matches are checked once.
 
-- A glob can select files at any directory depth, so no separate scan directory, file extension filter, or collection request field is needed. Glob metacharacters follow standard glob syntax (`*`, `**`, `?`, and character classes); escape a metacharacter to use it in a literal file name. Selection includes only `.md` and `.mdx` files. Other files are never check targets.
+- A glob can select files at any directory depth, so no separate scan directory, file extension filter, or collection request field is needed. Glob metacharacters follow standard glob syntax (`*`, `**`, `?`, and character classes); escape a metacharacter to use it in a literal file name. Selection includes only `.md` files. Other files are never check targets.
 
 - In `shallow` mode, check only selected files. Links in those files are validated relative to the source file, including links whose target lies outside `projectRoot`; those targets are not added to the check scope.
 
-- In `recursive` mode, `projectRoot` also bounds traversal. Follow only existing local `.md` and `.mdx` link targets whose resolved filesystem paths remain inside the root and are not matched by `exclude`. This also prevents a symlink from expanding the check outside the project. Validate a link to a target outside the root, but do not check that target's contents. An excluded file can still be validated as a link target; it is simply not added to the check scope.
+- In `recursive` mode, `projectRoot` also bounds traversal. Follow only existing local `.md` link targets whose resolved filesystem paths remain inside the root and are not matched by `exclude`. This also prevents a symlink from expanding the check outside the project. Validate a link to a target outside the root, but do not check that target's contents. An excluded file can still be validated as a link target; it is simply not added to the check scope.
 
 - For either mode, `scope.files` and every dead link record's `sourceFile` are paths relative to the resolved `projectRoot`. Only checked files appear in `scope.files`; linked targets that are merely validated do not. Return no report when request validation, selection, or detection fails.
 

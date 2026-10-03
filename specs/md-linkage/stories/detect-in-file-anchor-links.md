@@ -50,11 +50,25 @@
 
 **And** the record's dead link reason is `in-file-anchor-not-found`
 
+### Scenario 5: Duplicate headings use GitHub-compatible suffixes
+
+**Given** a specified Markdown file contains two standard Markdown headings whose visible text is `Rules`
+
+**And** the file contains a fragment-only link to `#rules-1`
+
+**When** dead link detection runs for that file
+
+**Then** the link resolves to the second `Rules` heading
+
+**And** the link does not produce a dead link record
+
 ## Business Rules
 
 - This story handles only fragment-only links: links whose target contains an anchor but no target file.
 
 - For a fragment-only link, look for the corresponding standard Markdown heading only in the current file that contains the link. Do not read other files, and do not support custom anchors such as HTML `id` attributes.
+
+- Generate heading anchors from the visible plain text of standard Markdown headings using GitHub-compatible slugging rules. Process headings in document order so duplicate headings receive GitHub-compatible numeric suffixes, such as `rules` and `rules-1`.
 
 - When the current file contains the corresponding standard Markdown heading, do not produce a dead link record. Otherwise, each invalid link produces one dead link record.
 

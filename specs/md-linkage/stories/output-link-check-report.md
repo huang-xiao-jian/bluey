@@ -44,7 +44,7 @@
 
 **Then** the system does not save the report
 
-**And** the system returns an error that clearly asks the user to provide a report save path
+**And** the system clearly asks the user to provide a report save path
 
 ### Scenario 4: Report output fails
 
@@ -68,6 +68,6 @@
 
 - The system currently supports outputting a report directly in the terminal or saving it to a file.
 
-- When saving a report to a file, the user must provide a save path. If no save path is provided, do not save the report and return an actionable error; CLI and MCP checks do not prompt interactively.
+- When saving a report to a file, the user must provide a save path. If no save path is provided, do not save the report and ask the user to provide one.
 
 - If report output fails, the system must explain the failure reason, must not automatically fall back to another output method, and must discard this run's raw and formatted link check reports.

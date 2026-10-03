@@ -16,7 +16,11 @@ multi-agent roles, routing, or orchestration.
 
 ## ADRs
 
-Review the ADRs when necessary:
+The short decision for project:
+
+- Don't use git worktree feature unless i explicitly request
+
+The formal ADR for project, review files when necessary:
 
 - [Dual mode architecture for CLI and MCP](./docs/adr/cli-first-mcp-architecture.md)
 
@@ -26,21 +30,12 @@ Turborepo orchestrate the pnpm workspace. Workspace packages belong
 in `mcps/*` or `packages/*`. Turbo handles dependency ordering and caches task
 outputs.
 
-## Package scripts
+The specs and implementation structure:
 
-Each TypeScript workspace package must expose the applicable scripts below:
-
-- `build`: bundle distributable code with tsdown and write output to `dist/`.
-- `test`: run behavioral tests with Vitest.
-- `typecheck`: run TypeScript without emitting files.
-
-## Commands
-
-Run workspace-wide tasks from the repository root:
-
-```sh
-pnpm build
-pnpm test
+```shell
+└── mcps
+    ├── md-linkage
+└── specs
+    ├── md-linkage #
+    ├──├── spec.md
 ```
-
-Use `pnpm --filter <package-name> <script>` to run a package-specific command.
