@@ -30,15 +30,15 @@ Every dead link record must be traceable to its source file, original link text,
 
 ### Extensible Raw Check Reports
 
-Raw link check reports must comply with the [Link Check Report Rules](rules/link-check-report-format.md) and retain only the check scope and dead link record collection. Subsequent stages handle derived statistics, content organization, and output methods.
+Raw link check reports must comply with the [Link Check Report Rules](rules/link-check-report-format.md) and retain only the check scope and dead link record collection. The output stage handles derived statistics, content organization, and output methods.
 
 ## User Story Journey
 
 ### Journey Overview
 
-Trigger a check → Detect dead links → Generate a raw report → Format the report → Output the report → Locate and repair
+Trigger a check → Detect dead links → Generate a raw report → Output the report → Locate and repair
 
-Maintainers select one or more Markdown files and choose whether to follow references to other Markdown files. After detection succeeds, the system generates a raw link check report and proceeds to formatting and output. If detection does not succeed, the system discards the result. The current formatting stage outputs the raw report directly; its capabilities can be extended later. Maintainers can view the report in the terminal or save it to a specified path before locating and repairing issues.
+Maintainers select one or more Markdown files and choose whether to follow references to other Markdown files. After detection succeeds, the system generates a raw link check report and proceeds to output. If detection does not succeed, the system discards the result. The output stage currently emits the raw report without derived processing; it can add formatting capabilities later. Maintainers can view the report in the terminal or save it to a specified path before locating and repairing issues.
 
 ### Journey Stages
 
@@ -55,20 +55,16 @@ Maintainers select one or more Markdown files and choose whether to follow refer
    - Prerequisite: Dead link detection has completed successfully.
    - System response: Aggregate the check scope, including selector issues, and the dead link record collection.
    - System output: A raw link check report that complies with the [Link Check Report Rules](rules/link-check-report-format.md).
-   - Alternate flow: If dead link detection does not complete successfully, the system discards the result, does not generate a raw report, and does not proceed to formatting or output.
+   - Alternate flow: If dead link detection does not complete successfully, the system discards the result, does not generate a raw report, and does not proceed to output.
 
-4. **Format the report**
+4. **Output the report**
    - Prerequisite: A raw link check report has been generated.
-   - System response: Currently, output the raw link check report directly without derived processing.
-   - System output: Report content for the output stage.
-   - Extension point: Add formatting capabilities later, such as statistics, grouping, sorting, and summaries, without changing the raw-report facts.
-
-5. **Output the report**
    - User action: Choose to output the report directly in the terminal or save it to a file and provide a save path.
-   - System response: Output the formatted report content using the selected method.
-   - Alternate flow: If no file save path is provided, the system asks the user to provide one. If output fails, the system explains why, does not automatically switch output methods, and discards the raw and formatted reports from this run.
+   - System response: Prepare and output the report using the selected method. Currently, the system outputs the raw link check report directly without derived processing.
+   - Extension point: Add formatting capabilities later, such as statistics, grouping, sorting, and summaries, without changing the raw-report facts.
+   - Alternate flow: If no file save path is provided, the system asks the user to provide one. If output fails, the system explains why, does not automatically switch output methods, and discards the raw report from this run.
 
-6. **Locate and repair**
+5. **Locate and repair**
    - User action: Review the output report and locate the issue.
 
 ## User Stories
@@ -80,5 +76,4 @@ Maintainers select one or more Markdown files and choose whether to follow refer
 - [Detect dead links recursively through file references](stories/detect-links-in-reference-chain.md)
 - [Detect dead links in a file collection](stories/detect-links-in-file-collection.md)
 - [Generate a raw link check report](stories/generate-link-check-report.md)
-- [Format a link check report](stories/format-link-check-report.md)
 - [Output a link check report](stories/output-link-check-report.md)
