@@ -1,10 +1,10 @@
 # Object-Oriented Design: {Design Scope}
 
-## 1. Use-Case Coverage
+## 1. Workflow Coverage
 
-<!-- List only descriptive links to source Requirement Specifications and Use Case Specifications. -->
+<!-- List each Workflow Source. Link Referenced Input; use a descriptive Source Label for Direct Input. -->
 
-- [{Source Title}]({Source Path})
+- {Referenced Input Link | Direct Input: Source Label}
 
 ## 2. CRC Model
 
@@ -30,19 +30,19 @@ classDiagram
     }
 ```
 
-## 4. Use-Case Sequence Diagrams
+## 4. Workflow Sequence Diagrams
 
-<!-- Repeat this subsection for every use case. -->
+<!-- Repeat this subsection for every Workflow. -->
 
-### {Use Case Specification Title}
+### {Workflow Title}
 
-**Use Case Specification:** [{Source Title}]({Source Path})
+**Workflow Source:** {Referenced Input Link | Direct Input: Source Label}
 
 <!--
-Repeat the diagram block under the same workflow heading when the source defines multiple paths in that category.
+Repeat the diagram block under the same Workflow heading for every distinct start-to-end Path.
 -->
 
-#### {Primary Workflow | Alternate Workflow | Exception Workflow}
+#### {Source Path Name | Neutral Path Name}
 
 ```mermaid
 sequenceDiagram

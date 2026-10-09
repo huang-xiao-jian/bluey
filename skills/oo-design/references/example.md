@@ -1,6 +1,6 @@
 # Object-Oriented Design: Book a Flight
 
-## 1. Use-Case Coverage
+## 1. Workflow Coverage
 
 - [Book a Flight](book-a-flight-use-case.md)
 
@@ -86,11 +86,11 @@ classDiagram
     BookingOrder --> JourneySelection : records selected journey
 ```
 
-## 4. Use-Case Sequence Diagrams
+## 4. Workflow Sequence Diagrams
 
 ### Book a Flight
 
-**Use Case Specification:** [Book a Flight](book-a-flight-use-case.md)
+**Workflow Source:** [Book a Flight](book-a-flight-use-case.md)
 
 #### Primary Workflow
 
