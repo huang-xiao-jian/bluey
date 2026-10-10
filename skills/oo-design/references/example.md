@@ -6,26 +6,26 @@
 
 ## 2. CRC Model
 
-### BookingSubmission
+### TravelerBookingAgent
 
 - **Role:** Boundary --> Driving Port.
 - **Purpose:** Represent the traveler's interaction with flight booking.
 - **Responsibilities:** Receive search, selection, passenger, confirmation, and payment stimuli; present available flights, prices, and booking outcomes.
-- **Collaborators:** `FlightBooking`.
+- **Collaborators:** `BookingCoordinator`.
 
-### FlightBooking
+### BookingCoordinator
 
 - **Role:** Control.
 - **Purpose:** Coordinate the Book a Flight use case.
 - **Responsibilities:** Coordinate flight search, selection, seat holding, payment, booking confirmation, and seat release.
-- **Collaborators:** `BookingSubmission`, `FlightCatalog`, `JourneySelection`, `BookingOrder`, `PaymentProvider`.
+- **Collaborators:** `TravelerBookingAgent`, `FlightCatalog`, `JourneySelection`, `BookingOrder`, `PaymentProvider`.
 
 ### FlightCatalog
 
 - **Role:** Boundary --> Driven Port.
 - **Purpose:** Represent the airline inventory capabilities used during booking.
 - **Responsibilities:** Find available flights; hold, consume, and release seat inventory.
-- **Collaborators:** `FlightBooking`.
+- **Collaborators:** `BookingCoordinator`.
 
 ### JourneySelection
 
@@ -46,7 +46,7 @@
 - **Role:** Boundary --> Driven Port.
 - **Purpose:** Represent payment authorization supplied by the external payment system.
 - **Responsibilities:** Request payment authorization and report approval or decline.
-- **Collaborators:** `FlightBooking`.
+- **Collaborators:** `BookingCoordinator`.
 
 ## 3. UML Class Diagram
 
@@ -54,12 +54,12 @@
 classDiagram
     direction LR
 
-    class BookingSubmission {
+    class TravelerBookingAgent {
         <<Boundary>>
     }
-    note for BookingSubmission "Role: Boundary --> Driving Port"
+    note for TravelerBookingAgent "Role: Boundary --> Driving Port"
 
-    class FlightBooking {
+    class BookingCoordinator {
         <<Control>>
     }
     class FlightCatalog {
@@ -78,11 +78,11 @@ classDiagram
     }
     note for PaymentProvider "Role: Boundary --> Driven Port"
 
-    BookingSubmission ..> FlightBooking : initiates booking
-    FlightBooking ..> FlightCatalog : requests inventory actions
-    FlightBooking ..> JourneySelection : coordinates selection
-    FlightBooking ..> BookingOrder : coordinates confirmation
-    FlightBooking ..> PaymentProvider : requests authorization
+    TravelerBookingAgent ..> BookingCoordinator : initiates booking
+    BookingCoordinator ..> FlightCatalog : requests inventory actions
+    BookingCoordinator ..> JourneySelection : coordinates selection
+    BookingCoordinator ..> BookingOrder : coordinates confirmation
+    BookingCoordinator ..> PaymentProvider : requests authorization
     BookingOrder --> JourneySelection : records selected journey
 ```
 
@@ -100,8 +100,8 @@ The traveler finds an available flight, provides passenger details, and complete
 sequenceDiagram
     autonumber
     actor Traveler
-    participant Submission as BookingSubmission
-    participant Booking as FlightBooking
+    participant Submission as TravelerBookingAgent
+    participant Booking as BookingCoordinator
     participant Catalog as FlightCatalog
     actor Inventory as Airline Inventory System
     participant Journey as JourneySelection
@@ -149,8 +149,8 @@ The traveler's search returns no available flights, so the system reports the la
 sequenceDiagram
     autonumber
     actor Traveler
-    participant Submission as BookingSubmission
-    participant Booking as FlightBooking
+    participant Submission as TravelerBookingAgent
+    participant Booking as BookingCoordinator
     participant Catalog as FlightCatalog
     actor Inventory as Airline Inventory System
 
@@ -173,8 +173,8 @@ The traveler selects an available flight and a seat is held, but payment is decl
 sequenceDiagram
     autonumber
     actor Traveler
-    participant Submission as BookingSubmission
-    participant Booking as FlightBooking
+    participant Submission as TravelerBookingAgent
+    participant Booking as BookingCoordinator
     participant Catalog as FlightCatalog
     actor Inventory as Airline Inventory System
     participant Journey as JourneySelection
