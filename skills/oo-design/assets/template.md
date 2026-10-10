@@ -44,13 +44,15 @@ Repeat the diagram block under the same Workflow heading for every distinct star
 
 #### {Source Path Name | Neutral Path Name}
 
+{Concise business explanation of the Path's precondition or trigger, exercised behavior, and terminal outcome.}
+
 ```mermaid
 sequenceDiagram
     autonumber
     actor {Initiating Actor}
     participant {Alias} as {CRC Class Name}
 
-    {Initiating Actor}->>{Alias}: {Source ID} {Business intention}
+    {Initiating Actor}->>{Alias}: {Business intention}
 ```
 
 <!-- Populate each diagram according to the diagram rules in SKILL.md. -->

@@ -94,6 +94,8 @@ classDiagram
 
 #### Primary Workflow
 
+The traveler finds an available flight, provides passenger details, and completes an approved payment, after which the held seat is consumed and the booking is confirmed.
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -107,40 +109,42 @@ sequenceDiagram
     participant Payment as PaymentProvider
     actor PaymentSystem as Payment System
 
-    Traveler->>Submission: P1 Enter search criteria
-    Submission->>Booking: P1 Coordinate flight search
-    Booking->>Catalog: P2 Find available flights
-    Catalog->>Inventory: P2 Request available inventory
-    Inventory-->>Catalog: P2 Available flights
-    Catalog-->>Booking: P2 Report available flights
-    Booking-->>Submission: P3 Provide available flights
-    Submission-->>Traveler: P3 Present available flights
-    Traveler->>Submission: P4 Select flight and enter passenger details
-    Submission->>Booking: P4 Coordinate selection
-    Booking->>Journey: P4 Preserve selected flight and price
-    Booking->>Order: P4 Preserve passenger and journey details
-    Order->>Journey: P4 Record selected journey
-    Booking->>Catalog: P5 Hold one seat
-    Catalog->>Inventory: P5 Request seat hold
-    Inventory-->>Catalog: P5 Seat held
-    Catalog-->>Booking: P5 Confirm seat hold
-    Booking-->>Submission: P6 Provide total price
-    Submission-->>Traveler: P6 Present total price
-    Traveler->>Submission: P7 Confirm and submit payment
-    Submission->>Booking: P7 Coordinate payment
-    Booking->>Payment: P7 Request authorization
-    Payment->>PaymentSystem: P7 Submit payment
-    PaymentSystem-->>Payment: P8 Payment approved
-    Payment-->>Booking: P8 Report approval
-    Booking->>Catalog: P9 Consume held seat
-    Catalog->>Inventory: P9 Consume inventory
-    Booking->>Order: P9 Confirm booking
-    Booking-->>Submission: P10 Provide booking confirmation
-    Submission-->>Traveler: P10 Present booking confirmation
+    Traveler->>Submission: Enter search criteria
+    Submission->>Booking: Coordinate flight search
+    Booking->>Catalog: Find available flights
+    Catalog->>Inventory: Request available inventory
+    Inventory-->>Catalog: Available flights
+    Catalog-->>Booking: Report available flights
+    Booking-->>Submission: Provide available flights
+    Submission-->>Traveler: Present available flights
+    Traveler->>Submission: Select flight and enter passenger details
+    Submission->>Booking: Coordinate selection
+    Booking->>Journey: Preserve selected flight and price
+    Booking->>Order: Preserve passenger and journey details
+    Order->>Journey: Record selected journey
+    Booking->>Catalog: Hold one seat
+    Catalog->>Inventory: Request seat hold
+    Inventory-->>Catalog: Seat held
+    Catalog-->>Booking: Confirm seat hold
+    Booking-->>Submission: Provide total price
+    Submission-->>Traveler: Present total price
+    Traveler->>Submission: Confirm and submit payment
+    Submission->>Booking: Coordinate payment
+    Booking->>Payment: Request authorization
+    Payment->>PaymentSystem: Submit payment
+    PaymentSystem-->>Payment: Payment approved
+    Payment-->>Booking: Report approval
+    Booking->>Catalog: Consume held seat
+    Catalog->>Inventory: Consume inventory
+    Booking->>Order: Confirm booking
+    Booking-->>Submission: Provide booking confirmation
+    Submission-->>Traveler: Present booking confirmation
 ```
 
 #### Alternate Workflow
 
+The traveler's search returns no available flights, so the system reports the lack of availability and the booking attempt ends without a selection.
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -150,18 +154,20 @@ sequenceDiagram
     participant Catalog as FlightCatalog
     actor Inventory as Airline Inventory System
 
-    Traveler->>Submission: A1 Enter search criteria
-    Submission->>Booking: A1 Coordinate flight search
-    Booking->>Catalog: A2 Find available flights
-    Catalog->>Inventory: A2 Request available inventory
-    Inventory-->>Catalog: A2 No available flights
-    Catalog-->>Booking: A2 Report no availability
-    Booking-->>Submission: A3 Provide no-flight outcome
-    Submission-->>Traveler: A3 Inform traveler
-    Note over Traveler,Booking: A4 Use case ends
+    Traveler->>Submission: Enter search criteria
+    Submission->>Booking: Coordinate flight search
+    Booking->>Catalog: Find available flights
+    Catalog->>Inventory: Request available inventory
+    Inventory-->>Catalog: No available flights
+    Catalog-->>Booking: Report no availability
+    Booking-->>Submission: Provide no-flight outcome
+    Submission-->>Traveler: Inform traveler
+    Note over Traveler,Booking: Use case ends
 ```
 
 #### Exception Workflow
+
+The traveler selects an available flight and a seat is held, but payment is declined, so the held seat is released and the traveler is informed that the booking did not complete.
 
 ```mermaid
 sequenceDiagram
@@ -176,34 +182,34 @@ sequenceDiagram
     participant Payment as PaymentProvider
     actor PaymentSystem as Payment System
 
-    Traveler->>Submission: E1 Enter search criteria
-    Submission->>Booking: E1 Coordinate flight search
-    Booking->>Catalog: E1 Find available flights
-    Catalog->>Inventory: E1 Request available inventory
-    Inventory-->>Catalog: E1 Available flights
-    Catalog-->>Booking: E1 Report available flights
-    Booking-->>Submission: E1 Provide available flights
-    Submission-->>Traveler: E1 Present available flights
-    Traveler->>Submission: E2 Select flight and enter passenger details
-    Submission->>Booking: E2 Coordinate selection
-    Booking->>Journey: E2 Preserve selected flight and price
-    Booking->>Order: E2 Preserve passenger and journey details
-    Order->>Journey: E2 Record selected journey
-    Booking->>Catalog: E3 Hold one seat
-    Catalog->>Inventory: E3 Request seat hold
-    Inventory-->>Catalog: E3 Seat held
-    Catalog-->>Booking: E3 Confirm seat hold
-    Booking-->>Submission: E3 Provide total price
-    Submission-->>Traveler: E3 Present total price
-    Traveler->>Submission: E4 Confirm and submit payment
-    Submission->>Booking: E4 Coordinate payment
-    Booking->>Payment: E4 Request authorization
-    Payment->>PaymentSystem: E4 Submit payment
-    PaymentSystem-->>Payment: E4 Payment declined
-    Payment-->>Booking: E4 Report decline
-    Booking->>Catalog: E5 Release held seat
-    Catalog->>Inventory: E5 Release inventory
-    Booking-->>Submission: E6 Provide payment-declined outcome
-    Submission-->>Traveler: E6 Inform traveler
-    Note over Traveler,Booking: E7 Use case ends
+    Traveler->>Submission: Enter search criteria
+    Submission->>Booking: Coordinate flight search
+    Booking->>Catalog: Find available flights
+    Catalog->>Inventory: Request available inventory
+    Inventory-->>Catalog: Available flights
+    Catalog-->>Booking: Report available flights
+    Booking-->>Submission: Provide available flights
+    Submission-->>Traveler: Present available flights
+    Traveler->>Submission: Select flight and enter passenger details
+    Submission->>Booking: Coordinate selection
+    Booking->>Journey: Preserve selected flight and price
+    Booking->>Order: Preserve passenger and journey details
+    Order->>Journey: Record selected journey
+    Booking->>Catalog: Hold one seat
+    Catalog->>Inventory: Request seat hold
+    Inventory-->>Catalog: Seat held
+    Catalog-->>Booking: Confirm seat hold
+    Booking-->>Submission: Provide total price
+    Submission-->>Traveler: Present total price
+    Traveler->>Submission: Confirm and submit payment
+    Submission->>Booking: Coordinate payment
+    Booking->>Payment: Request authorization
+    Payment->>PaymentSystem: Submit payment
+    PaymentSystem-->>Payment: Payment declined
+    Payment-->>Booking: Report decline
+    Booking->>Catalog: Release held seat
+    Catalog->>Inventory: Release inventory
+    Booking-->>Submission: Provide payment-declined outcome
+    Submission-->>Traveler: Inform traveler
+    Note over Traveler,Booking: Use case ends
 ```
