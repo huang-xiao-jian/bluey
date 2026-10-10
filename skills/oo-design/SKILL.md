@@ -25,7 +25,7 @@ Preserve each Workflow's structure, terminology, Path names, and Workflow Title 
 - Apply EBC dependency direction between layers:
   - `Actors` --> `Driving Boundary` --> `Control` --> `Entity`
   - `Control` --> `Driven Boundary`
-- Classify each Boundary as `Boundary --> Driving Port` or `Boundary --> Driven Port`.
+- Classify each Boundary as `Boundary(Driving Port)` or `Boundary(Driven Port)`.
 - Put business decisions with the Entity that owns the relevant knowledge. Use Controls for cross-object coordination, alternatives, compensation, and multi-participant transitions.
 - Choose relationships, multiplicity, and lifecycle ownership only when supported by source evidence.
 - Follow the [Class naming guidelines](assets/naming-guideline.md) for every EBC candidate and CRC class. Keep each selected name consistent across CRC cards and diagrams.
