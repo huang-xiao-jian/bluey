@@ -37,6 +37,8 @@ docs/               Conventions and operating notes
   Draft a structured use-case specification from business requirements.
 - [evaluate-logical-model](skills/evaluate-logical-model/SKILL.md): Evaluate
   the quality of a business logical model without modifying it.
+- [oo-design](skills/oo-design/SKILL.md): Derive a conceptual object-oriented
+  design from workflow-based requirements.
 
 ### MCP servers
 
