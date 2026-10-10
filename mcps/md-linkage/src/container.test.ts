@@ -1,18 +1,31 @@
-import { Container } from "inversify";
+import { Container, inject, injectable } from "inversify";
 import { describe, expect, it } from "vitest";
 
 import { container as directContainer } from "./container.js";
 import { container as publicContainer } from "./index.js";
 
-describe("md-linkage dependency injection container", () => {
-  it("exports one working Inversify container", () => {
-    const token = Symbol("test-value");
+@injectable()
+class TestRepository {}
 
+@injectable()
+class TestService {
+  constructor(
+    @inject(TestRepository) readonly repository: TestRepository,
+  ) {}
+}
+
+describe("md-linkage dependency injection container", () => {
+  it("resolves explicitly bound classes by constructor token", () => {
     expect(publicContainer).toBe(directContainer);
     expect(publicContainer).toBeInstanceOf(Container);
+    expect(() => publicContainer.get(TestService)).toThrow();
 
-    publicContainer.bind(token).toConstantValue("resolved");
+    publicContainer.bind(TestRepository).toSelf();
+    publicContainer.bind(TestService).toSelf();
 
-    expect(publicContainer.get(token)).toBe("resolved");
+    const service = publicContainer.get(TestService);
+
+    expect(service).toBeInstanceOf(TestService);
+    expect(service.repository).toBeInstanceOf(TestRepository);
   });
 });
