@@ -1,6 +1,6 @@
 # Link Check Request Rules
 
-These rules define the input to one link check. CLI and MCP entry points translate their arguments into the same request. They obtain the project root separately from the request fields.
+These rules define the input to one link check. CLI and MCP entry points translate their arguments into the same request, including the project root.
 
 ## Data Model
 
@@ -11,6 +11,8 @@ The following TypeScript definitions describe the request. Field names are the r
 type LinkCheckMode = 'shallow' | 'recursive';
 
 interface LinkCheckRequest {
+  /** Required absolute path that bounds selection, traversal, and reported file identities. */
+  projectRoot: string;
   /** Required file selectors; each entry is a literal path or glob expression. */
   include: string[];
   /** File selectors to remove from the check scope. */
@@ -22,6 +24,8 @@ interface LinkCheckRequest {
 
 ## Field Descriptions
 
+- **Project root**: A required absolute path that establishes the project boundary for the check. Entry points resolve their user-facing project-root input before constructing the request.
+
 - **Include**: A non-empty list of file selectors. A selector without glob metacharacters is a literal file path; a selector with glob metacharacters is a glob expression. Resolve relative selectors from the project root and accept absolute selectors only when they remain inside the project root. The union of valid matches forms the starting file set.
 
 - **Exclude**: File selectors with the same syntax and base as `include`. Remove their matches from the starting set and, in recursive mode, from files discovered through links. An omitted or empty list excludes nothing.
@@ -30,11 +34,11 @@ interface LinkCheckRequest {
 
 ## Project Context
 
-- Resolve one `projectRoot` for each check. The same root rules apply to `shallow` and `recursive` requests. Do not infer the root from `include` matches or discovered link targets.
+- Each request owns one `projectRoot`. The same root rules apply to `shallow` and `recursive` requests. Do not infer the root from `include` matches or discovered link targets.
 
-- **CLI:** Use the process's current working directory as the project root by default. An optional `--project-root` argument overrides it; resolve a relative value against the current working directory.
+- **CLI:** Use the process's current working directory as the project root by default. An optional `--project-root` argument overrides it; resolve a relative value against the current working directory before constructing the request.
 
-- **MCP:** Require `projectRoot` as an argument to every link-check tool call. It must be an absolute path. The server does not use its own working directory as a default.
+- **MCP:** Require the request's `projectRoot` field in every link-check tool call. It must be an absolute path. The server does not use its own working directory as a default.
 
 - For either entry point, the resolved root must be an existing directory. Use its resolved filesystem path when determining whether a file is inside the project. The root stays fixed for that check.
 
@@ -64,6 +68,7 @@ Check two specific files and every Markdown file in a folder, except drafts:
 
 ```json
 {
+  "projectRoot": "/workspace/bluey",
   "include": ["specs/md-linkage/spec.md", "specs/md-linkage/rules/*.md", "specs/md-linkage/stories/**/*.md"],
   "exclude": ["specs/md-linkage/stories/draft.md", "specs/**/archive/**"],
   "mode": "shallow"
@@ -74,12 +79,13 @@ Follow local Markdown links from one starting file:
 
 ```json
 {
+  "projectRoot": "/workspace/bluey",
   "include": ["specs/md-linkage/spec.md"],
   "mode": "recursive"
 }
 ```
 
-For MCP, the tool call supplies `projectRoot` alongside the request fields:
+An MCP tool call uses the same complete request shape:
 
 ```json
 {
