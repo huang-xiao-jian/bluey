@@ -13,6 +13,8 @@ multi-agent roles, routing, or orchestration.
   development workflow and implementation guidance for MCP servers.
 - [Document convention](docs/conventions/document.md) defines the default
   style and presentation rules for repository documentation.
+- [TypeScript convention](docs/conventions/typescript.md) defines the default
+  object-oriented design and import style for TypeScript code.
 
 ## ADRs
 
