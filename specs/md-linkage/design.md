@@ -42,7 +42,7 @@
 
 ## CRC Model
 
-### SpecificationLinkageFacade
+### LinkCheckFacade
 
 - **Role:** Boundary(Driving Port).
 - **Purpose:** Represent the author or maintainer's interaction with a link check.
@@ -54,7 +54,7 @@
 - **Role:** Control.
 - **Purpose:** Coordinate the complete specification-document link-check journey.
 - **Responsibilities:** Coordinate project-context establishment, scope selection, dead link checking, raw-report creation, and selected report delivery; own the raw report throughout the run; prevent report creation or output after an untrustworthy check; retain the raw report while a missing save path is requested; discard the run's raw report after delivery failure.
-- **Collaborators:** `SpecificationLinkageFacade`, `LinkCheckRequest`, `LinkCheckScopeSelector`, `LinkCheckExclusionMatcher`, `DeadLinkInspector`, `RawLinkCheckReport`, `LinkCheckReportDispatcher`.
+- **Collaborators:** `LinkCheckFacade`, `LinkCheckRequest`, `LinkCheckScopeSelector`, `LinkCheckExclusionMatcher`, `DeadLinkInspector`, `RawLinkCheckReport`, `LinkCheckReportDispatcher`.
 
 ### LinkCheckRequest
 
@@ -170,10 +170,10 @@
 classDiagram
     direction LR
 
-    class SpecificationLinkageFacade {
+    class LinkCheckFacade {
         <<Boundary>>
     }
-    note for SpecificationLinkageFacade "Role: Boundary(Driving Port)"
+    note for LinkCheckFacade "Role: Boundary(Driving Port)"
 
     class LinkChecker {
         <<Control>>
@@ -226,8 +226,8 @@ classDiagram
     }
     note for FileLinkCheckReporter "Role: Boundary(Driven Port)"
 
-    SpecificationLinkageFacade ..> LinkChecker : initiates and receives outcomes
-    SpecificationLinkageFacade ..> LinkCheckRequest : accepts as input
+    LinkCheckFacade ..> LinkChecker : initiates and receives outcomes
+    LinkCheckFacade ..> LinkCheckRequest : accepts as input
     LinkChecker ..> LinkCheckRequest : coordinates requested check
     LinkChecker ..> LinkCheckScopeSelector : delegates starting-scope selection
     LinkChecker ..> LinkCheckExclusionMatcher : shares exclusion policy
@@ -273,7 +273,7 @@ The maintainer selects the documents and traversal mode, the system completes a 
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Selection as LinkCheckScopeSelector
     participant Detection as DeadLinkInspector
@@ -304,7 +304,7 @@ The maintainer selects the documents and traversal mode and supplies a save path
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Selection as LinkCheckScopeSelector
     participant Detection as DeadLinkInspector
@@ -335,7 +335,7 @@ The check cannot produce a trustworthy detection result, so the system discards 
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Selection as LinkCheckScopeSelector
     participant Detection as DeadLinkInspector
@@ -357,7 +357,7 @@ The maintainer chooses file output but omits the required path, so the system re
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Delivery as LinkCheckReportDispatcher
 
@@ -379,7 +379,7 @@ The selected file destination cannot accept the report, so the system explains t
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Delivery as LinkCheckReportDispatcher
     participant File as FileLinkCheckReporter
@@ -407,7 +407,7 @@ The author selects one Markdown document, and the system examines its supported 
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Document as SpecificationDocument
@@ -436,7 +436,7 @@ The link resolves to an existing local file, so validation succeeds and no dead 
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Link as SpecificationLink
@@ -459,7 +459,7 @@ The link resolves to a missing local file, so the system records one `local-file
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Link as SpecificationLink
@@ -483,7 +483,7 @@ The link contains only a fragment, so it is classified for in-file anchor valida
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Link as SpecificationLink
@@ -503,7 +503,7 @@ The link contains both a file path and an anchor, so it is classified for cross-
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Link as SpecificationLink
@@ -523,7 +523,7 @@ The system decodes the local path and ignores query parameters for validation wh
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Link as SpecificationLink
@@ -550,7 +550,7 @@ The fragment matches a standard Markdown heading in the current document, so the
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Document as SpecificationDocument
@@ -573,7 +573,7 @@ The fragment does not match a standard Markdown heading in the current document,
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Document as SpecificationDocument
@@ -597,7 +597,7 @@ The fragment is evaluated only against headings in its source document; no other
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Document as SpecificationDocument
@@ -620,7 +620,7 @@ Only a custom anchor matches the fragment, so the target is treated as missing b
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Document as SpecificationDocument
@@ -642,7 +642,7 @@ The document assigns GitHub-compatible suffixes in heading order, allowing `#rul
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Document as SpecificationDocument
@@ -667,7 +667,7 @@ The file portion of the cross-file anchor is missing, so the system records only
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Link as SpecificationLink
@@ -692,7 +692,7 @@ The target document exists but contains no matching standard-heading anchor, so 
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Access as SpecificationDocumentRepository
@@ -717,7 +717,7 @@ Both the referenced document and its standard-heading anchor exist, so the cross
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Access as SpecificationDocumentRepository
@@ -741,7 +741,7 @@ The system resolves the relative path from the source document, decodes it, and 
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Link as SpecificationLink
@@ -767,7 +767,7 @@ The target document assigns duplicate-heading suffixes in document order, allowi
 sequenceDiagram
     autonumber
     actor Author as Specification Document Author
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Access as SpecificationDocumentRepository
@@ -795,7 +795,7 @@ The maintainer names two Markdown documents directly, and the shallow check incl
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Selection as LinkCheckScopeSelector
     participant Scope as LinkCheckScope
@@ -819,7 +819,7 @@ The include pattern selects only matching Markdown documents under `specs/`, so 
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Selection as LinkCheckScopeSelector
     participant Access as SpecificationDocumentRepository
@@ -846,7 +846,7 @@ The exclusion selectors remove draft and archived documents from the selected co
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Exclusion as LinkCheckExclusionMatcher
     participant Selection as LinkCheckScopeSelector
@@ -873,7 +873,7 @@ The include pattern selects no Markdown documents, so the system preserves a `gl
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Selection as LinkCheckScopeSelector
     participant Access as SpecificationDocumentRepository
@@ -898,7 +898,7 @@ All successfully selected documents are excluded, producing an empty but valid s
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Selection as LinkCheckScopeSelector
     participant Scope as LinkCheckScope
@@ -920,7 +920,7 @@ The absolute selector resolves to an existing Markdown document inside the fixed
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Selection as LinkCheckScopeSelector
     participant Context as ProjectContext
@@ -944,7 +944,7 @@ The selector points outside the project boundary, so no outside document is chec
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Selection as LinkCheckScopeSelector
     participant Context as ProjectContext
@@ -967,7 +967,7 @@ The literal selector identifies no existing Markdown document, so the system rec
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Selection as LinkCheckScopeSelector
     participant Access as SpecificationDocumentRepository
@@ -994,7 +994,7 @@ Recursive mode begins with the selected document, follows every eligible Markdow
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Scope as LinkCheckScope
     participant Detection as DeadLinkInspector
@@ -1018,7 +1018,7 @@ Shallow mode checks only the initially selected document and does not inspect re
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Scope as LinkCheckScope
     participant Detection as DeadLinkInspector
@@ -1038,7 +1038,7 @@ Recursive mode follows references beyond the first level, adds indirectly reache
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Access as SpecificationDocumentRepository
@@ -1061,7 +1061,7 @@ When multiple reference paths reach the same document, the scope recognizes that
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Scope as LinkCheckScope
@@ -1084,7 +1084,7 @@ When traversal returns to a document already checked, the scope stops the cycle 
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Scope as LinkCheckScope
@@ -1107,7 +1107,7 @@ The missing reference is reported under its applicable single-file rule, but the
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Access as SpecificationDocumentRepository
@@ -1131,7 +1131,7 @@ An excluded referenced document remains a valid link target, but it is not added
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Exclusion as LinkCheckExclusionMatcher
     participant Detection as DeadLinkInspector
@@ -1161,7 +1161,7 @@ The check completes successfully without selector issues or invalid links, so th
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Scope as LinkCheckScope
     participant Report as RawLinkCheckReport
@@ -1181,7 +1181,7 @@ The check completes successfully with an invalid link, so the raw report combine
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Scope as LinkCheckScope
     participant Record as DeadLinkRecord
@@ -1202,7 +1202,7 @@ The check produces records from multiple documents, and the raw report retains e
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Scope as LinkCheckScope
     participant Record as DeadLinkRecord
@@ -1224,7 +1224,7 @@ Selection contributes no documents but does produce non-fatal issues, so the sys
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Scope as LinkCheckScope
     participant Report as RawLinkCheckReport
@@ -1243,7 +1243,7 @@ The request cannot establish a valid project boundary, so the system discards th
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Selection as LinkCheckScopeSelector
 
@@ -1262,7 +1262,7 @@ An unexpected failure prevents trustworthy detection despite a valid project con
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
 
@@ -1285,7 +1285,7 @@ The maintainer selects terminal delivery, and the system emits the generated raw
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Delivery as LinkCheckReportDispatcher
     participant Terminal as TerminalLinkCheckReporter
@@ -1309,7 +1309,7 @@ The maintainer selects file delivery and provides a path, and the system saves t
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Report as RawLinkCheckReport
     participant Delivery as LinkCheckReportDispatcher
@@ -1334,7 +1334,7 @@ The maintainer selects file delivery without the required path, so the system as
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Report as RawLinkCheckReport
     participant Delivery as LinkCheckReportDispatcher
@@ -1357,7 +1357,7 @@ The selected destination fails, so the system explains the reason, does not fall
 sequenceDiagram
     autonumber
     actor Maintainer as Specification Document Maintainer
-    participant Submission as SpecificationLinkageFacade
+    participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Delivery as LinkCheckReportDispatcher
     participant File as FileLinkCheckReporter
