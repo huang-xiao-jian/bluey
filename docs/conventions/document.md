@@ -26,3 +26,20 @@ more specific file-level instruction overrides them.
 - Link to the most specific relevant file or section.
 - Avoid adding cross-links between peer files in `docs/` by default; the
   documentation map in `AGENTS.md` provides navigation.
+
+## Typescript Constraint
+
+> A simple guideline for `Typescript` in document file
+
+- MUST use enum for limited values instead of literal value.
+
+```ts
+// BAD!
+type LinkCheckMode = "shallow" | "recursive";
+
+// GOOD!
+enum LinkCheckMode {
+  Shallow = "shallow",
+  Recursive = "recursive",
+}
+```
