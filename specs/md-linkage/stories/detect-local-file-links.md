@@ -22,11 +22,9 @@
 
 **Then** the link produces one dead link record
 
-**And** the record's link type is `local-file`
+**And** the record's reason is `file-not-found`
 
-**And** the record's dead link reason is `local-file-not-found`
-
-**And** the record complies with the [Dead Link Record Reporting Rules](../rules/dead-link-record-format.md)
+**And** the record conforms to the [Dead Link Record](../glossary/DeadLinkRecord.md) concept
 
 ### Scenario 3: Fragment-only links are not handled by this story
 
@@ -66,6 +64,6 @@
 
 - When the target file exists, do not produce a dead link record. Otherwise, each invalid link produces one dead link record.
 
-- A dead link record for a local file link must identify the `local-file` scenario and the `local-file-not-found` reason.
+- A dead link record for a missing local file must identify the resolved target file path and use the `file-not-found` reason.
 
-- A dead link record's target must preserve the target exactly as written in the link. All other content must comply with the [Dead Link Record Reporting Rules](../rules/dead-link-record-format.md).
+- A dead link record must preserve the original link and its parsed name and path. All other content must conform to the [Dead Link Record](../glossary/DeadLinkRecord.md) concept.

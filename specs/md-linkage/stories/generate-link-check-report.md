@@ -20,7 +20,7 @@
 
 ### Scenario 2: Detection succeeds with dead links
 
-**Given** this link check completes successfully and produces one dead link record that complies with the [Dead Link Record Reporting Rules](../rules/dead-link-record-format.md)
+**Given** this link check completes successfully and produces one record that conforms to the [Dead Link Record](../glossary/DeadLinkRecord.md) concept
 
 **When** a raw link check report is generated
 
@@ -36,7 +36,7 @@
 
 **Then** the report's dead link record collection contains every input record
 
-**And** every record retains its source file, original link text, link target, link scenario, and dead link reason
+**And** every record retains its location, original and parsed link, resolved target, and dead reason
 
 **And** the report does not precompute a total number of dead links, grouping, sorting, or summaries
 
@@ -64,10 +64,10 @@
 
 ## Business Rules
 
-- A raw link check report must comply with the [Link Check Report Rules](../rules/link-check-report-format.md).
+- A raw link check report must conform to the [Link Check Report](../glossary/LinkCheckReport.md) concept.
 
 - A raw link check report aggregates only the check scope, which contains files and selector issues, and the dead link record collection. It does not reevaluate selector or link validity or determine how results are presented, stored, or delivered.
 
 - Selector issues and an empty file scope are valid monitoring results and always produce a raw report. Discard the result only when the check cannot establish a valid project context or cannot produce a trustworthy result because of an unexpected failure.
 
-- Every record in the dead link record collection must comply with the [Dead Link Record Reporting Rules](../rules/dead-link-record-format.md).
+- Every record in the dead link record collection must conform to the [Dead Link Record](../glossary/DeadLinkRecord.md) concept.

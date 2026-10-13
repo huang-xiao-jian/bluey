@@ -8,7 +8,7 @@
 
 ### Scenario 1: Output the report directly in the terminal
 
-**Given** a raw link check report that complies with the [Link Check Report Rules](../rules/link-check-report-format.md) has been generated
+**Given** a raw report that conforms to the [Link Check Report](../glossary/LinkCheckReport.md) concept has been generated
 
 **And** the user chooses to output the report in the terminal
 
@@ -24,7 +24,7 @@
 
 ### Scenario 2: Save the report to a file
 
-**Given** a raw link check report that complies with the [Link Check Report Rules](../rules/link-check-report-format.md) has been generated
+**Given** a raw report that conforms to the [Link Check Report](../glossary/LinkCheckReport.md) concept has been generated
 
 **And** the user chooses to save the report to a file
 

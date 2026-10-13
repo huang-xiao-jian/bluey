@@ -12,4 +12,4 @@ This epic covers local file links, in-file anchor links, and cross-file anchor l
 - [Detect dead in-file anchor links](detect-in-file-anchor-links.md)
 - [Detect dead cross-file anchor links](detect-cross-file-anchor-links.md)
 
-All dead link records produced by these stories must comply with the [Dead Link Record Reporting Rules](../rules/dead-link-record-format.md).
+All dead link records produced by these stories must conform to the [Dead Link Record](../glossary/DeadLinkRecord.md) concept.

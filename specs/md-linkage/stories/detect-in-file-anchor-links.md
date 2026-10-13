@@ -22,11 +22,9 @@
 
 **Then** the link produces one dead link record
 
-**And** the record's link type is `in-file-anchor`
+**And** the record's reason is `anchor-not-found`
 
-**And** the record's dead link reason is `in-file-anchor-not-found`
-
-**And** the record complies with the [Dead Link Record Reporting Rules](../rules/dead-link-record-format.md)
+**And** the record conforms to the [Dead Link Record](../glossary/DeadLinkRecord.md) concept
 
 ### Scenario 3: Validation does not read other files
 
@@ -48,7 +46,7 @@
 
 **Then** the link produces one dead link record
 
-**And** the record's dead link reason is `in-file-anchor-not-found`
+**And** the record's reason is `anchor-not-found`
 
 ### Scenario 5: Duplicate headings use GitHub-compatible suffixes
 
@@ -72,6 +70,6 @@
 
 - When the current file contains the corresponding standard Markdown heading, do not produce a dead link record. Otherwise, each invalid link produces one dead link record.
 
-- A dead link record for an in-file anchor link must identify the `in-file-anchor` scenario and the `in-file-anchor-not-found` reason.
+- A dead link record for a missing in-file anchor must resolve the target file to the source file, identify the normalized target anchor ID, and use the `anchor-not-found` reason.
 
-- A dead link record's target must preserve the target exactly as written in the link. All other content must comply with the [Dead Link Record Reporting Rules](../rules/dead-link-record-format.md).
+- A dead link record must preserve the original link and its parsed name and anchor. All other content must conform to the [Dead Link Record](../glossary/DeadLinkRecord.md) concept.

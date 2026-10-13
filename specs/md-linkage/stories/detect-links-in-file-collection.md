@@ -114,4 +114,4 @@
 
 - This story covers checking the selected collection. Following links to additional Markdown files is covered by [Detect Dead Links Recursively Through File References](detect-links-in-reference-chain.md).
 
-- The request fields, selector syntax, and project-root rules are defined by the [Link Check Request Rules](../rules/link-check-request-format.md).
+- The request fields, selector syntax, and project-root constraints are defined by the [Link Check Request](../glossary/LinkCheckRequest.md) concept.

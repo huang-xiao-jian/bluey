@@ -3,9 +3,9 @@
 ## Workflow Coverage
 
 - [Dead Link Detection Requirements for Specification Documents](spec.md)
-- [Link Check Request Rules](rules/link-check-request-format.md)
-- [Dead Link Record Reporting Rules](rules/dead-link-record-format.md)
-- [Link Check Report Rules](rules/link-check-report-format.md)
+- [Link Check Request](glossary/LinkCheckRequest.md)
+- [Dead Link Record](glossary/DeadLinkRecord.md)
+- [Link Check Report](glossary/LinkCheckReport.md)
 - [Detect Dead Links in a Single File](stories/detect-links-in-single-file.md)
 - [Detect Dead Local File Links](stories/detect-local-file-links.md)
 - [Detect Dead In-File Anchor Links](stories/detect-in-file-anchor-links.md)
@@ -61,7 +61,7 @@
 - **Role:** Entity.
 - **Purpose:** Represent the maintainer's requested project boundary, link-check scope, and traversal intent.
 - **Responsibilities:** Preserve the project root, include selectors, exclude selectors, and the shallow or recursive choice; provide the root used to establish `ProjectContext`; determine whether reference traversal is requested.
-- **Data contract:** [Link Check Request Rules](rules/link-check-request-format.md).
+- **Business concept:** [Link Check Request](glossary/LinkCheckRequest.md).
 - **Collaborators:** None.
 
 ### ProjectContext
@@ -72,7 +72,7 @@
   - Resolve and preserve the project root supplied by `LinkCheckRequest`;
   - determine whether selected or discovered documents remain within that root;
   - provide project-relative identities for checked documents.
-- **Rules:** [Project Context](rules/link-check-request-format.md#project-context).
+- **Business constraints:** [Link Check Request](glossary/LinkCheckRequest.md#4-business-rules-and-constraints).
 - **Collaborators:** None.
 
 ### LinkCheckScope
@@ -80,7 +80,7 @@
 - **Role:** Entity.
 - **Purpose:** Represent the documents actually checked and the non-fatal issues encountered while selecting them.
 - **Responsibilities:** Retain each checked document once; retain every selector issue with its original selector and reason; prevent duplicate and cyclic checking; preserve an empty scope as a valid result.
-- **Data contract:** [`LinkCheckScope` and `LinkCheckScopeIssue`](rules/link-check-report-format.md#data-model).
+- **Data contract:** [`LinkCheckScope` and `LinkCheckScopeIssue`](glossary/LinkCheckReport.md#31-data-model).
 - **Collaborators:** `ProjectContext`.
 
 ### LinkCheckScopeSelector
@@ -95,7 +95,7 @@
 - **Role:** Entity.
 - **Purpose:** Represent the exclusion policy shared by starting-scope selection and recursive traversal.
 - **Responsibilities:** Preserve the request's exclude selectors; interpret literal and glob exclusions using the fixed project root and the selector rules; determine consistently whether a resolved candidate document is excluded without treating exclusion as link invalidity.
-- **Rules:** [Exclusion and selector rules](rules/link-check-request-format.md#selection-rules).
+- **Business constraints:** [Link Check Request](glossary/LinkCheckRequest.md#4-business-rules-and-constraints).
 - **Collaborators:** `ProjectContext`.
 
 ### SpecificationDocumentRepository
@@ -123,7 +123,7 @@
 
 - **Role:** Entity.
 - **Purpose:** Represent one supported local Markdown link in its source-document context.
-- **Responsibilities:** Preserve the complete original link text and target; determine whether the link is a local-file, in-file-anchor, or cross-file-anchor link; derive the validation location by resolving relative paths, decoding URL-encoded paths, and ignoring query parameters without changing the reported target.
+- **Responsibilities:** Preserve the complete original link text and expose its parsed name, path, and anchor; determine whether the link is a local-file, in-file-anchor, or cross-file-anchor link; derive the resolved target file path and normalized anchor ID by resolving relative paths, decoding URL-encoded paths, and ignoring query parameters.
 - **Scope:** Only the supported link types defined by the [single-file detection epic](stories/detect-links-in-single-file.md) are represented. Other link forms are outside this model and are not validated by `DeadLinkInspector`.
 - **Collaborators:** None.
 
@@ -131,8 +131,8 @@
 
 - **Role:** Entity.
 - **Purpose:** Represent one traceable invalid specification link.
-- **Responsibilities:** Preserve the source document, original link text, original target, link scenario, and single applicable dead link reason; prevent a missing cross-file target from also producing an anchor-missing reason.
-- **Data contract:** [`DeadLinkRecord`, `LinkType`, and `DeadLinkErrorType`](rules/dead-link-record-format.md#data-model).
+- **Responsibilities:** Preserve the project boundary and source document path, the original and parsed link, the resolved target file path and anchor details, and the single dead reason; prevent a missing cross-file target from also producing an anchor-missing reason.
+- **Data contract:** [`DeadLinkRecord`](glossary/DeadLinkRecord.md#31-data-model).
 - **Collaborators:** `SpecificationLink`.
 
 ### RawLinkCheckReport
@@ -140,7 +140,7 @@
 - **Role:** Entity.
 - **Purpose:** Represent the unprocessed business result of one trustworthy link check.
 - **Responsibilities:** Aggregate only the check scope and every dead link record; preserve empty collections and selector issues; exclude totals, conclusions, grouping, sorting, summaries, and delivery concerns.
-- **Data contract:** [`LinkCheckReport`](rules/link-check-report-format.md#data-model).
+- **Data contract:** [`LinkCheckReport`](glossary/LinkCheckReport.md#31-data-model).
 - **Collaborators:** `LinkCheckScope`, `DeadLinkRecord`.
 
 ### LinkCheckReportDispatcher
@@ -453,7 +453,7 @@ sequenceDiagram
 
 #### Scenario 2: The target local file does not exist
 
-The link resolves to a missing local file, so the system records one `local-file-not-found` result while preserving the original link target.
+The link resolves to a missing local file, so the system records the `file-not-found` reason together with the source location, original and parsed link, and resolved target file path.
 
 ```mermaid
 sequenceDiagram
@@ -472,7 +472,7 @@ sequenceDiagram
     Detection->>Link: Classify and resolve the local-file validation location
     Detection->>Access: Determine whether the local target exists
     Access-->>Detection: Target does not exist
-    Detection->>Record: Preserve one local-file-not-found outcome and original target
+    Detection->>Record: Preserve location, link, resolved target, and file-not-found reason
 ```
 
 #### Scenario 3: Fragment-only links are not handled by this story
@@ -567,7 +567,7 @@ sequenceDiagram
 
 #### Scenario 2: The target in-file anchor does not exist
 
-The fragment does not match a standard Markdown heading in the current document, so the system records one `in-file-anchor-not-found` result.
+The fragment does not match a standard Markdown heading in the current document, so the system records the `anchor-not-found` reason with the source location, original and parsed link, resolved source-file target, and normalized anchor ID.
 
 ```mermaid
 sequenceDiagram
@@ -586,7 +586,7 @@ sequenceDiagram
     Detection->>Link: Classify the link as an in-file anchor
     Detection->>Document: Determine whether the standard-heading anchor exists in this document
     Document-->>Detection: Target heading anchor does not exist
-    Detection->>Record: Preserve one in-file-anchor-not-found outcome and original target
+    Detection->>Record: Preserve location, link, resolved target, and anchor-not-found reason
 ```
 
 #### Scenario 3: Validation does not read other files
@@ -631,7 +631,7 @@ sequenceDiagram
     Check->>Detection: Validate document links
     Detection->>Document: Seek a corresponding standard Markdown heading
     Document-->>Detection: No standard-heading anchor exists
-    Detection->>Record: Preserve one in-file-anchor-not-found outcome
+    Detection->>Record: Preserve location, link, resolved target, and anchor-not-found reason
 ```
 
 #### Scenario 5: Duplicate headings use GitHub-compatible suffixes
@@ -661,7 +661,7 @@ sequenceDiagram
 
 #### Scenario 1: The target file does not exist
 
-The file portion of the cross-file anchor is missing, so the system records only `cross-file-not-found` and does not attempt anchor validation.
+The file portion of the cross-file anchor is missing, so the system records only the `file-not-found` reason and does not attempt anchor validation.
 
 ```mermaid
 sequenceDiagram
@@ -677,16 +677,16 @@ sequenceDiagram
     Author->>Submission: Check a cross-file anchor whose file is missing
     Submission->>Check: Initiate link check
     Check->>Detection: Validate document links
-    Detection->>Link: Resolve the target file location and preserve the original target
+    Detection->>Link: Parse the original link and resolve the target file path
     Detection->>Access: Determine whether the target file exists
     Access-->>Detection: Target file does not exist
-    Detection->>Record: Preserve one cross-file-not-found outcome
+    Detection->>Record: Preserve location, link, resolved target, and file-not-found reason
     Note over Detection,Record: Do not validate the target anchor or add a second reason
 ```
 
 #### Scenario 2: The target file exists but the target anchor does not
 
-The target document exists but contains no matching standard-heading anchor, so the system records one `cross-file-anchor-not-found` result.
+The target document exists but contains no matching standard-heading anchor, so the system records the `anchor-not-found` reason with the normalized target anchor ID.
 
 ```mermaid
 sequenceDiagram
@@ -706,7 +706,7 @@ sequenceDiagram
     Access-->>Detection: Provide existing target document
     Detection->>Target: Determine whether the standard-heading anchor exists
     Target-->>Detection: Target heading anchor does not exist
-    Detection->>Record: Preserve one cross-file-anchor-not-found outcome
+    Detection->>Record: Preserve location, link, resolved target, and anchor-not-found reason
 ```
 
 #### Scenario 3: Both the target file and target anchor exist

@@ -14,13 +14,11 @@
 
 **Then** the link produces one dead link record
 
-**And** the record's link type is `cross-file-anchor`
-
-**And** the record's dead link reason is `cross-file-not-found`
+**And** the record's reason is `file-not-found`
 
 **And** the target anchor is not validated
 
-**And** the record complies with the [Dead Link Record Reporting Rules](../rules/dead-link-record-format.md)
+**And** the record conforms to the [Dead Link Record](../glossary/DeadLinkRecord.md) concept
 
 ### Scenario 2: The target file exists but the target anchor does not
 
@@ -32,11 +30,9 @@
 
 **Then** the link produces one dead link record
 
-**And** the record's link type is `cross-file-anchor`
+**And** the record's reason is `anchor-not-found`
 
-**And** the record's dead link reason is `cross-file-anchor-not-found`
-
-**And** the record complies with the [Dead Link Record Reporting Rules](../rules/dead-link-record-format.md)
+**And** the record conforms to the [Dead Link Record](../glossary/DeadLinkRecord.md) concept
 
 ### Scenario 3: Both the target file and target anchor exist
 
@@ -86,10 +82,10 @@
 
 - Always confirm that the target file exists before validating a cross-file anchor link. If the target file does not exist, do not continue to validate the target anchor.
 
-- When the target file does not exist, each invalid link produces one dead link record with the `cross-file-anchor` scenario and the `cross-file-not-found` reason.
+- When the target file does not exist, each invalid link produces one dead link record with the resolved target file path and the `file-not-found` reason.
 
-- Only when the target file exists, find the target anchor that corresponds to a standard Markdown heading in that file. When the target anchor does not exist, each invalid link produces one dead link record with the `cross-file-anchor` scenario and the `cross-file-anchor-not-found` reason.
+- Only when the target file exists, find the target anchor that corresponds to a standard Markdown heading in that file. When the target anchor does not exist, each invalid link produces one dead link record with the normalized target anchor ID and the `anchor-not-found` reason.
 
 - When both the target file and target anchor exist, do not produce a dead link record.
 
-- A dead link record's target must preserve the target exactly as written in the link. All other content must comply with the [Dead Link Record Reporting Rules](../rules/dead-link-record-format.md).
+- A dead link record must preserve the original link and its parsed name, path, and anchor. All other content must conform to the [Dead Link Record](../glossary/DeadLinkRecord.md) concept.

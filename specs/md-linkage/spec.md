@@ -18,15 +18,15 @@ In a **Specification Driven Development** workflow, business documents are the t
 
 ### Consistent Dead Link Format
 
-Dead link records produced by all detection sub-stories must comply with the [Dead Link Record Reporting Rules](rules/dead-link-record-format.md), so downstream report generator can consume data consistently without structural differences caused by different sources.
+Dead link records produced by all detection sub-stories must conform to the [Dead Link Record](glossary/DeadLinkRecord.md) concept, so downstream report generators can consume data consistently without structural differences caused by different sources.
 
 ### Traceable Dead Link Locations
 
-Every dead link record must be traceable to its source file, original link text, link target, link scenario, and dead link reason, enabling maintainers to locate and repair the link quickly.
+Every dead link record must identify the project and source file containing the link, preserve the original link and its parsed components, identify the resolved target file and anchor when applicable, and state whether the target file or anchor could not be found.
 
 ### Extensible Link Check Report
 
-The core provide raw link check report which comply with the [Link Check Report Rules](rules/link-check-report-format.md). The output stage handles derived statistics, content organization, and output methods.
+The core provides a raw report that conforms to the [Link Check Report](glossary/LinkCheckReport.md) concept. The output stage handles derived statistics, content organization, and output methods.
 
 ## User Story Journey
 
@@ -50,7 +50,7 @@ Maintainers select one or more Markdown files and choose whether to follow refer
 3. **Generate a raw report**
    - Prerequisite: Dead link detection has completed successfully.
    - System response: Aggregate the check scope, including selector issues, and the dead link record collection.
-   - System output: A raw link check report that complies with the [Link Check Report Rules](rules/link-check-report-format.md) even there's no file or link within process.
+   - System output: A raw report that conforms to the [Link Check Report](glossary/LinkCheckReport.md) concept even when no files or links are processed.
 
 4. **Output the report**
    - Prerequisite: A raw link check report has been generated.
