@@ -2,11 +2,12 @@
 
 ## Prerequisite Dependencies
 
+- [Specification Link](./SpecificationLink.md)
 - [Link Check Report](./LinkCheckReport.md)
 
 ## 1. Business Definition
 
-A **Dead Link Record** is the traceable business result for one invalid Markdown link found during a link check. It tells a maintainer where the link exists, what the author wrote, where the link resolves, and which part of that destination could not be found.
+A **Dead Link Record** is the traceable business result produced for one invalid **Specification Link** during a link check. It tells a maintainer where the link exists, what the author wrote, where the link resolves, and which part of that destination could not be found.
 
 ## 2. Synonyms and Aliases
 
@@ -17,7 +18,7 @@ A **Dead Link Record** is the traceable business result for one invalid Markdown
 ## 3. Key Attributes
 
 - **Location:** The project boundary and the path of the Markdown file that contains the invalid link.
-- **Link:** The complete original Markdown link together with its parsed name, path, and anchor components.
+- **Link:** The original [Specification Link](./SpecificationLink.md) that failed validation.
 - **Target:** The resolved target file path and, when applicable, the anchor ID used for validation and its known heading name.
 - **Dead Reason:** The reason the link is invalid: its target file or target anchor could not be found.
 
@@ -37,17 +38,8 @@ interface DeadLinkRecord {
     /** Path of the source Markdown document, relative to root. */
     filePath: string;
   };
-  /** Preserves the authored link and exposes its parsed components. */
-  link: {
-    /** Complete Markdown link exactly as authored. */
-    text: string;
-    /** Visible link text. */
-    name: string;
-    /** Authored path component; absent for an in-file anchor link. */
-    path?: string;
-    /** Authored anchor component; absent for a file-only link. */
-    anchor?: string;
-  };
+  /** Preserves the original specification link that failed validation. */
+  link: SpecificationLink;
   /** Identifies the destination used during link validation. */
   target: {
     /** Fully resolved filesystem path; resolves to the source file for an in-file anchor. */
@@ -73,6 +65,7 @@ const example: DeadLinkRecord = {
     filePath: "specs/md-linkage/spec.md",
   },
   link: {
+    type: SpecificationLinkType.CrossFileAnchor,
     text: "[Dead link record](glossary/DeadLinkRecord.md#missing-section)",
     name: "Dead link record",
     path: "glossary/DeadLinkRecord.md",
@@ -88,7 +81,7 @@ const example: DeadLinkRecord = {
 
 ## 4. Business Rules and Constraints
 
-1. Each invalid Markdown link produces exactly one **Dead Link Record**.
+1. Each invalid **Specification Link** produces exactly one **Dead Link Record**.
 2. When the resolved target file does not exist, the record uses `DeadReason.FileNotFound`.
 3. The record uses `DeadReason.AnchorNotFound` only when the resolved target file exists but the specified anchor does not identify a supported heading in that file.
 4. When a cross-file link's target file does not exist, the record uses only `DeadReason.FileNotFound`; anchor validation does not continue and the record does not also use `DeadReason.AnchorNotFound`.
@@ -96,6 +89,7 @@ const example: DeadLinkRecord = {
 ## 5. Relationships
 
 - **Aggregation:** A **Link Check Report** aggregates zero or more **Dead Link Records** produced by its link check.
+- **Transformation:** A **Dead Link Record** is produced from one invalid **Specification Link** and preserves that link unchanged.
 
 ## 6. Scope Boundaries
 

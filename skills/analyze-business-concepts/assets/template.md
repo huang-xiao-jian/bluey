@@ -59,6 +59,9 @@ Example:
 ### 3.1 Data Model (Optional)
 
 > Define the TypeScript data model only when a technical visualization is essential to understand the concept.
+> Use enum for limited values instead of literal
+> Avoid inheritance unless necessary
+> Add proper comment and example to acheive better readability
 
 <!--
 Format:
@@ -69,6 +72,11 @@ interface {ConceptName} {
 }
 ```
 
+```json
+{
+  {property}: {Type}
+}
+
 Example:
 
 ```ts
@@ -77,11 +85,18 @@ interface Workspace {
   status: "active" | "archived";
 }
 ```
+
+```json
+{
+  "id": "001",
+  "status": "active"
+}
+```
 -->
 
 ## 4. Business Rules and Constraints
 
-> State the rules that govern how the concept may be created, changed, or used.
+> State the rules that govern how the concept may be created, changed, or used. Avoid verbose explanation for each field!
 
 <!--
 Format:

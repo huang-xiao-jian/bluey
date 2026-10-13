@@ -1,6 +1,6 @@
 ---
 name: analyze-business-concepts
-description: Extract business concepts from business-source material and create business-concept descriptions. Use when users ask to identify or define business concepts, or maintain a glossary.
+description: Draft business concept descriptions from business-source material. Use when users ask to identify or define business concepts, or maintain a glossary.
 ---
 
 # analyze-business-concepts
@@ -11,10 +11,10 @@ The user must provide a clear document that is strongly related to the business 
 
 ### Exception Handling
 
-| Condition | Handling strategy |
-| :-- | :-- |
-| The user provides a technical design document | Decline the task and ask for material related to the business domain. |
-| The input document is ambiguous | Decline the task and ask the user to provide a clearer requirements description. Do not infer missing details. |
+| Condition                                     | Handling strategy                                                                                              |
+| :-------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| The user provides a technical design document | Decline the task and ask for material related to the business domain.                                          |
+| The input document is ambiguous               | Decline the task and ask the user to provide a clearer requirements description. Do not infer missing details. |
 
 ## Core Principles
 
