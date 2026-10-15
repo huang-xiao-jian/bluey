@@ -26,8 +26,10 @@ The user must provide a clear document that is strongly related to the business 
 
 ## Resources
 
-- [Business-concept description template](assets/template.md)
-- [Business-concept description example](references/example.md)
+- [concept description template](assets/template.md)
+- [concept description example](references/example.md)
+- [how to discover rules for concept](./assets/rules-discovery.md)
+- [concrete rules example based on the discovery rules](./assets/rules-example.md)
 
 ## Workflow
 

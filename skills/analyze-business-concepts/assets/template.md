@@ -14,7 +14,7 @@ Example:
 - [Workspace](./workspace.md)
 -->
 
-## 1. Business Definition
+## 1. Definition
 
 > Define the business concept, its purpose, and the business value it represents.
 
@@ -39,7 +39,7 @@ Format:
 
 Example:
 
-- Project space
+- Project Space
 -->
 
 ## 3. Key Attributes
@@ -49,7 +49,7 @@ Example:
 <!--
 Format:
 
-- **{Attribute Name}:** {Business meaning and constraints}
+- **{Attribute Name}:** {Semantic meaning and constraints}
 
 Example:
 
@@ -61,7 +61,7 @@ Example:
 > Define the TypeScript data model only when a technical visualization is essential to understand the concept.
 > Use enum for limited values instead of literal
 > Avoid inheritance unless necessary
-> Add proper comment and example to acheive better readability
+> Add proper comment and example to gain better readability
 
 <!--
 Format:
@@ -80,6 +80,11 @@ interface {ConceptName} {
 Example:
 
 ```ts
+enum WorkspaceStatus {
+  Active = 'active',
+  Archived = 'archived'
+}
+
 interface Workspace {
   id: string;
   status: "active" | "archived";
@@ -94,14 +99,15 @@ interface Workspace {
 ```
 -->
 
-## 4. Business Rules and Constraints
+## 4. Rules and Constraints
 
-> State the rules that govern how the concept may be created, changed, or used. Avoid verbose explanation for each field!
+> State the rules that govern how the concept may be created, changed, or used.
 
 <!--
 Format:
 
 1. {Business rule}
+2. ...
 
 Example:
 
@@ -120,20 +126,4 @@ Format:
 Example:
 
 - **Composition:** A Workspace contains its Workspace Versions.
--->
-
-## 6. Scope Boundaries (Optional)
-
-> Identify what the concept explicitly includes and excludes so its meaning remains bounded.
-
-<!--
-Format:
-
-- **Includes:** {Scenarios explicitly in scope}
-- **Excludes:** {Scenarios explicitly out of scope}
-
-Example:
-
-- **Includes:** Configuration shared by a team.
-- **Excludes:** User-level personal preferences.
 -->
