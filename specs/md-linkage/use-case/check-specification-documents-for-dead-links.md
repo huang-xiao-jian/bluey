@@ -6,9 +6,7 @@
 
 ## Brief Description
 
-A Specification Document Maintainer submits a [Link Check Request](../glossary/LinkCheckRequest.md) to validate [Specification Links](../glossary/SpecificationLink.md) in selected Markdown documents and receive a [Link Check Report](../glossary/LinkCheckReport.md) for locating and repairing invalid references.
-
-A Specification Document Maintainer want to detect dead links in specification documents automatic and fast, so that maintainers can promptly discover and repair invalid references.
+A Specification Document Maintainer want to detect dead links in specification documents, automatic and fast, so that maintainers can promptly discover and repair invalid references.
 
 ## Preconditions
 

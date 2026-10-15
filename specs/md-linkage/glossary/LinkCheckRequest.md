@@ -1,8 +1,6 @@
 # Link Check Request
 
-## Prerequisite Dependencies
-
-## 1. Business Definition
+## 1. Definition
 
 A **Link Check Request** expresses the intended boundary and breadth of one
 Markdown link check. It identifies the project in which document identities
