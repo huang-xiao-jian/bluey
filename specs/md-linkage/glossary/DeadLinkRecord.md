@@ -94,4 +94,6 @@ const example: DeadLinkRecord = {
 ## 6. Scope Boundaries
 
 - **Includes:** The source location, original and parsed Markdown link, resolved target, and reason for one invalid link.
-- **Excludes:** Selector problems, valid links, repair instructions, derived statistics, grouping, sorting, and presentation details.
+- **Excludes:** Delegated document-path problems, valid links, repair
+  instructions, derived statistics, grouping, sorting, and presentation
+  details.

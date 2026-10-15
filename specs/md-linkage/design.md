@@ -3,7 +3,7 @@
 ## Workflow Coverage
 
 - [Dead Link Detection Requirements for Specification Documents](spec.md)
-- [Link Check Request](glossary/LinkCheckRequest.md)
+- [Link Check Delegation](glossary/LinkCheckDelegation.md)
 - [Dead Link Record](glossary/DeadLinkRecord.md)
 - [Link Check Report](glossary/LinkCheckReport.md)
 - [Detect Dead Links in a Single File](stories/detect-links-in-single-file.md)
@@ -17,9 +17,6 @@
 
 ## Package Selections
 
-- **`tinyglobby`**: Expands project-relative and permitted absolute include and
-  exclude selectors. It provides the required glob behavior with a smaller
-  dependency surface than `globby` or `fast-glob`.
 - **`mdast-util-from-markdown`**: Parses CommonMark into a syntax tree so links
   and headings can be detected without fragile regular expressions. The
   higher-level `remark` processing pipeline is unnecessary for this use case.
@@ -46,22 +43,22 @@
 
 - **Role:** Boundary(Driving Port).
 - **Purpose:** Represent the author or maintainer's interaction with a link check.
-- **Responsibilities:** Receive a complete `LinkCheckRequest`, the output choice, and the save path; pass the request to the link-check workflow without reconstructing its project root, include, exclude, or mode fields; present delivered reports, requests for a missing save path, and failure reasons.
-- **Collaborators:** `LinkCheckRequest`, `LinkChecker`.
+- **Responsibilities:** Receive a complete `LinkCheckDelegation`, the output choice, and the save path; pass the delegation to the link-check workflow without reconstructing its project root, document paths, or mode; present delivered reports, requests for a missing save path, and failure reasons.
+- **Collaborators:** `LinkCheckDelegation`, `LinkChecker`.
 
 ### LinkChecker
 
 - **Role:** Control.
 - **Purpose:** Coordinate the complete specification-document link-check journey.
 - **Responsibilities:** Coordinate project-context establishment, scope selection, dead link checking, raw-report creation, and selected report delivery; own the raw report throughout the run; prevent report creation or output after an untrustworthy check; retain the raw report while a missing save path is requested; discard the run's raw report after delivery failure.
-- **Collaborators:** `LinkCheckFacade`, `LinkCheckRequest`, `LinkCheckScopeSelector`, `LinkCheckExclusionMatcher`, `DeadLinkInspector`, `RawLinkCheckReport`, `LinkCheckReportDispatcher`.
+- **Collaborators:** `LinkCheckFacade`, `LinkCheckDelegation`, `LinkCheckScopeBuilder`, `DeadLinkInspector`, `RawLinkCheckReport`, `LinkCheckReportDispatcher`.
 
-### LinkCheckRequest
+### LinkCheckDelegation
 
 - **Role:** Entity.
-- **Purpose:** Represent the maintainer's requested project boundary, link-check scope, and traversal intent.
-- **Responsibilities:** Preserve the project root, include selectors, exclude selectors, and the shallow or recursive choice; provide the root used to establish `ProjectContext`; determine whether reference traversal is requested.
-- **Business concept:** [Link Check Request](glossary/LinkCheckRequest.md).
+- **Purpose:** Represent the link-check work delegated by a maintainer.
+- **Responsibilities:** Preserve the project root, explicit document paths, and the shallow or recursive choice; provide the root used to establish `ProjectContext`; determine whether reference traversal is delegated.
+- **Business concept:** [Link Check Delegation](glossary/LinkCheckDelegation.md).
 - **Collaborators:** None.
 
 ### ProjectContext
@@ -69,48 +66,37 @@
 - **Role:** Entity.
 - **Purpose:** Represent the fixed project boundary for one link check.
 - **Responsibilities:**
-  - Resolve and preserve the project root supplied by `LinkCheckRequest`;
+  - Resolve and preserve the project root supplied by `LinkCheckDelegation`;
   - determine whether selected or discovered documents remain within that root;
   - provide project-relative identities for checked documents.
-- **Business constraints:** [Link Check Request](glossary/LinkCheckRequest.md#4-business-rules-and-constraints).
+- **Business constraints:** [Link Check Delegation](glossary/LinkCheckDelegation.md#4-rules-and-constraints).
 - **Collaborators:** None.
 
 ### LinkCheckScope
 
 - **Role:** Entity.
 - **Purpose:** Represent the documents actually checked and the non-fatal issues encountered while selecting them.
-- **Responsibilities:** Retain each checked document once; retain every selector issue with its original selector and reason; prevent duplicate and cyclic checking; preserve an empty scope as a valid result.
+- **Responsibilities:** Retain each checked document once; retain every document-path issue with its original path and reason; prevent duplicate and cyclic checking; preserve an empty scope as a valid result.
 - **Data contract:** [`LinkCheckScope` and `LinkCheckScopeIssue`](glossary/LinkCheckReport.md#31-data-model).
 - **Collaborators:** `ProjectContext`.
 
-### LinkCheckScopeSelector
+### LinkCheckScopeBuilder
 
-- **Role:** Control.
-- **Purpose:** Establish the project context and starting document set for a link check.
-- **Responsibilities:** Resolve include selectors independently; use the shared exclusion matcher to remove excluded documents; retain non-fatal selector issues; continue after selector issues; establish an empty or populated starting scope without treating selection issues as check failure.
-- **Collaborators:** `LinkCheckRequest`, `ProjectContext`, `LinkCheckScope`, `LinkCheckExclusionMatcher`, `SpecificationDocumentRepository`.
-
-### LinkCheckExclusionMatcher
-
-- **Role:** Entity.
-- **Purpose:** Represent the exclusion policy shared by starting-scope selection and recursive traversal.
-- **Responsibilities:** Preserve the request's exclude selectors; interpret literal and glob exclusions using the fixed project root and the selector rules; determine consistently whether a resolved candidate document is excluded without treating exclusion as link invalidity.
-- **Business constraints:** [Link Check Request](glossary/LinkCheckRequest.md#4-business-rules-and-constraints).
-- **Collaborators:** `ProjectContext`.
+- **Role definition:** [Link Check Scope Builder](roles/LinkCheckScopeBuilder.md).
 
 ### SpecificationDocumentRepository
 
 - **Role:** Boundary(Driven Port).
 - **Purpose:** Represent access to specification documents and their filesystem context.
-- **Responsibilities:** Resolve project roots and selectors; report document existence and kind; provide selected and referenced Markdown documents; determine resolved containment without changing original selectors or link targets.
-- **Collaborators:** `LinkCheckScopeSelector`, `DeadLinkInspector`.
+- **Responsibilities:** Resolve project roots and explicit document paths; report document existence and kind; provide delegated and referenced Markdown documents; determine resolved containment without changing original paths or link targets.
+- **Collaborators:** `LinkCheckScopeBuilder`, `DeadLinkInspector`.
 
 ### DeadLinkInspector
 
 - **Role:** Control.
 - **Purpose:** Coordinate dead link detection across the documents in one check.
-- **Responsibilities:** Check every in-scope document at most once; classify and validate each supported link; follow eligible Markdown references only in recursive mode; use the shared exclusion matcher to stop traversal at excluded targets; stop traversal at outside-root, non-Markdown, or missing targets; retain one compliant dead link record for each invalid link.
-- **Collaborators:** `LinkCheckRequest`, `ProjectContext`, `LinkCheckScope`, `LinkCheckExclusionMatcher`, `SpecificationDocumentRepository`, `SpecificationDocument`, `SpecificationLink`, `DeadLinkRecord`.
+- **Responsibilities:** Check every in-scope document at most once; classify and validate each supported link; follow eligible Markdown references only in recursive mode; stop traversal at outside-root, non-Markdown, or missing targets; retain one compliant dead link record for each invalid link.
+- **Collaborators:** `LinkCheckDelegation`, `ProjectContext`, `LinkCheckScope`, `SpecificationDocumentRepository`, `SpecificationDocument`, `SpecificationLink`, `DeadLinkRecord`.
 
 ### SpecificationDocument
 
@@ -139,7 +125,7 @@
 
 - **Role:** Entity.
 - **Purpose:** Represent the unprocessed business result of one trustworthy link check.
-- **Responsibilities:** Aggregate only the check scope and every dead link record; preserve empty collections and selector issues; exclude totals, conclusions, grouping, sorting, summaries, and delivery concerns.
+- **Responsibilities:** Aggregate only the check scope and every dead link record; preserve empty collections and document-path issues; exclude totals, conclusions, grouping, sorting, summaries, and delivery concerns.
 - **Data contract:** [`LinkCheckReport`](glossary/LinkCheckReport.md#31-data-model).
 - **Collaborators:** `LinkCheckScope`, `DeadLinkRecord`.
 
@@ -178,7 +164,7 @@ classDiagram
     class LinkChecker {
         <<Control>>
     }
-    class LinkCheckRequest {
+    class LinkCheckDelegation {
         <<Entity>>
     }
     class ProjectContext {
@@ -187,11 +173,8 @@ classDiagram
     class LinkCheckScope {
         <<Entity>>
     }
-    class LinkCheckScopeSelector {
+    class LinkCheckScopeBuilder {
         <<Control>>
-    }
-    class LinkCheckExclusionMatcher {
-        <<Entity>>
     }
     class SpecificationDocumentRepository {
         <<Boundary>>
@@ -227,25 +210,21 @@ classDiagram
     note for FileLinkCheckReporter "Role: Boundary(Driven Port)"
 
     LinkCheckFacade ..> LinkChecker : initiates and receives outcomes
-    LinkCheckFacade ..> LinkCheckRequest : accepts as input
-    LinkChecker ..> LinkCheckRequest : coordinates requested check
-    LinkChecker ..> LinkCheckScopeSelector : delegates starting-scope selection
-    LinkChecker ..> LinkCheckExclusionMatcher : shares exclusion policy
+    LinkCheckFacade ..> LinkCheckDelegation : accepts as input
+    LinkChecker ..> LinkCheckDelegation : coordinates delegated check
+    LinkChecker ..> LinkCheckScopeBuilder : delegates starting-scope creation
     LinkChecker ..> DeadLinkInspector : delegates link checking
     LinkChecker *-- RawLinkCheckReport : creates and owns for the run
     LinkChecker ..> LinkCheckReportDispatcher : delegates selected delivery
-    LinkCheckScopeSelector ..> LinkCheckRequest : interprets selectors
-    LinkCheckScopeSelector ..> ProjectContext : establishes fixed root
-    LinkCheckScopeSelector ..> LinkCheckScope : records files and issues
-    LinkCheckScopeSelector ..> LinkCheckExclusionMatcher : filters starting documents
-    LinkCheckScopeSelector ..> SpecificationDocumentRepository : resolves context and selectors
-    LinkCheckExclusionMatcher --> ProjectContext : applies fixed-root selector rules
-    ProjectContext ..> LinkCheckRequest : resolves the owned project root
+    LinkCheckScopeBuilder ..> LinkCheckDelegation : interprets document paths
+    LinkCheckScopeBuilder ..> ProjectContext : establishes fixed root
+    LinkCheckScopeBuilder ..> LinkCheckScope : records files and issues
+    LinkCheckScopeBuilder ..> SpecificationDocumentRepository : resolves context and paths
+    ProjectContext ..> LinkCheckDelegation : resolves the owned project root
     LinkCheckScope --> ProjectContext : records project-relative scope
-    DeadLinkInspector ..> LinkCheckRequest : follows requested traversal mode
+    DeadLinkInspector ..> LinkCheckDelegation : follows delegated traversal mode
     DeadLinkInspector ..> ProjectContext : bounds recursive traversal
     DeadLinkInspector ..> LinkCheckScope : expands and deduplicates checked files
-    DeadLinkInspector ..> LinkCheckExclusionMatcher : stops excluded traversal
     DeadLinkInspector ..> SpecificationDocumentRepository : obtains documents and target facts
     DeadLinkInspector ..> SpecificationDocument : coordinates document checks
     DeadLinkInspector ..> SpecificationLink : coordinates classification and validation
@@ -275,16 +254,16 @@ sequenceDiagram
     actor Maintainer as Specification Document Maintainer
     participant Submission as LinkCheckFacade
     participant Check as LinkChecker
-    participant Selection as LinkCheckScopeSelector
+    participant Selection as LinkCheckScopeBuilder
     participant Detection as DeadLinkInspector
     participant Report as RawLinkCheckReport
     participant Delivery as LinkCheckReportDispatcher
     participant Terminal as TerminalLinkCheckReporter
 
-    Maintainer->>Submission: Provide LinkCheckRequest and terminal output
-    Submission->>Check: Submit request and output choice
+    Maintainer->>Submission: Provide LinkCheckDelegation and terminal output
+    Submission->>Check: Submit delegation and output choice
     Check->>Selection: Establish starting check scope
-    Selection-->>Check: Provide scope and selector issues
+    Selection-->>Check: Provide scope and document-path issues
     Check->>Detection: Detect dead links in scope
     Detection-->>Check: Provide trustworthy detection result
     Check->>Report: Aggregate scope and dead links only
@@ -306,16 +285,16 @@ sequenceDiagram
     actor Maintainer as Specification Document Maintainer
     participant Submission as LinkCheckFacade
     participant Check as LinkChecker
-    participant Selection as LinkCheckScopeSelector
+    participant Selection as LinkCheckScopeBuilder
     participant Detection as DeadLinkInspector
     participant Report as RawLinkCheckReport
     participant Delivery as LinkCheckReportDispatcher
     participant File as FileLinkCheckReporter
 
-    Maintainer->>Submission: Provide LinkCheckRequest, file output, and save path
-    Submission->>Check: Initiate link check with request
+    Maintainer->>Submission: Provide LinkCheckDelegation, file output, and save path
+    Submission->>Check: Initiate link check with delegation
     Check->>Selection: Establish starting check scope
-    Selection-->>Check: Provide scope and selector issues
+    Selection-->>Check: Provide scope and document-path issues
     Check->>Detection: Detect dead links in scope
     Detection-->>Check: Provide trustworthy detection result
     Check->>Report: Aggregate scope and dead links only
@@ -337,11 +316,11 @@ sequenceDiagram
     actor Maintainer as Specification Document Maintainer
     participant Submission as LinkCheckFacade
     participant Check as LinkChecker
-    participant Selection as LinkCheckScopeSelector
+    participant Selection as LinkCheckScopeBuilder
     participant Detection as DeadLinkInspector
 
-    Maintainer->>Submission: Submit a LinkCheckRequest
-    Submission->>Check: Initiate link check with request
+    Maintainer->>Submission: Submit a LinkCheckDelegation
+    Submission->>Check: Initiate link check with delegation
     Check->>Selection: Establish starting check scope
     Selection-->>Check: Provide starting outcome
     Check->>Detection: Detect dead links
@@ -797,50 +776,25 @@ sequenceDiagram
     actor Maintainer as Specification Document Maintainer
     participant Submission as LinkCheckFacade
     participant Check as LinkChecker
-    participant Selection as LinkCheckScopeSelector
+    participant Selection as LinkCheckScopeBuilder
     participant Scope as LinkCheckScope
     participant Detection as DeadLinkInspector
     participant Report as RawLinkCheckReport
 
-    Maintainer->>Submission: Submit LinkCheckRequest selecting a.md and b.md in shallow mode
-    Submission->>Check: Pass the request unchanged
-    Check->>Selection: Resolve the starting collection
+    Maintainer->>Submission: Delegate a.md and b.md in shallow mode
+    Submission->>Check: Pass the delegation unchanged
+    Check->>Selection: Resolve the delegated document paths
     Selection->>Scope: Retain a.md and b.md once
     Check->>Detection: Check both selected documents
     Detection-->>Check: Provide one invalid-link outcome from each document
     Check->>Report: Aggregate both files and both dead link records
 ```
 
-#### Scenario 2: Check files matched by a pattern
+#### Scenario 2: An absolute path identifies a file inside the project root
 
-The include pattern selects only matching Markdown documents under `specs/`, so unrelated documents and their invalid links remain outside the report.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Maintainer as Specification Document Maintainer
-    participant Submission as LinkCheckFacade
-    participant Check as LinkChecker
-    participant Selection as LinkCheckScopeSelector
-    participant Access as SpecificationDocumentRepository
-    participant Scope as LinkCheckScope
-    participant Detection as DeadLinkInspector
-    participant Report as RawLinkCheckReport
-
-    Maintainer->>Submission: Select specs/*.md in shallow mode
-    Submission->>Check: Initiate collection check
-    Check->>Selection: Resolve the include pattern
-    Selection->>Access: Find matching Markdown documents
-    Access-->>Selection: Provide specs/a.md and specs/b.md only
-    Selection->>Scope: Retain both matched documents
-    Check->>Detection: Check the selected scope only
-    Detection-->>Check: Provide dead links from the two checked documents only
-    Check->>Report: Aggregate selected scope and its dead links
-```
-
-#### Scenario 3: Exclude named files and files matched by a pattern
-
-The exclusion selectors remove draft and archived documents from the selected collection, leaving only the eligible document to be checked and reported.
+The absolute path resolves to an existing Markdown document inside the fixed
+project root, so the document is checked and identified by its project-relative
+path.
 
 ```mermaid
 sequenceDiagram
@@ -848,97 +802,25 @@ sequenceDiagram
     actor Maintainer as Specification Document Maintainer
     participant Submission as LinkCheckFacade
     participant Check as LinkChecker
-    participant Exclusion as LinkCheckExclusionMatcher
-    participant Selection as LinkCheckScopeSelector
-    participant Scope as LinkCheckScope
-    participant Detection as DeadLinkInspector
-    participant Report as RawLinkCheckReport
-
-    Maintainer->>Submission: Submit LinkCheckRequest with include and exclude selectors
-    Submission->>Check: Pass the request unchanged
-    Check->>Exclusion: Establish shared exclusion policy
-    Check->>Selection: Resolve includes and apply exclusions
-    Selection->>Exclusion: Test selected documents
-    Selection->>Scope: Retain specs/a.md only
-    Check->>Detection: Check the retained document only
-    Detection-->>Check: Provide dead links from specs/a.md only
-    Check->>Report: Aggregate the retained scope and its dead links
-```
-
-#### Scenario 4: An include glob matches no files
-
-The include pattern selects no Markdown documents, so the system preserves a `glob-no-match` scope issue and still generates an empty raw report.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Maintainer as Specification Document Maintainer
-    participant Submission as LinkCheckFacade
-    participant Check as LinkChecker
-    participant Selection as LinkCheckScopeSelector
-    participant Access as SpecificationDocumentRepository
-    participant Scope as LinkCheckScope
-    participant Report as RawLinkCheckReport
-
-    Maintainer->>Submission: Submit an include glob with no Markdown matches
-    Submission->>Check: Initiate collection check
-    Check->>Selection: Resolve the include glob
-    Selection->>Access: Find matching Markdown documents
-    Access-->>Selection: Report no matches
-    Selection->>Scope: Retain original selector with glob-no-match reason
-    Selection-->>Check: Provide empty valid scope with issue
-    Check->>Report: Aggregate empty files, scope issue, and no dead links
-```
-
-#### Scenario 5: Exclusions remove every selected file
-
-All successfully selected documents are excluded, producing an empty but valid scope with no selector issues and no dead links.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Maintainer as Specification Document Maintainer
-    participant Submission as LinkCheckFacade
-    participant Check as LinkChecker
-    participant Selection as LinkCheckScopeSelector
-    participant Scope as LinkCheckScope
-    participant Report as RawLinkCheckReport
-
-    Maintainer->>Submission: Submit valid selectors whose matches are all excluded
-    Submission->>Check: Initiate collection check
-    Check->>Selection: Resolve includes and apply exclusions
-    Selection->>Scope: Retain no files and no selector issues
-    Selection-->>Check: Provide empty valid scope
-    Check->>Report: Aggregate empty scope and no dead links
-```
-
-#### Scenario 6: An absolute selector identifies a file inside the project root
-
-The absolute selector resolves to an existing Markdown document inside the fixed project root, so the document is checked and identified by its project-relative path.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Maintainer as Specification Document Maintainer
-    participant Submission as LinkCheckFacade
-    participant Check as LinkChecker
-    participant Selection as LinkCheckScopeSelector
+    participant Selection as LinkCheckScopeBuilder
     participant Context as ProjectContext
     participant Access as SpecificationDocumentRepository
     participant Scope as LinkCheckScope
 
     Maintainer->>Submission: Select an absolute Markdown path inside the project root
     Submission->>Check: Initiate collection check
-    Check->>Selection: Resolve the absolute selector
+    Check->>Selection: Resolve the absolute document path
     Selection->>Access: Resolve document and project containment
     Access-->>Selection: Report existing in-root Markdown document
     Selection->>Context: Obtain project-relative document identity
     Selection->>Scope: Retain project-relative file without a scope issue
 ```
 
-#### Scenario 7: A selector resolves outside the project root
+#### Scenario 3: A document path resolves outside the project root
 
-The selector points outside the project boundary, so no outside document is checked; the original selector is retained as a non-fatal scope issue while selection continues.
+The document path points outside the project boundary, so no outside document
+is checked; the original path is retained as a non-fatal scope issue while
+resolution continues.
 
 ```mermaid
 sequenceDiagram
@@ -946,22 +828,23 @@ sequenceDiagram
     actor Maintainer as Specification Document Maintainer
     participant Submission as LinkCheckFacade
     participant Check as LinkChecker
-    participant Selection as LinkCheckScopeSelector
+    participant Selection as LinkCheckScopeBuilder
     participant Context as ProjectContext
     participant Scope as LinkCheckScope
 
-    Maintainer->>Submission: Submit an include selector outside the project root
+    Maintainer->>Submission: Delegate a document path outside the project root
     Submission->>Check: Initiate collection check
-    Check->>Selection: Resolve include selectors independently
-    Selection->>Context: Determine whether the selector remains in the project
-    Context-->>Selection: Selector is outside the project root
-    Selection->>Scope: Retain original selector with selector-outside-project-root reason
-    Note over Selection,Scope: Do not check outside files and continue remaining selectors
+    Check->>Selection: Resolve delegated paths independently
+    Selection->>Context: Determine whether the path remains in the project
+    Context-->>Selection: Path is outside the project root
+    Selection->>Scope: Retain original path with document-outside-project-root reason
+    Note over Selection,Scope: Do not check outside files and continue remaining paths
 ```
 
-#### Scenario 8: A literal include selector identifies a missing file
+#### Scenario 4: A delegated path identifies a missing file
 
-The literal selector identifies no existing Markdown document, so the system records a `literal-file-not-found` scope issue and continues resolving other selectors.
+The delegated path identifies no existing Markdown document, so the system
+records a `document-not-found` scope issue and continues resolving other paths.
 
 ```mermaid
 sequenceDiagram
@@ -969,17 +852,17 @@ sequenceDiagram
     actor Maintainer as Specification Document Maintainer
     participant Submission as LinkCheckFacade
     participant Check as LinkChecker
-    participant Selection as LinkCheckScopeSelector
+    participant Selection as LinkCheckScopeBuilder
     participant Access as SpecificationDocumentRepository
     participant Scope as LinkCheckScope
 
-    Maintainer->>Submission: Submit a literal selector for a missing Markdown file
+    Maintainer->>Submission: Delegate a path to a missing Markdown file
     Submission->>Check: Initiate collection check
-    Check->>Selection: Resolve include selectors independently
-    Selection->>Access: Determine whether the literal document exists
-    Access-->>Selection: Literal document does not exist
-    Selection->>Scope: Retain original selector with literal-file-not-found reason
-    Note over Selection,Scope: Continue resolving remaining selectors
+    Check->>Selection: Resolve delegated paths independently
+    Selection->>Access: Determine whether the document exists
+    Access-->>Selection: Document does not exist
+    Selection->>Scope: Retain original path with document-not-found reason
+    Note over Selection,Scope: Continue resolving remaining paths
 ```
 
 ### Detect Dead Links Recursively Through File References
@@ -1001,8 +884,8 @@ sequenceDiagram
     participant Access as SpecificationDocumentRepository
     participant Record as DeadLinkRecord
 
-    Maintainer->>Submission: Submit LinkCheckRequest selecting a starting document in recursive mode
-    Submission->>Check: Pass the request unchanged
+    Maintainer->>Submission: Delegate a starting document in recursive mode
+    Submission->>Check: Pass the delegation unchanged
     Check->>Detection: Check the starting scope and follow eligible references
     Detection->>Access: Obtain each reachable in-root Markdown document
     Detection->>Scope: Retain starting and reachable documents once
@@ -1023,8 +906,8 @@ sequenceDiagram
     participant Scope as LinkCheckScope
     participant Detection as DeadLinkInspector
 
-    Maintainer->>Submission: Submit LinkCheckRequest selecting the starting document in shallow mode
-    Submission->>Check: Pass the request unchanged
+    Maintainer->>Submission: Delegate the starting document in shallow mode
+    Submission->>Check: Pass the delegation unchanged
     Check->>Detection: Check selected documents only
     Detection->>Scope: Retain only the starting document
     Note over Detection,Scope: Do not inspect file A or file B and do not report file B's invalid link
@@ -1123,39 +1006,15 @@ sequenceDiagram
     Note over Detection,Scope: Do not add the missing target to the check scope
 ```
 
-#### Scenario 7: Excluded references are validated but not followed
-
-An excluded referenced document remains a valid link target, but it is not added to the check scope and its contents are not inspected.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Maintainer as Specification Document Maintainer
-    participant Submission as LinkCheckFacade
-    participant Check as LinkChecker
-    participant Exclusion as LinkCheckExclusionMatcher
-    participant Detection as DeadLinkInspector
-    participant Access as SpecificationDocumentRepository
-    participant Scope as LinkCheckScope
-
-    Maintainer->>Submission: Submit LinkCheckRequest for recursive checking with an exclusion
-    Submission->>Check: Pass the request unchanged
-    Check->>Exclusion: Establish shared exclusion policy
-    Check->>Detection: Validate and follow eligible references
-    Detection->>Access: Validate the referenced target
-    Access-->>Detection: Target exists
-    Detection->>Exclusion: Determine whether the target is excluded
-    Exclusion-->>Detection: Target is excluded
-    Note over Detection,Scope: Do not add or inspect the excluded document
-```
-
 ### Generate a Raw Link Check Report
 
 **Workflow Source:** [Generate a Raw Link Check Report](stories/generate-link-check-report.md)
 
 #### Scenario 1: Detection succeeds with no dead links
 
-The check completes successfully without selector issues or invalid links, so the raw report preserves the checked scope and empty issue and dead-link collections.
+The check completes successfully without document-path issues or invalid links,
+so the raw report preserves the checked scope and empty issue and dead-link
+collections.
 
 ```mermaid
 sequenceDiagram
@@ -1229,15 +1088,16 @@ sequenceDiagram
     participant Scope as LinkCheckScope
     participant Report as RawLinkCheckReport
 
-    Maintainer->>Submission: Request a check whose selectors contribute no files
+    Maintainer->>Submission: Delegate paths that contribute no files
     Submission->>Check: Initiate link check
-    Scope-->>Check: Provide empty files and all selector issues
-    Check->>Report: Aggregate empty files, selector issues, and empty dead links
+    Scope-->>Check: Provide empty files and all document-path issues
+    Check->>Report: Aggregate empty files, document-path issues, and empty dead links
 ```
 
 #### Scenario 5a: The project context is invalid
 
-The request cannot establish a valid project boundary, so the system discards the check result and does not create a raw report.
+The delegation cannot establish a valid project boundary, so the system
+discards the check result and does not create a raw report.
 
 ```mermaid
 sequenceDiagram
@@ -1245,7 +1105,7 @@ sequenceDiagram
     actor Maintainer as Specification Document Maintainer
     participant Submission as LinkCheckFacade
     participant Check as LinkChecker
-    participant Selection as LinkCheckScopeSelector
+    participant Selection as LinkCheckScopeBuilder
 
     Maintainer->>Submission: Request a link check
     Submission->>Check: Initiate link check

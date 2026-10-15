@@ -2,15 +2,15 @@
 
 ## Prerequisite Dependencies
 
-- [Link Check Request](./LinkCheckRequest.md)
+- [Link Check Delegation](./LinkCheckDelegation.md)
 - [Link Check Scope](./LinkCheckScope.md)
 - [Dead Link Record](./DeadLinkRecord.md)
 
 ## 1. Business Definition
 
 A **Link Check Report** is the raw business result of one completed link check.
-It records the initial Markdown documents supplied to the check, any non-fatal
-problems encountered while selecting those documents, every document actually
+It records the initial Markdown documents delegated to the check, any non-fatal
+problems encountered while resolving those documents, every document actually
 checked, and every dead link found. The report provides stable facts for later
 delivery, presentation, storage, or analysis.
 
@@ -23,12 +23,13 @@ delivery, presentation, storage, or analysis.
 ## 3. Key Attributes
 
 - **Check Scope:** The starting files supplied to the check together with any
-  non-fatal selector issues.
+  non-fatal document-path issues.
 - **Starting Files:** The project-relative paths of Markdown files from which
   checking began.
 - **Checked Files:** The project-relative paths of every Markdown file whose
   contents were checked.
-- **Scope Issues:** Problems that prevented individual include selectors from contributing files while allowing the check to continue. Each issue preserves the original selector and its stable reason.
+- **Scope Issues:** The document-path issues preserved from the established
+  **Link Check Scope**.
 - **Dead Link Records:** The complete collection of **Dead Link Records** produced by the check.
 
 ### 3.1 Data Model
@@ -48,12 +49,12 @@ interface LinkCheckReport {
    collection, and the dead link record collection.
 2. The check scope conforms to the [Link Check Scope](./LinkCheckScope.md)
    concept.
-3. Each scope issue preserves the original selector and uses the issue reason
-   defined by the **Link Check Scope** selection rules.
-4. Scope issues do not stop file selection or dead link detection. Every usable include selector is processed.
+3. Each scope issue preserves the original document path and uses the reason
+   defined by the
+   [Link Check Scope Builder](../roles/LinkCheckScopeBuilder.md#32-path-exceptions).
+4. The report preserves every scope issue unchanged.
 5. An empty starting-file collection is a valid result and still produces a
-   report, including when selectors produce issues or exclusions remove every
-   selected file.
+   report, including when every delegated path produces an issue.
 6. Every starting file appears in the checked-file collection.
 7. In `shallow` mode, the checked-file collection contains exactly the
    starting files.
@@ -65,19 +66,21 @@ interface LinkCheckReport {
     definition.
 11. The raw report does not derive totals, conclusions, grouping, sorting, or
     summaries. Those belong to subsequent processing.
-12. A report is not produced when the request cannot establish a valid project
-    context or an unexpected failure prevents the check from producing a
-    trustworthy result.
+12. A report is not produced when the delegation cannot establish a valid
+    project context or an unexpected failure prevents the check from producing
+    a trustworthy result.
 
 ## 5. Relationships
 
-- **Association:** A **Link Check Report** is the result of one successfully completed **Link Check Request**.
+- **Association:** A **Link Check Report** is the result of one successfully
+  completed **Link Check Delegation**.
 - **Aggregation:** A **Link Check Report** contains one **Link Check Scope**
   without changing its contents.
 - **Aggregation:** A **Link Check Report** aggregates zero or more **Dead Link Records** without changing their contents.
 
 ## 6. Scope Boundaries
 
-- **Includes:** Starting-file identities, selector issues, checked-file
+- **Includes:** Starting-file identities, document-path issues, checked-file
   identities, and raw dead link records from one check.
-- **Excludes:** Request construction, link repair, output destination, storage behavior, totals, conclusions, grouping, sorting, and summaries.
+- **Excludes:** Delegation construction, link repair, output destination,
+  storage behavior, totals, conclusions, grouping, sorting, and summaries.
