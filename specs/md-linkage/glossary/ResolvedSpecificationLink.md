@@ -11,12 +11,7 @@ supported **Specification Link**. It preserves the authored link and identifies
 the resolved target. Its `status` discriminates between the live and dead
 variants.
 
-## 2. Synonyms and Aliases
-
-- Resolved link
-- Link validation result
-
-## 3. Key Attributes
+## 2. Key Attributes
 
 - **Status:** Whether the resolved link is live or dead.
 - **Location:** The project boundary and project-relative path of the Markdown
@@ -114,12 +109,12 @@ const example: DeadResolvedSpecificationLink = {
 };
 ```
 
-## 4. Rules and Constraints
+## 3. Rules and Constraints
 
 1. Each **Specification Link** produces exactly one **Resolved Specification Link**.
 2. Each **Resolved Specification Link** remain unchanged after established.
 
-## 5. Relationships
+## 4. Relationships
 
 - **Transformation:** Validation transforms one **Specification Link** into one
   live or dead **Resolved Specification Link** variant.

@@ -8,13 +8,7 @@
 
 A **Link Check Scope** is the formal internal representation for internal link check workflow .
 
-## 2. Synonyms and Aliases
-
-- Check scope
-- Effective link check scope
-- Document check scope
-
-## 3. Key Attributes
+## 2. Key Attributes
 
 - **Files:** Project-relative identities of the starting documents supplied to
   the check.
@@ -46,12 +40,12 @@ interface LinkCheckScope {
 }
 ```
 
-## 4. Rules and Constraints
+## 3. Rules and Constraints
 
 1. The scope remains unchanged after it has been established.
 2. A resolved path with issues should not appear in `files`.
 3. The resolved path in `files` is unique
 
-## 5. Relationships
+## 4. Relationships
 
 - **Aggregation:** [Link Check Report](./LinkCheckReport.md) contains the scope as one task descriptor.

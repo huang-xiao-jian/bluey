@@ -9,13 +9,7 @@
 
 At a specific point in time, a **Flight Offer** is a **sellable combination** presented by the sales system to a traveler. It contains specific flight information, fare class, real-time pricing, and ancillary benefits. It is the direct basis on which the traveler places an order.
 
-## 2. Synonyms and Aliases
-
-- Offer
-- Sellable Flight Segment
-- Fare Combination
-
-## 3. Key Attributes
+## 2. Key Attributes
 
 - **ID:** The unique identifier for this offer, used to lock the price when the order is placed.
 - **Flight Number:** The operating airline's flight identifier (for example, `CA6532`).
@@ -23,7 +17,7 @@ At a specific point in time, a **Flight Offer** is a **sellable combination** pr
 - **Total Selling Price:** The final amount payable, including the base fare, passenger facility charge, fuel surcharge, and taxes.
 - **Validity Period:** The period for which the offer is locked (for example, 15 minutes).
 
-## 4. Rules and Constraints
+## 3. Rules and Constraints
 
 1. **Business Identification Constraint:** The ID uniquely identifies a **Flight Offer** and is used to lock its price when an order is placed.
 2. **Aggregation Constraint:** The Total Selling Price equals the sum of the base fare, passenger facility charge, fuel surcharge, and taxes.
@@ -33,7 +27,7 @@ At a specific point in time, a **Flight Offer** is a **sellable combination** pr
 6. **Statistical Constraint:** A **Flight Offer** aggregates between `[1,5]` **Flight Segments**.
 7. **Value Domain Constraint:** A **Flight Offer** may contain a nonstop flight or a connecting itinerary operated by the same airline; it cannot contain an interline connection combination.
 
-## 5. Relationships
+## 4. Relationships
 
 - **Aggregation:** This concept aggregates between `[1,5]` **Flight Segments**.
 - **Generalization:** This concept is a specialization of **Sellable Product**.

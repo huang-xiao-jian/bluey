@@ -28,21 +28,7 @@ Example:
 A Workspace is a bounded area in which a team organizes and manages related rules.
 -->
 
-## 2. Synonyms and Aliases
-
-> List names that stakeholders use interchangeably for this concept.
-
-<!--
-Format:
-
-- {Synonym or alias}
-
-Example:
-
-- Project Space
--->
-
-## 3. Key Attributes
+## 2. Key Attributes
 
 > List business characteristics of the concept. Do not include technical implementation details.
 
@@ -56,7 +42,7 @@ Example:
 - **Status:** Indicates whether the Workspace is active or archived.
 -->
 
-### 3.1 Data Model (Optional)
+### 2.1 Data Model (Optional)
 
 > Define the TypeScript data model only when a technical visualization is essential to understand the concept.
 > Use enum for limited values instead of literal
@@ -99,7 +85,7 @@ interface Workspace {
 ```
 -->
 
-## 4. Rules and Constraints
+## 3. Rules and Constraints
 
 > State the rules that govern how the concept may be created, changed, or used.
 
@@ -114,7 +100,7 @@ Example:
 1. An archived Workspace cannot accept new Workspace Versions.
 -->
 
-## 5. Relationships
+## 4. Relationships
 
 > Describe this concept's relationships to other business concepts using the authoritative relationship vocabulary.
 

@@ -4,13 +4,7 @@
 
 A **Specification Link** is an original link extracted from a specific markdown document. It preserves what the author wrote and identifies the supported link form before any target is resolved or validated.
 
-## 2. Synonyms and Aliases
-
-- Source link
-- Authored link
-- Specification document link
-
-## 3. Key Attributes
+## 2. Key Attributes
 
 - **Type:** Identifies whether the link targets a local file, an anchor in its source document, or an anchor in another file.
 - **Text:** The complete Markdown link exactly as authored.
@@ -91,13 +85,13 @@ const crossFileAnchorLink: CrossFileAnchorSpecificationLink = {
 };
 ```
 
-## 4. Rules and Constraints
+## 3. Rules and Constraints
 
 1. A supported link extracted from a specification document is represented by exactly one **Specification Link**.
 2. A **Specification Link** remain unchanged after established
 3. A **Specification Link** exists before validation and represents the same authored material whether its target is valid or invalid.
 
-## 5. Relationships
+## 4. Relationships
 
 - **Aggregation:** A Markdown specification document contains zero or more **Specification Links**.
 - **Transformation:** Validation transforms a **Specification Link** into one

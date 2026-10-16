@@ -10,13 +10,7 @@
 
 A **Link Check Report** is the raw check result of one completed **Link Check Delegation**.
 
-## 2. Synonyms and Aliases
-
-- Raw link check report
-- Dead link report
-- Check result
-
-## 3. Key Attributes
+## 2. Key Attributes
 
 - **Check Delegation:**
 - **Check Scope:**
@@ -32,11 +26,11 @@ interface LinkCheckReport {
 }
 ```
 
-## 4. Rules and Constraints
+## 3. Rules and Constraints
 
 None!
 
-## 5. Relationships
+## 4. Relationships
 
 - **Association:** A **Link Check Report** is the result of one successfully
   completed **Link Check Delegation**.

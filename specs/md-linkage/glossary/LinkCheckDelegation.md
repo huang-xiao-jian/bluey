@@ -6,12 +6,7 @@ A **Link Check Delegation** expresses a maintainer's intent to have Markdown
 documents checked for dead links. It is a self-validating data structure used to
 assign work to the internal workflow.
 
-## 2. Synonyms and Aliases
-
-- Check delegation
-- Delegated link check
-
-## 3. Key Attributes
+## 2. Key Attributes
 
 - **Project Root:** The stable frame of reference and containment boundary for
   documents in the check.
@@ -41,7 +36,7 @@ interface LinkCheckDelegation {
 }
 ```
 
-## 4. Rules and Constraints
+## 3. Rules and Constraints
 
 1. `root` must be a non-empty absolute path.
 2. `files` must contain at least one document path, each document path must be a non-empty, concrete path string, not a glob.
@@ -56,10 +51,10 @@ interface LinkCheckDelegation {
 
 FATAL! BLOCK!
 
-## 5. Relationships
+## 4. Relationships
 
 - **Transformation:** The [Link Check Scope Builder](../roles/LinkCheckScopeBuilder.md) interprets **Link Check Delegation** to establish [Link Check Scope](./LinkCheckScope.md).
 
-## 6. Extension Points
+## 5. Extension Points
 
 None
