@@ -38,33 +38,48 @@ interface AtomicLinkCheckArtifact {
 ```mermaid
 flowchart TD
     Start([Start]) --> Initialize["Initialize link check context"]
-    Initialize --> Extract["Extract Specification Links"]
-    Extract --> DeriveSourceAnchors["Derive heading anchors"]
-    DeriveSourceAnchors --> Filter["Filter supported<br/>Specification Links"]
-    Filter --> HasLink{"Has Specification Link?"}
 
-    HasLink -- No --> Fabricate["Fabricate Atomic Link<br/>Check Artifact"]
+    subgraph Setup ["Setup"]
+        Initialize --> Extract["Extract Specification Links"]
+        Extract --> DeriveSourceAnchors["Derive heading anchors"]
+        DeriveSourceAnchors --> Filter["Filter supported<br/>Specification Links"]
+    end
+
+    Setup --> HasLink{"Has Specification Link?"}
+
+    subgraph Loop ["Link Processing"]
+        HasLink -- Yes --> TakeLink["Take the next<br/>Specification Link"]
+        TakeLink --> LinkType{"Link type?"}
+
+        subgraph InFile ["In-file Anchor"]
+            LinkType -- In-file anchor --> SourceAnchorExists{"Anchor identifies<br/>a derived heading?"}
+            SourceAnchorExists -- Yes --> AppendLive["Append one Live Link"]
+            SourceAnchorExists -- No --> AppendAnchorDead["Append one Dead Link Record<br/>AnchorNotFound"]
+        end
+
+        subgraph LocalFile ["Local File"]
+            LinkType -- Local file --> ResolveLocal["Resolve final target path"]
+            ResolveLocal --> LocalFileExists{"Target file exists?"}
+            LocalFileExists -- Yes --> AppendLive
+            LocalFileExists -- No --> AppendFileDead["Append one Dead Link Record<br/>FileNotFound"]
+        end
+
+        subgraph CrossFile ["Cross-file Anchor"]
+            LinkType -- Cross-file anchor --> ResolveCrossFile["Resolve final target path"]
+            ResolveCrossFile --> ReadTarget["Obtain target content"]
+            ReadTarget --> DeriveTargetAnchors["Derive target-document heading anchors"]
+            DeriveTargetAnchors --> TargetAnchorExists{"Anchor identifies<br/>a target-document heading?"}
+            TargetAnchorExists -- Yes --> AppendLive
+            TargetAnchorExists -- No --> AppendAnchorDead
+        end
+    end
+
+    subgraph Result ["Result Generation"]
+        AppendLive --> HasLink
+        AppendAnchorDead --> HasLink
+        AppendFileDead --> HasLink
+        HasLink -- No --> Fabricate["Fabricate Atomic Link<br/>Check Artifact"]
+    end
+
     Fabricate --> End([End])
-    HasLink -- Yes --> TakeLink["Take the next<br/>Specification Link"]
-    TakeLink --> LinkType{"Link type?"}
-
-    LinkType -- In-file anchor --> SourceAnchorExists{"Anchor identifies a derived heading?"}
-    SourceAnchorExists -- Yes --> AppendLive["Append one Live Link"]
-    SourceAnchorExists -- No --> AppendAnchorDead["Append one Dead Link Record<br/>AnchorNotFound"]
-
-    LinkType -- Local file --> ResolveLocal["Resolve final target path"]
-    ResolveLocal --> LocalFileExists{"Target file exists?"}
-    LocalFileExists -- Yes --> AppendLive
-    LocalFileExists -- No --> AppendFileDead["Append one Dead Link Record<br/>FileNotFound"]
-
-    LinkType -- Cross-file anchor --> ResolveCrossFile["Resolve final target path"]
-    ResolveCrossFile --> ReadTarget["Obtain target content"]
-    ReadTarget --> DeriveTargetAnchors["Derive target-document heading anchors"]
-    DeriveTargetAnchors --> TargetAnchorExists{"Anchor identifies a target-document heading?"}
-    TargetAnchorExists -- Yes --> AppendLive
-    TargetAnchorExists -- No --> AppendAnchorDead
-
-    AppendLive --> HasLink
-    AppendAnchorDead --> HasLink
-    AppendFileDead --> HasLink
 ```
