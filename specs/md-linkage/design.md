@@ -4,7 +4,7 @@
 
 - [Dead Link Detection Requirements for Specification Documents](spec.md)
 - [Link Check Delegation](glossary/LinkCheckDelegation.md)
-- [Dead Link Record](glossary/DeadLinkRecord.md)
+- [Resolved Specification Link](glossary/ResolvedSpecificationLink.md)
 - [Link Check Report](glossary/LinkCheckReport.md)
 - [Detect Dead Links in a Single File](stories/detect-links-in-single-file.md)
 - [Detect Dead Local File Links](stories/detect-local-file-links.md)
@@ -95,8 +95,8 @@
 
 - **Role:** Control.
 - **Purpose:** Coordinate dead link detection across the documents in one check.
-- **Responsibilities:** Check every in-scope document at most once; classify and validate each supported link; follow eligible Markdown references only in recursive mode; stop traversal at outside-root, non-Markdown, or missing targets; retain one compliant dead link record for each invalid link.
-- **Collaborators:** `LinkCheckDelegation`, `ProjectContext`, `LinkCheckScope`, `SpecificationDocumentRepository`, `SpecificationDocument`, `SpecificationLink`, `DeadLinkRecord`.
+- **Responsibilities:** Check every in-scope document at most once; classify and validate each supported link; reject a resolved target outside the project root before checking its existence or anchor; follow eligible Markdown references only in recursive mode; stop traversal at outside-root, non-Markdown, or missing targets; retain one resolved-link variant for each supported link.
+- **Collaborators:** `LinkCheckDelegation`, `ProjectContext`, `LinkCheckScope`, `SpecificationDocumentRepository`, `SpecificationDocument`, `SpecificationLink`, `ResolvedSpecificationLink`.
 
 ### SpecificationDocument
 
@@ -113,21 +113,21 @@
 - **Scope:** Only the supported link types defined by the [single-file detection epic](stories/detect-links-in-single-file.md) are represented. Other link forms are outside this model and are not validated by `DeadLinkInspector`.
 - **Collaborators:** None.
 
-### DeadLinkRecord
+### ResolvedSpecificationLink
 
 - **Role:** Entity.
-- **Purpose:** Represent one traceable invalid specification link.
-- **Responsibilities:** Preserve the project boundary and source document path, the original and parsed link, the resolved target file path and anchor details, and the single dead reason; prevent a missing cross-file target from also producing an anchor-missing reason.
-- **Data contract:** [`DeadLinkRecord`](glossary/DeadLinkRecord.md#31-data-model).
+- **Purpose:** Represent the traceable live or dead result of validating one specification link.
+- **Responsibilities:** Preserve the project boundary and source document path, the original and parsed link, and the resolved target file path and anchor details; discriminate live and dead outcomes; retain exactly one reason for a dead outcome; classify an outside-root target before file or anchor existence; prevent a missing cross-file target from also producing an anchor-missing reason.
+- **Data contract:** [`ResolvedSpecificationLink`](glossary/ResolvedSpecificationLink.md#31-data-model).
 - **Collaborators:** `SpecificationLink`.
 
 ### RawLinkCheckReport
 
 - **Role:** Entity.
 - **Purpose:** Represent the unprocessed business result of one trustworthy link check.
-- **Responsibilities:** Aggregate only the check scope and every dead link record; preserve empty collections and document-path issues; exclude totals, conclusions, grouping, sorting, summaries, and delivery concerns.
+- **Responsibilities:** Aggregate only the check scope and every dead resolved-link variant; preserve empty collections and document-path issues; exclude totals, conclusions, grouping, sorting, summaries, and delivery concerns.
 - **Data contract:** [`LinkCheckReport`](glossary/LinkCheckReport.md#31-data-model).
-- **Collaborators:** `LinkCheckScope`, `DeadLinkRecord`.
+- **Collaborators:** `LinkCheckScope`, `DeadResolvedSpecificationLink`.
 
 ### LinkCheckReportDispatcher
 
@@ -190,8 +190,14 @@ classDiagram
     class SpecificationLink {
         <<Entity>>
     }
-    class DeadLinkRecord {
+    class ResolvedSpecificationLink {
         <<Entity>>
+    }
+    class LiveResolvedSpecificationLink {
+        <<Variant>>
+    }
+    class DeadResolvedSpecificationLink {
+        <<Variant>>
     }
     class RawLinkCheckReport {
         <<Entity>>
@@ -228,11 +234,13 @@ classDiagram
     DeadLinkInspector ..> SpecificationDocumentRepository : obtains documents and target facts
     DeadLinkInspector ..> SpecificationDocument : coordinates document checks
     DeadLinkInspector ..> SpecificationLink : coordinates classification and validation
-    DeadLinkInspector ..> DeadLinkRecord : retains invalid-link outcomes
+    DeadLinkInspector ..> ResolvedSpecificationLink : retains validation outcomes
     SpecificationDocument --> SpecificationLink : contains
-    DeadLinkRecord --> SpecificationLink : reports invalidity of
+    ResolvedSpecificationLink --> SpecificationLink : resolves
+    ResolvedSpecificationLink <|-- LiveResolvedSpecificationLink : live variant
+    ResolvedSpecificationLink <|-- DeadResolvedSpecificationLink : dead variant
     RawLinkCheckReport o-- LinkCheckScope : aggregates scope
-    RawLinkCheckReport o-- DeadLinkRecord : aggregates dead links
+    RawLinkCheckReport o-- DeadResolvedSpecificationLink : aggregates
     LinkCheckReportDispatcher ..> RawLinkCheckReport : borrows for unchanged delivery
     LinkCheckReportDispatcher ..> TerminalLinkCheckReporter : requests terminal delivery
     LinkCheckReportDispatcher ..> FileLinkCheckReporter : requests file delivery
@@ -391,7 +399,7 @@ sequenceDiagram
     participant Detection as DeadLinkInspector
     participant Document as SpecificationDocument
     participant Link as SpecificationLink
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
 
     Author->>Submission: Choose one Markdown file for checking
     Submission->>Check: Initiate single-file check
@@ -400,7 +408,7 @@ sequenceDiagram
     Document-->>Detection: Provide contained links and heading anchors
     Detection->>Link: Classify each supported link
     Detection->>Record: Retain one record for each invalid link
-    Detection-->>Check: Provide all single-file dead link records
+    Detection-->>Check: Provide all single-file resolved-link variants
 ```
 
 ### Detect Dead Local File Links
@@ -409,7 +417,8 @@ sequenceDiagram
 
 #### Scenario 1: The target local file exists
 
-The link resolves to an existing local file, so validation succeeds and no dead link record is produced.
+The link resolves to an existing local file, so validation produces a live
+resolved-link variant.
 
 ```mermaid
 sequenceDiagram
@@ -425,9 +434,11 @@ sequenceDiagram
     Submission->>Check: Initiate link check
     Check->>Detection: Validate document links
     Detection->>Link: Classify and resolve the local-file validation location
+    Detection->>Access: Determine whether the resolved target remains inside the project root
+    Access-->>Detection: Target remains inside the project root
     Detection->>Access: Determine whether the local target exists
     Access-->>Detection: Target exists
-    Note over Detection: Produce no dead link record
+    Note over Detection: Produce one live resolved-link variant
 ```
 
 #### Scenario 2: The target local file does not exist
@@ -443,12 +454,14 @@ sequenceDiagram
     participant Detection as DeadLinkInspector
     participant Link as SpecificationLink
     participant Access as SpecificationDocumentRepository
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
 
     Author->>Submission: Check a document containing a missing local target
     Submission->>Check: Initiate link check
     Check->>Detection: Validate document links
     Detection->>Link: Classify and resolve the local-file validation location
+    Detection->>Access: Determine whether the resolved target remains inside the project root
+    Access-->>Detection: Target remains inside the project root
     Detection->>Access: Determine whether the local target exists
     Access-->>Detection: Target does not exist
     Detection->>Record: Preserve location, link, resolved target, and file-not-found reason
@@ -496,7 +509,10 @@ sequenceDiagram
 
 #### Scenario 5: URL-encoded paths and query parameters do not change file-existence validation
 
-The system decodes the local path and ignores query parameters for validation while preserving the original target for reporting; because the resolved file exists, no record is produced.
+The system decodes the local path and ignores query parameters for validation
+while preserving the original target for reporting; because the resolved file
+remains inside the project root and exists, validation produces a live
+resolved-link variant.
 
 ```mermaid
 sequenceDiagram
@@ -512,9 +528,38 @@ sequenceDiagram
     Submission->>Check: Initiate link check
     Check->>Detection: Validate document links
     Detection->>Link: Decode the path, ignore query parameters, and preserve the original target
+    Detection->>Access: Determine whether the resolved target remains inside the project root
+    Access-->>Detection: Target remains inside the project root
     Detection->>Access: Determine whether the resolved local target exists
     Access-->>Detection: Target exists
-    Note over Detection: Produce no dead link record
+    Note over Detection: Produce one live resolved-link variant
+```
+
+#### Scenario 6: The target resolves outside the project root
+
+The resolved target path crosses the project boundary, so validation records
+the `target-outside-project-root` reason without checking whether the target
+file or anchor exists.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Author as Specification Document Author
+    participant Submission as LinkCheckFacade
+    participant Check as LinkChecker
+    participant Detection as DeadLinkInspector
+    participant Link as SpecificationLink
+    participant Access as SpecificationDocumentRepository
+    participant Record as DeadResolvedSpecificationLink
+
+    Author->>Submission: Check a link whose target crosses the project root
+    Submission->>Check: Initiate link check
+    Check->>Detection: Validate document links
+    Detection->>Link: Resolve the target file path
+    Detection->>Access: Determine whether the resolved target remains inside the project root
+    Access-->>Detection: Target is outside the project root
+    Detection->>Record: Preserve location, link, target, and target-outside-project-root reason
+    Note over Detection,Record: Do not check file or anchor existence
 ```
 
 ### Detect Dead In-File Anchor Links
@@ -523,7 +568,8 @@ sequenceDiagram
 
 #### Scenario 1: The target in-file anchor exists
 
-The fragment matches a standard Markdown heading in the current document, so the link is valid and produces no dead link record.
+The fragment matches a standard Markdown heading in the current document, so
+validation produces a live resolved-link variant.
 
 ```mermaid
 sequenceDiagram
@@ -541,7 +587,7 @@ sequenceDiagram
     Detection->>Link: Classify the link as an in-file anchor
     Detection->>Document: Determine whether the standard-heading anchor exists in this document
     Document-->>Detection: Target heading anchor exists
-    Note over Detection: Produce no dead link record
+    Note over Detection: Produce one live resolved-link variant
 ```
 
 #### Scenario 2: The target in-file anchor does not exist
@@ -557,7 +603,7 @@ sequenceDiagram
     participant Detection as DeadLinkInspector
     participant Document as SpecificationDocument
     participant Link as SpecificationLink
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
 
     Author->>Submission: Check a document containing a missing fragment target
     Submission->>Check: Initiate link check
@@ -603,7 +649,7 @@ sequenceDiagram
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Document as SpecificationDocument
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
 
     Author->>Submission: Check a fragment supported only by a custom anchor
     Submission->>Check: Initiate link check
@@ -631,7 +677,7 @@ sequenceDiagram
     Check->>Detection: Validate document links
     Detection->>Document: Determine anchors from headings in document order
     Document-->>Detection: Match rules-1 to the second Rules heading
-    Note over Detection: Produce no dead link record
+    Note over Detection: Produce one live resolved-link variant
 ```
 
 ### Detect Dead Cross-File Anchor Links
@@ -651,12 +697,14 @@ sequenceDiagram
     participant Detection as DeadLinkInspector
     participant Link as SpecificationLink
     participant Access as SpecificationDocumentRepository
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
 
     Author->>Submission: Check a cross-file anchor whose file is missing
     Submission->>Check: Initiate link check
     Check->>Detection: Validate document links
     Detection->>Link: Parse the original link and resolve the target file path
+    Detection->>Access: Determine whether the resolved target remains inside the project root
+    Access-->>Detection: Target remains inside the project root
     Detection->>Access: Determine whether the target file exists
     Access-->>Detection: Target file does not exist
     Detection->>Record: Preserve location, link, resolved target, and file-not-found reason
@@ -676,11 +724,13 @@ sequenceDiagram
     participant Detection as DeadLinkInspector
     participant Access as SpecificationDocumentRepository
     participant Target as SpecificationDocument
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
 
     Author->>Submission: Check a cross-file anchor whose heading is missing
     Submission->>Check: Initiate link check
     Check->>Detection: Validate document links
+    Detection->>Access: Determine whether the resolved target remains inside the project root
+    Access-->>Detection: Target remains inside the project root
     Detection->>Access: Determine whether the target file exists
     Access-->>Detection: Provide existing target document
     Detection->>Target: Determine whether the standard-heading anchor exists
@@ -690,7 +740,8 @@ sequenceDiagram
 
 #### Scenario 3: Both the target file and target anchor exist
 
-Both the referenced document and its standard-heading anchor exist, so the cross-file link is valid and produces no dead link record.
+Both the referenced document and its standard-heading anchor exist, so
+validation produces a live resolved-link variant.
 
 ```mermaid
 sequenceDiagram
@@ -705,11 +756,13 @@ sequenceDiagram
     Author->>Submission: Check a valid cross-file anchor
     Submission->>Check: Initiate link check
     Check->>Detection: Validate document links
+    Detection->>Access: Determine whether the resolved target remains inside the project root
+    Access-->>Detection: Target remains inside the project root
     Detection->>Access: Determine whether the target file exists
     Access-->>Detection: Provide existing target document
     Detection->>Target: Determine whether the standard-heading anchor exists
     Target-->>Detection: Target heading anchor exists
-    Note over Detection: Produce no dead link record
+    Note over Detection: Produce one live resolved-link variant
 ```
 
 #### Scenario 4: Relative paths, URL encoding, and query parameters
@@ -731,11 +784,13 @@ sequenceDiagram
     Submission->>Check: Initiate link check
     Check->>Detection: Validate document links
     Detection->>Link: Resolve relative path, decode it, ignore query parameters, and preserve original target
+    Detection->>Access: Determine whether the resolved target remains inside the project root
+    Access-->>Detection: Target remains inside the project root
     Detection->>Access: Obtain the resolved target document
     Access-->>Detection: Provide existing target document
     Detection->>Target: Determine whether the standard-heading anchor exists
     Target-->>Detection: Target heading anchor exists
-    Note over Detection: Produce no dead link record
+    Note over Detection: Produce one live resolved-link variant
 ```
 
 #### Scenario 5: Duplicate target headings use GitHub-compatible suffixes
@@ -755,11 +810,13 @@ sequenceDiagram
     Author->>Submission: Check a cross-file link to the second duplicate Rules heading
     Submission->>Check: Initiate link check
     Check->>Detection: Validate document links
+    Detection->>Access: Determine whether the resolved target remains inside the project root
+    Access-->>Detection: Target remains inside the project root
     Detection->>Access: Obtain the target document
     Access-->>Detection: Provide existing target document
     Detection->>Target: Determine anchors from headings in document order
     Target-->>Detection: Match rules-1 to the second Rules heading
-    Note over Detection: Produce no dead link record
+    Note over Detection: Produce one live resolved-link variant
 ```
 
 ### Detect Dead Links in a File Collection
@@ -787,7 +844,7 @@ sequenceDiagram
     Selection->>Scope: Retain a.md and b.md once
     Check->>Detection: Check both selected documents
     Detection-->>Check: Provide one invalid-link outcome from each document
-    Check->>Report: Aggregate both files and both dead link records
+    Check->>Report: Aggregate both files and both dead resolved-link variants
 ```
 
 #### Scenario 2: An absolute path identifies a file inside the project root
@@ -882,7 +939,7 @@ sequenceDiagram
     participant Scope as LinkCheckScope
     participant Detection as DeadLinkInspector
     participant Access as SpecificationDocumentRepository
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
 
     Maintainer->>Submission: Delegate a starting document in recursive mode
     Submission->>Check: Pass the delegation unchanged
@@ -890,7 +947,7 @@ sequenceDiagram
     Detection->>Access: Obtain each reachable in-root Markdown document
     Detection->>Scope: Retain starting and reachable documents once
     Detection->>Record: Preserve invalid link from the indirectly reached document
-    Detection-->>Check: Provide scope and traceable dead link records
+    Detection-->>Check: Provide scope and traceable dead resolved-link variants
 ```
 
 #### Scenario 2: Shallow mode checks only selected files
@@ -926,7 +983,7 @@ sequenceDiagram
     participant Detection as DeadLinkInspector
     participant Access as SpecificationDocumentRepository
     participant Scope as LinkCheckScope
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
 
     Maintainer->>Submission: Select the starting document in recursive mode
     Submission->>Check: Initiate recursive check
@@ -948,7 +1005,7 @@ sequenceDiagram
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Scope as LinkCheckScope
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
 
     Maintainer->>Submission: Request recursive checking with converging references
     Submission->>Check: Initiate recursive check
@@ -971,7 +1028,7 @@ sequenceDiagram
     participant Check as LinkChecker
     participant Detection as DeadLinkInspector
     participant Scope as LinkCheckScope
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
 
     Maintainer->>Submission: Request recursive checking of a cyclic reference chain
     Submission->>Check: Initiate recursive check
@@ -995,7 +1052,7 @@ sequenceDiagram
     participant Detection as DeadLinkInspector
     participant Access as SpecificationDocumentRepository
     participant Scope as LinkCheckScope
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
 
     Maintainer->>Submission: Request recursive checking with a missing referenced file
     Submission->>Check: Initiate recursive check
@@ -1034,7 +1091,8 @@ sequenceDiagram
 
 #### Scenario 2: Detection succeeds with dead links
 
-The check completes successfully with an invalid link, so the raw report combines the check scope with the compliant dead link record.
+The check completes successfully with an invalid link, so the raw report
+combines the check scope with the compliant dead resolved-link variant.
 
 ```mermaid
 sequenceDiagram
@@ -1043,17 +1101,17 @@ sequenceDiagram
     participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Scope as LinkCheckScope
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
     participant Report as RawLinkCheckReport
 
     Maintainer->>Submission: Request a link check
     Submission->>Check: Initiate link check
     Scope-->>Check: Provide successful check scope
-    Record-->>Check: Provide one compliant dead link record
-    Check->>Report: Aggregate scope and the dead link record
+    Record-->>Check: Provide one compliant dead resolved-link variant
+    Check->>Report: Aggregate scope and the dead resolved-link variant
 ```
 
-#### Scenario 3: The report retains multiple raw dead link records
+#### Scenario 3: The report retains multiple dead resolved-link variants
 
 The check produces records from multiple documents, and the raw report retains every original fact without calculating totals or reorganizing the results.
 
@@ -1064,13 +1122,13 @@ sequenceDiagram
     participant Submission as LinkCheckFacade
     participant Check as LinkChecker
     participant Scope as LinkCheckScope
-    participant Record as DeadLinkRecord
+    participant Record as DeadResolvedSpecificationLink
     participant Report as RawLinkCheckReport
 
     Maintainer->>Submission: Request a multi-document link check
     Submission->>Check: Initiate link check
     Scope-->>Check: Provide successful multi-document scope
-    Record-->>Check: Provide every traceable dead link record
+    Record-->>Check: Provide every traceable dead resolved-link variant
     Check->>Report: Aggregate scope and every record unchanged
     Note over Report: Do not derive totals, grouping, sorting, or summaries
 ```

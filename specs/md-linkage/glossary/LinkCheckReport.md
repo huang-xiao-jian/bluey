@@ -4,7 +4,7 @@
 
 - [Link Check Delegation](./LinkCheckDelegation.md)
 - [Link Check Scope](./LinkCheckScope.md)
-- [Dead Link Record](./DeadLinkRecord.md)
+- [Resolved Specification Link](./ResolvedSpecificationLink.md)
 
 ## 1. Definition
 
@@ -20,7 +20,7 @@ A **Link Check Report** is the raw check result of one completed **Link Check De
 
 - **Check Delegation:**
 - **Check Scope:**
-- **Dead Link Records:**
+- **Dead Resolved Specification Links:**
 
 ### 3.1 Data Model
 
@@ -28,7 +28,7 @@ A **Link Check Report** is the raw check result of one completed **Link Check De
 interface LinkCheckReport {
   delegation: LinkCheckDelegation;
   scope: LinkCheckScope;
-  deadLinks: DeadLinkRecord[];
+  deadLinks: DeadResolvedSpecificationLink[];
 }
 ```
 
@@ -42,4 +42,5 @@ None!
   completed **Link Check Delegation**.
 - **Aggregation:** A **Link Check Report** contains one **Link Check Scope**
   without changing its contents.
-- **Aggregation:** A **Link Check Report** aggregates zero or more **Dead Link Records** without changing their contents.
+- **Aggregation:** A **Link Check Report** aggregates zero or more dead
+  **Resolved Specification Link** variants without changing their contents.

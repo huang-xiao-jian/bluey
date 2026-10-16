@@ -5,7 +5,7 @@
 - [Single-Document Check](./single-document-check.md)
 - [Link Check Delegation](../../glossary/LinkCheckDelegation.md)
 - [Link Check Scope](../../glossary/LinkCheckScope.md)
-- [Live Link](../../glossary/LiveLink.md)
+- [Resolved Specification Link](../../glossary/ResolvedSpecificationLink.md)
 
 ## Brief Description
 
@@ -29,7 +29,7 @@ interface BatchLinkCheckTask {
 
 ```ts
 interface AtomicLinkCheckArtifact {
-  readonly deadLinks: readonly DeadLinkRecord[];
+  readonly deadLinks: readonly DeadResolvedSpecificationLink[];
 }
 ```
 
@@ -57,15 +57,13 @@ flowchart TD
 
     subgraph RecursiveDiscovery ["Recursive Discovery: Enqueue New Targets"]
         direction TB
-        HasLiveLink{"Has more Live Link?"}
-        HasLiveLink -- No --> HasPending
-        HasLiveLink -- Yes --> TakeLiveLink["Take the first live link"]
-        TakeLiveLink --> EligibleTarget{"Target satisfy root constraint?"}
-        EligibleTarget -- No --> HasLiveLink
-        EligibleTarget -- Yes --> KnownTarget{"Target already pending<br/>or checked?"}
-        KnownTarget -- Yes --> HasLiveLink
+        HasLiveVariant{"Has another live resolved-link variant?"}
+        HasLiveVariant -- No --> HasPending
+        HasLiveVariant -- Yes --> TakeLiveVariant["Take the first live resolved-link variant"]
+        TakeLiveVariant --> KnownTarget{"Target already pending<br/>or checked?"}
+        KnownTarget -- Yes --> HasLiveVariant
         KnownTarget -- No --> EnqueueTarget["Append target to the pending collection"]
-        EnqueueTarget --> HasLiveLink
+        EnqueueTarget --> HasLiveVariant
     end
 
     ProduceResult --> End([End])

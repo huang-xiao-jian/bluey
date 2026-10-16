@@ -3,13 +3,12 @@
 ## Prerequities
 
 - [Specification Link](../../glossary/SpecificationLink.md)
-- [Live Link](../../glossary/LiveLink.md)
-- [Dead Link Record](../../glossary/DeadLinkRecord.md)
+- [Resolved Specification Link](../../glossary/ResolvedSpecificationLink.md)
 
 ## Brief Description
 
 Validate every **Specification Link** in one document and classify
-each link as either a **Live Link** or a **Dead Link Record**.
+each link as either a live or dead **Resolved Specification Link** variant.
 
 ## Input
 
@@ -28,8 +27,8 @@ interface AtomicLinkCheckTask {
 
 ```ts
 interface AtomicLinkCheckArtifact {
-  readonly liveLinks: readonly LiveLink[];
-  readonly deadLinks: readonly DeadLinkRecord[];
+  readonly liveLinks: readonly LiveResolvedSpecificationLink[];
+  readonly deadLinks: readonly DeadResolvedSpecificationLink[];
 }
 ```
 
@@ -53,20 +52,26 @@ flowchart TD
 
         subgraph InFile ["In-file Anchor"]
             LinkType -- In-file anchor --> SourceAnchorExists{"Anchor identifies<br/>a derived heading?"}
-            SourceAnchorExists -- Yes --> AppendLive["Append one Live Link"]
-            SourceAnchorExists -- No --> AppendAnchorDead["Append one Dead Link Record<br/>AnchorNotFound"]
+            SourceAnchorExists -- Yes --> AppendLive["Append one live resolved-link variant"]
+            SourceAnchorExists -- No --> AppendAnchorDead["Append one dead resolved-link variant<br/>AnchorNotFound"]
         end
 
         subgraph LocalFile ["Local File"]
             LinkType -- Local file --> ResolveLocal["Resolve final target path"]
-            ResolveLocal --> LocalFileExists{"Target file exists?"}
+            ResolveLocal --> LocalTargetWithinRoot{"Target remains<br/>inside root?"}
+            LocalTargetWithinRoot -- No --> AppendOutsideRootDead["Append one dead resolved-link variant<br/>TargetOutsideProjectRoot"]
+            LocalTargetWithinRoot -- Yes --> LocalFileExists{"Target file exists?"}
             LocalFileExists -- Yes --> AppendLive
-            LocalFileExists -- No --> AppendFileDead["Append one Dead Link Record<br/>FileNotFound"]
+            LocalFileExists -- No --> AppendFileDead["Append one dead resolved-link variant<br/>FileNotFound"]
         end
 
         subgraph CrossFile ["Cross-file Anchor"]
             LinkType -- Cross-file anchor --> ResolveCrossFile["Resolve final target path"]
-            ResolveCrossFile --> ReadTarget["Obtain target content"]
+            ResolveCrossFile --> CrossTargetWithinRoot{"Target remains<br/>inside root?"}
+            CrossTargetWithinRoot -- No --> AppendOutsideRootDead
+            CrossTargetWithinRoot -- Yes --> CrossFileExists{"Target file exists?"}
+            CrossFileExists -- No --> AppendFileDead
+            CrossFileExists -- Yes --> ReadTarget["Obtain target content"]
             ReadTarget --> DeriveTargetAnchors["Derive target-document heading anchors"]
             DeriveTargetAnchors --> TargetAnchorExists{"Anchor identifies<br/>a target-document heading?"}
             TargetAnchorExists -- Yes --> AppendLive
@@ -76,6 +81,7 @@ flowchart TD
 
     subgraph Result ["Result Generation"]
         AppendLive --> HasLink
+        AppendOutsideRootDead --> HasLink
         AppendAnchorDead --> HasLink
         AppendFileDead --> HasLink
         HasLink -- No --> Fabricate["Fabricate Atomic Link<br/>Check Artifact"]

@@ -84,9 +84,9 @@ const inFileAnchorLink: InFileAnchorSpecificationLink = {
 
 const crossFileAnchorLink: CrossFileAnchorSpecificationLink = {
   type: SpecificationLinkType.CrossFileAnchor,
-  text: "[Data model](./DeadLinkRecord.md#31-data-model)",
+  text: "[Data model](./ResolvedSpecificationLink.md#31-data-model)",
   name: "Data model",
-  path: "./DeadLinkRecord.md",
+  path: "./ResolvedSpecificationLink.md",
   anchor: "31-data-model",
 };
 ```
@@ -100,7 +100,9 @@ const crossFileAnchorLink: CrossFileAnchorSpecificationLink = {
 ## 5. Relationships
 
 - **Aggregation:** A Markdown specification document contains zero or more **Specification Links**.
-- **Transformation:** An invalid **Specification Link** produces one [Dead Link Record](./DeadLinkRecord.md).
+- **Transformation:** Validation transforms a **Specification Link** into one
+  live or dead [Resolved Specification Link](./ResolvedSpecificationLink.md)
+  variant.
 
 ## References
 

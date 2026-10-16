@@ -10,7 +10,7 @@
 
 ## 数据结构
 
-数据库表结构请参考 [Data model](./DeadLinkRecord.md#31-data-model)，其中包含了所有核心实体的字段定义和关联关系。如果需要扩展新的业务模块，建议先在此文档中补充对应的表设计。
+数据库表结构请参考 [Data model](../ResolvedSpecificationLink.md#31-data-model)，其中包含了所有核心实体的字段定义和关联关系。如果需要扩展新的业务模块，建议先在此文档中补充对应的表设计。
 
 ## 快速上手
 
