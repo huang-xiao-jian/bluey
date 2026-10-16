@@ -1,12 +1,12 @@
 # Link Check Report
 
-## Prerequisite Dependencies
+## Prerequities
 
 - [Link Check Delegation](./LinkCheckDelegation.md)
 - [Link Check Scope](./LinkCheckScope.md)
 - [Dead Link Record](./DeadLinkRecord.md)
 
-## 1. Business Definition
+## 1. Definition
 
 A **Link Check Report** is the raw business result of one completed link check.
 It records the initial Markdown documents delegated to the check, any non-fatal

@@ -32,31 +32,26 @@ enum LinkCheckScopeIssueType {
 }
 
 interface LinkCheckScopeIssue {
-  filepath: string;
+  // the original document path
+  path: string;
+  // the resolved absolute path
+  resolvedPath: string;
+  // the cause for issue
   issueType: LinkCheckScopeIssueType;
 }
 
 interface LinkCheckScope {
-  files: string[];
-  issues: LinkCheckScopeIssue[];
+  readonly files: readonly string[];
+  readonly issues: Readonly<LinkCheckScopeIssue>[];
 }
 ```
 
-## 4. Business Rules and Constraints
+## 4. Rules and Constraints
 
-1. Every file is an eligible Markdown document identified relative to the
-   resolved project root.
-2. Each document appears at most once in `files`.
-3. Each issue preserves the original delegated path and a stable issue type.
-4. A document outside the project boundary cannot appear in `files`.
-5. The file and issue collections may be empty.
-6. The scope remains unchanged after it has been established.
+1. The scope remains unchanged after it has been established.
+2. A resolved path with issues should not appear in `files`.
+3. The resolved path in `files` is unique
 
 ## 5. Relationships
 
-- **Construction:** The
-  [Link Check Scope Builder](../roles/LinkCheckScopeBuilder.md) establishes one
-  **Link Check Scope** from one **Link Check Delegation**.
-- **Issue Semantics:** The **Link Check Scope Builder** defines the path
-  exceptions represented by `issues`.
-- **Aggregation:** One [Link Check Report](./LinkCheckReport.md) contains the scope as one task descriptor.
+- **Aggregation:** [Link Check Report](./LinkCheckReport.md) contains the scope as one task descriptor.
