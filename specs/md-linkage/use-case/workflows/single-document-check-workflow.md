@@ -33,29 +33,38 @@ interface AtomicLinkCheckArtifact {
 }
 ```
 
-## Steps
+## Workflow
 
-1. Initialize empty live-link and dead-link result collections.
-2. Extract **Specification Link** from the supplied content in authored order.
-3. Derive the source document's supported heading anchors from the supplied content.
-4. Filter supported **Specification Link** for the remaining steps.
-5. For each established **Specification Link**, apply the branch for its type:
-   1. For an in-file anchor link, resolve the target to the source document:
-      1. If the anchor identifies a derived source-document heading, append one
-         **Live Link**.
-      2. Otherwise, append one **Dead Link Record** with
-         `DeadReason.AnchorNotFound`.
-      3. Continue with the next link.
-   2. For a local-file or cross-file anchor link, :
-      1. resolve the target path relative to the source document and within the project root
-      2. If the link is a local-file link:
-         1. If the target file does not exist, append one **Dead Link Record** with
-            `DeadReason.FileNotFound`, then continue with the next link.
-         2. Otherwise Append one **Live Link**
-         3. Then continue with the next link.
-      3. If the link is a cross-file anchor link:
-         1. obtain the target content through the read-only target-access boundary
-         2. derive its supported heading anchors.
-         3. If the anchor identifies a derived target-document heading, append one **Live Link**.
-         4. Otherwise, append one **Dead Link Record** with `DeadReason.AnchorNotFound`.
-6. Fabricate the **Atomic Link Check Artifact** after every established **Specification Link** has produced exactly one outcome.
+```mermaid
+flowchart TD
+    Start([Start]) --> Initialize["Initialize link check context"]
+    Initialize --> Extract["Extract Specification Links"]
+    Extract --> DeriveSourceAnchors["Derive heading anchors"]
+    DeriveSourceAnchors --> Filter["Filter supported<br/>Specification Links"]
+    Filter --> HasLink{"Has Specification Link?"}
+
+    HasLink -- No --> Fabricate["Fabricate Atomic Link<br/>Check Artifact"]
+    Fabricate --> End([End])
+    HasLink -- Yes --> TakeLink["Take the next<br/>Specification Link"]
+    TakeLink --> LinkType{"Link type?"}
+
+    LinkType -- In-file anchor --> SourceAnchorExists{"Anchor identifies a derived heading?"}
+    SourceAnchorExists -- Yes --> AppendLive["Append one Live Link"]
+    SourceAnchorExists -- No --> AppendAnchorDead["Append one Dead Link Record<br/>AnchorNotFound"]
+
+    LinkType -- Local file --> ResolveLocal["Resolve final target path"]
+    ResolveLocal --> LocalFileExists{"Target file exists?"}
+    LocalFileExists -- Yes --> AppendLive
+    LocalFileExists -- No --> AppendFileDead["Append one Dead Link Record<br/>FileNotFound"]
+
+    LinkType -- Cross-file anchor --> ResolveCrossFile["Resolve final target path"]
+    ResolveCrossFile --> ReadTarget["Obtain target content"]
+    ReadTarget --> DeriveTargetAnchors["Derive target-document heading anchors"]
+    DeriveTargetAnchors --> TargetAnchorExists{"Anchor identifies a target-document heading?"}
+    TargetAnchorExists -- Yes --> AppendLive
+    TargetAnchorExists -- No --> AppendAnchorDead
+
+    AppendLive --> HasLink
+    AppendAnchorDead --> HasLink
+    AppendFileDead --> HasLink
+```
