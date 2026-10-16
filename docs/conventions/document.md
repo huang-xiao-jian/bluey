@@ -22,6 +22,10 @@ more specific file-level instruction overrides them.
 
 ## Links
 
+- When a document depends on reference files, add a `Prerequities` section near
+  the beginning and list the reference links there.
+- After a reference is listed under `Prerequities`, use its **bold name** in
+  the remaining document instead of repeating the link.
 - Use descriptive link text.
 - Link to the most specific relevant file or section.
 - Avoid adding cross-links between peer files in `docs/` by default; the

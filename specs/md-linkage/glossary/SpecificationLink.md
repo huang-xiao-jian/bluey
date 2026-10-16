@@ -1,8 +1,8 @@
 # Specification Link
 
-## 1. Business Definition
+## 1. Definition
 
-A **Specification Link** is an original Markdown link extracted from a specification document for link checking. It preserves what the author wrote and identifies the supported link form before any target is resolved or validated.
+A **Specification Link** is an original link extracted from a specific markdown document. It preserves what the author wrote and identifies the supported link form before any target is resolved or validated.
 
 ## 2. Synonyms and Aliases
 
@@ -65,7 +65,7 @@ type SpecificationLink =
   | CrossFileAnchorSpecificationLink;
 ```
 
-#### Examples
+### Data Model Examples
 
 ```ts
 const localFileLink: LocalFileSpecificationLink = {
@@ -91,19 +91,17 @@ const crossFileAnchorLink: CrossFileAnchorSpecificationLink = {
 };
 ```
 
-## 4. Business Rules and Constraints
+## 4. Rules and Constraints
 
-1. Each supported Markdown link extracted from a specification document is represented by exactly one **Specification Link**.
-2. The complete link text is preserved exactly as authored. Its name, path, and anchor are parsed from that text without replacing the original text.
+1. A supported link extracted from a specification document is represented by exactly one **Specification Link**.
+2. A **Specification Link** remain unchanged after established
 3. A **Specification Link** exists before validation and represents the same authored material whether its target is valid or invalid.
-4. Target resolution, anchor normalization, and validity determination do not change the **Specification Link**.
 
 ## 5. Relationships
 
 - **Aggregation:** A Markdown specification document contains zero or more **Specification Links**.
-- **Transformation:** An invalid **Specification Link** produces one [Dead Link Record](./DeadLinkRecord.md). A valid **Specification Link** does not produce a dead link record.
+- **Transformation:** An invalid **Specification Link** produces one [Dead Link Record](./DeadLinkRecord.md).
 
-## 6. Scope Boundaries
+## References
 
-- **Includes:** Original supported Markdown links and their authored name, path, and anchor components.
-- **Excludes:** Unsupported link forms, source-document selection, resolved target paths, normalized anchors, validity results, failure reasons, and report presentation.
+- [Specification Link Material](./assets/SpecificationLinkMaterial.md) A simple markdown material that includes links
