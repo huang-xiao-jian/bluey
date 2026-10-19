@@ -1,9 +1,5 @@
 # 面向对象设计分析：发布短视频
 
-> 本文档基于"发布短视频"用例规约（references/case-study-publish-video-spec.md），
-> 按照面向对象设计流程五步法（references/design-process-steps.md）进行完整的设计分析，
-> 作为方法论落地的参考示例。
-
 ---
 
 ## 步骤一：名词提取 —— 识别业务实体
@@ -157,16 +153,16 @@
 
 ### 最终候选类清单
 
-| 序号 | 类名                            | 职责                                           | 协作类                                                                                             |
-| ---- | ------------------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| 1    | VideoPublishApplication         | 承载一次发布申请的完整生命周期，管理申请单状态 | VideoContent, ReviewFeedback, VideoPublishApplicationManager                                       |
-| 2    | VideoContent                    | 代表被发布的视频内容实体                       | VideoPublishApplication                                                                            |
-| 3    | ReviewFeedback                  | 记录审核反馈意见                               | VideoPublishApplication                                                                            |
-| 4    | VideoContentValidator           | 判断视频内容是否符合发布规则                   | VideoPublishWorkflowScheduler                                                                      |
-| 5    | ContentReviewer                 | 判断内容是否通过审核                           | VideoPublishWorkflowScheduler                                                                      |
-| 6    | PublishNotificationDrafter      | 撰写并发送反馈通知给创作者                     | VideoPublishApplicationManager                                                                     |
-| 7    | VideoPublishApplicationManager  | 管理发布申请单的生命周期（创建、更新、终止）   | VideoPublishWorkflowScheduler, VideoPublishCancellationHandler, VideoPublishTimeoutHandler         |
-| 8    | VideoPublishWorkflowScheduler   | 编排短视频发布的整体流程                       | VideoContentValidator, ContentReviewer, PublishNotificationDrafter, VideoPublishApplicationManager |
-| 9    | VideoPublishCancellationHandler | 处理创作者主动撤销发布申请                     | VideoPublishApplicationManager                                                                     |
-| 10   | VideoPublishTimeoutInspector    | 检测创作者是否超时未更新内容                   | VideoPublishApplicationManager                                                                     |
-| 11   | VideoPublishTimeoutHandler      | 执行超时自动关闭流程                           | VideoPublishApplicationManager                                                                     |
+| 序号 | 类名                            | 职责                                         | 协作类                                                                                             |
+| ---- | ------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| 1    | VideoPublishApplication         | 负责发布申请的完整生命周期，管理申请单状态   | VideoContent, ReviewFeedback, VideoPublishApplicationManager                                       |
+| 2    | VideoContent                    | 代表被发布的视频内容实体                     | VideoPublishApplication                                                                            |
+| 3    | ReviewFeedback                  | 记录审核反馈意见                             | VideoPublishApplication                                                                            |
+| 4    | VideoContentValidator           | 判断视频内容是否符合发布规则                 | VideoPublishWorkflowScheduler                                                                      |
+| 5    | ContentReviewer                 | 判断内容是否通过审核                         | VideoPublishWorkflowScheduler                                                                      |
+| 6    | PublishNotificationDrafter      | 撰写并发送反馈通知给创作者                   | VideoPublishApplicationManager                                                                     |
+| 7    | VideoPublishApplicationManager  | 管理发布申请单的生命周期（创建、更新、终止） | VideoPublishWorkflowScheduler, VideoPublishCancellationHandler, VideoPublishTimeoutHandler         |
+| 8    | VideoPublishWorkflowScheduler   | 编排短视频发布的整体流程                     | VideoContentValidator, ContentReviewer, PublishNotificationDrafter, VideoPublishApplicationManager |
+| 9    | VideoPublishCancellationHandler | 处理创作者主动撤销发布申请                   | VideoPublishApplicationManager                                                                     |
+| 10   | VideoPublishTimeoutInspector    | 检测创作者是否超时未更新内容                 | VideoPublishApplicationManager                                                                     |
+| 11   | VideoPublishTimeoutHandler      | 执行超时自动关闭流程                         | VideoPublishApplicationManager                                                                     |

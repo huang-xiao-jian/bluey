@@ -19,8 +19,8 @@ description: 执行从用例规约到设计文档产出的面向对象设计流�
 
 ## 参考资源
 
-- [用例规约案例](./references/case-study-publish-video-spec.md)
 - [面向对象设计命名规范](references/naming-conventions.md)
+- [用例规约案例-发布短视频](./references/use-case-specification-publish-video.md)
 
 ## 设计流程
 
@@ -53,4 +53,4 @@ description: 执行从用例规约到设计文档产出的面向对象设计流�
 参考资源：
 
 - [思考过程文档模板](references/thinking-process-template.md)
-- [思考过程文档案例-发布短视频](references/case-study-publish-video-design.md)
+- [思考过程文档案例-发布短视频](references/thinking-process-publish-video-example.md)
