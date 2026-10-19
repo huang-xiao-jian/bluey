@@ -6,7 +6,6 @@
 - [Resolved Specification Link](../glossary/ResolvedSpecificationLink.md)
 - [Link Check Delegation](../glossary/LinkCheckDelegation.md)
 - [Link Check Scope](../glossary/LinkCheckScope.md)
-- [Link Check Result](../glossary/LinkCheckResult.md)
 
 ## Actors
 
