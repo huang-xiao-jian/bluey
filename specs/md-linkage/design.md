@@ -112,10 +112,11 @@
 
 ## Candidate-Class Visualization
 
-The diagrams present the model from the complete use case into its two
-subprocess levels. Boundary classes are repeated where they connect adjacent
-levels. The candidate-class descriptions remain the complete source of
-collaboration details.
+The diagrams present static class relationships at the use-case, batch-check,
+and single-document levels. They use composition, aggregation, association,
+dependency, and multiplicity rather than execution order. Boundary classes are
+repeated where they connect adjacent levels. Relationship labels are omitted,
+while the `Input`, `Output`, and `Caller` class stereotypes are preserved.
 
 ### Use-Case Overview
 
@@ -135,31 +136,34 @@ classDiagram
     class LinkCheckScope
     class SpecificationDocumentBatchChecker
     class LinkCheckReportFabricator
+    class ResolvedSpecificationLink
 
-    SpecificationDocumentMaintainer --> LinkCheckDelegation
-    SpecificationDocumentMaintainer --> LinkCheckWorkflowScheduler
-    LinkCheckDelegation --> LinkCheckWorkflowScheduler
-    LinkCheckWorkflowScheduler --> LinkCheckScopeBuilder
-    LinkCheckScopeBuilder --> LinkCheckScope
-    LinkCheckWorkflowScheduler --> SpecificationDocumentBatchChecker
-    LinkCheckWorkflowScheduler --> LinkCheckReportFabricator
-    LinkCheckReportFabricator --> LinkCheckReport
-    LinkCheckReport --> SpecificationDocumentMaintainer
+    SpecificationDocumentMaintainer ..> LinkCheckDelegation
+    SpecificationDocumentMaintainer ..> LinkCheckWorkflowScheduler
+    LinkCheckWorkflowScheduler ..> LinkCheckDelegation
+    LinkCheckWorkflowScheduler ..> LinkCheckScopeBuilder
+    LinkCheckWorkflowScheduler ..> SpecificationDocumentBatchChecker
+    LinkCheckWorkflowScheduler ..> LinkCheckReportFabricator
+    LinkCheckWorkflowScheduler ..> LinkCheckReport
+    LinkCheckScopeBuilder ..> LinkCheckDelegation
+    LinkCheckScopeBuilder ..> LinkCheckScope
+    LinkCheckReportFabricator ..> LinkCheckDelegation
+    LinkCheckReportFabricator ..> LinkCheckScope
+    LinkCheckReportFabricator ..> ResolvedSpecificationLink
+    LinkCheckReportFabricator ..> LinkCheckReport
+    LinkCheckReport "1" o-- "1" LinkCheckDelegation
+    LinkCheckReport "1" o-- "1" LinkCheckScope
+    LinkCheckReport "1" o-- "0..*" ResolvedSpecificationLink
+    SpecificationDocumentMaintainer ..> LinkCheckReport
 ```
 
 ### Specification Document Batch Check
 
-**Subprocess contract:**
-
-- **Trigger:** `LinkCheckWorkflowScheduler` starts the batch check after a
-  `LinkCheckScope` has been established.
-- **Input:** The `LinkCheckDelegation` supplies the traversal mode, and the
-  `LinkCheckScope` supplies the ordered starting documents.
-- **Working set:** `SpecificationDocumentRepository` tracks pending and checked
-  documents and admits each starting or recursively discovered document once.
-- **Output:** The aggregated dead `ResolvedSpecificationLink` instances from
-  every checked document. Live instances remain internal and support recursive
-  discovery when requested.
+`LinkCheckScope` and `SpecificationDocumentRepository` aggregate documents for
+different lifetimes: the scope preserves accepted starting documents, while the
+repository preserves the mutable working set for one batch check. The batch
+checker depends on both aggregates and on its document-checking and discovery
+collaborators.
 
 ```mermaid
 classDiagram
@@ -170,27 +174,27 @@ classDiagram
 
     class LinkCheckDelegation
     <<Input>> LinkCheckDelegation
-
     class LinkCheckScope
     <<Input>> LinkCheckScope
-
     class SpecificationDocumentRepository
-
+    class SpecificationDocument
     class SpecificationDocumentBatchChecker
     class SpecificationDocumentChecker
     class ReferencedDocumentDiscoverer
-
     class ResolvedSpecificationLink
 
-    LinkCheckWorkflowScheduler --> SpecificationDocumentBatchChecker
-    LinkCheckDelegation --> SpecificationDocumentBatchChecker
-    LinkCheckScope --> SpecificationDocumentBatchChecker
-    SpecificationDocumentBatchChecker --> SpecificationDocumentRepository
-    SpecificationDocumentBatchChecker --> SpecificationDocumentChecker
-    SpecificationDocumentBatchChecker --> ReferencedDocumentDiscoverer
-    SpecificationDocumentChecker --> ResolvedSpecificationLink
-    ReferencedDocumentDiscoverer --> ResolvedSpecificationLink
-    ReferencedDocumentDiscoverer --> SpecificationDocumentRepository
+    LinkCheckWorkflowScheduler ..> SpecificationDocumentBatchChecker
+    LinkCheckScope "1" o-- "0..*" SpecificationDocument
+    SpecificationDocumentRepository "1" o-- "0..*" SpecificationDocument
+    SpecificationDocumentBatchChecker --> "1" SpecificationDocumentRepository
+    SpecificationDocumentBatchChecker ..> LinkCheckDelegation
+    SpecificationDocumentBatchChecker ..> LinkCheckScope
+    SpecificationDocumentBatchChecker ..> SpecificationDocumentChecker
+    SpecificationDocumentBatchChecker ..> ReferencedDocumentDiscoverer
+    SpecificationDocumentBatchChecker ..> ResolvedSpecificationLink
+    ReferencedDocumentDiscoverer ..> LinkCheckDelegation
+    ReferencedDocumentDiscoverer ..> ResolvedSpecificationLink
+    ReferencedDocumentDiscoverer ..> SpecificationDocumentRepository
 ```
 
 ### Single-Document Subprocess
@@ -204,22 +208,26 @@ classDiagram
 
     class SpecificationDocument
     <<Input>> SpecificationDocument
-
     class SpecificationDocumentChecker
     class SpecificationLinkExtractor
     class SpecificationHeadingCataloger
     class SpecificationLinkChecker
     class SpecificationLink
-
     class ResolvedSpecificationLink
     <<Output>> ResolvedSpecificationLink
 
-    SpecificationDocumentBatchChecker --> SpecificationDocumentChecker
-    SpecificationDocument --> SpecificationDocumentChecker
-    SpecificationDocumentChecker --> SpecificationLinkExtractor
-    SpecificationDocumentChecker --> SpecificationHeadingCataloger
-    SpecificationLinkExtractor --> SpecificationLink
-    SpecificationLink --> SpecificationLinkChecker
-    SpecificationHeadingCataloger --> SpecificationLinkChecker
-    SpecificationLinkChecker --> ResolvedSpecificationLink
+    SpecificationDocumentBatchChecker ..> SpecificationDocumentChecker
+    SpecificationDocument "1" *-- "0..*" SpecificationLink
+    ResolvedSpecificationLink "1" --> "1" SpecificationLink
+    SpecificationDocumentChecker ..> SpecificationDocument
+    SpecificationDocumentChecker ..> SpecificationLinkExtractor
+    SpecificationDocumentChecker ..> SpecificationHeadingCataloger
+    SpecificationDocumentChecker ..> SpecificationLinkChecker
+    SpecificationDocumentChecker ..> ResolvedSpecificationLink
+    SpecificationLinkExtractor ..> SpecificationDocument
+    SpecificationLinkExtractor ..> SpecificationLink
+    SpecificationHeadingCataloger ..> SpecificationDocument
+    SpecificationLinkChecker ..> SpecificationLink
+    SpecificationLinkChecker ..> SpecificationHeadingCataloger
+    SpecificationLinkChecker ..> ResolvedSpecificationLink
 ```

@@ -206,6 +206,48 @@ No additional exception-handling class is justified. The specification assigns i
 - `SpecificationHeadingCataloger` — Establishes valid heading identifiers.
 - `SpecificationLinkChecker` — Resolves and classifies one link.
 
+## Step 6: Define Class Relationships
+
+The class model distinguishes stable object structure from temporary use. No
+relationship label is required because the UML line type and multiplicity carry
+the relationship meaning.
+
+### Composition
+
+- One `SpecificationDocument` composes zero or more `SpecificationLink`
+  instances. An authored link belongs to one source document and has no useful
+  identity outside that document.
+
+### Aggregation
+
+- One `LinkCheckScope` aggregates zero or more `SpecificationDocument`
+  instances accepted as starting documents. The documents remain meaningful
+  independently of the scope.
+- One `SpecificationDocumentRepository` aggregates zero or more
+  `SpecificationDocument` instances as its pending and checked working set. The
+  repository manages membership without owning document identity.
+- One `LinkCheckReport` aggregates one `LinkCheckDelegation`, one
+  `LinkCheckScope`, and zero or more dead `ResolvedSpecificationLink`
+  instances. Each object exists before report fabrication and remains a
+  traceable result object rather than a report-owned part.
+
+### Association
+
+- Each `ResolvedSpecificationLink` has a navigable association to exactly one
+  `SpecificationLink`, preserving the authored link behind the outcome.
+- Each `SpecificationDocumentBatchChecker` has a navigable association to one
+  `SpecificationDocumentRepository`, whose changing state spans the batch
+  check.
+
+### Dependency
+
+- The external maintainer, coordinators, builders, checkers, discoverer,
+  extractor, cataloger, and fabricator depend on the objects they consume or
+  create during an operation.
+- Dependencies do not imply ownership, persistent fields, or call sequence.
+  They record only that a class requires another class to fulfill its
+  responsibility.
+
 ## Final Candidate-Class List
 
 1. **`LinkCheckDelegation`:** Represents the maintainer's instruction to check documents within a project boundary. Collaborates with `SpecificationDocumentMaintainer`, `LinkCheckWorkflowScheduler`, `LinkCheckScopeBuilder`, `SpecificationDocumentBatchChecker`, and `LinkCheckReport`.
