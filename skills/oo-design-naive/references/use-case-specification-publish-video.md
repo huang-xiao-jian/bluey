@@ -1,57 +1,57 @@
-# 面向对象案例：发布短视频
+# Object-Oriented Design Example: Publish a Short Video
 
-## 参与者
+## Participants
 
-- **主要参与者**：内容创作者
-- **次要参与者**：内容审核系统、内容管理系统
+- **Primary participant:** Content creator
+- **Secondary participants:** Content review system, content management system
 
-## 简要说明
+## Summary
 
-创作者发起一次短视频发布申请，系统进行内容校验与审核；若未通过，系统需要提供反馈，创作者在同一申请单内更新视频或发布信息，系统重新校验与审核，直至申请单进入可分发状态或终止状态。
+A creator initiates a short-video publication application, and the system validates and reviews the content. If the application does not pass, the system must provide feedback. The creator updates the video or publication information within the same application, and the system repeats validation and review until the application reaches either a distributable or terminated state.
 
-## 前置条件
+## Preconditions
 
-1. 创作者已具备发布短视频权限。
-2. 创作者已经上传待发布的视频文件至内容管理系统。
+1. The creator has permission to publish short videos.
+2. The creator has uploaded the video file to be published to the content management system.
 
-## 后置条件
+## Postconditions
 
-- **成功结束**：发布申请单通过校验与审核，关联短视频进入可分发状态。
-- **驳回结束**：发布申请单未通过校验或审核，且创作者未继续更新内容，申请单以驳回状态结束。
-- **主动终止**：创作者在审核流程中主动放弃发布，申请单以终止状态结束。
+- **Successful completion:** The publication application passes validation and review, and the associated short video enters the distributable state.
+- **Rejected completion:** The publication application does not pass validation or review, and the creator does not continue revising the content. The application ends in the rejected state.
+- **Voluntary termination:** The creator voluntarily abandons publication during the review process. The application ends in the terminated state.
 
-## 基本工作流
+## Basic Workflow
 
-1. 【创作者】发起短视频发布申请。
-2. 【系统】创建发布申请单，并执行校验与审核。
-3. 【系统】审核通过后，将申请单关联的视频置为可分发状态。
+1. **Creator:** Initiates a short-video publication application.
+2. **System:** Creates the publication application, then performs validation and review.
+3. **System:** After approval, marks the video associated with the application as distributable.
 
-## 扩展工作流
+## Extension Workflows
 
-### A1. 校验或审核未通过，进入反馈修订循环（扩展步骤2）
+### A1. Validation or Review Fails, Starting the Feedback-and-Revision Cycle (Extends Step 2)
 
-1. 【系统】判定视频或发布内容不符合发布规则或内容规范。
-2. 【系统】将反馈意见记录到当前发布申请单，并通知创作者。
-3. 【创作者】更新视频或修订发布信息。
-4. 【系统】基于更新后的内容重新执行校验与审核。
-5. 若通过，进入主流程步骤3；若仍未通过，返回本扩展流程步骤2，继续循环。
+1. **System:** Determines that the video or publication content does not comply with publication rules or content standards.
+2. **System:** Records feedback in the current publication application and notifies the creator.
+3. **Creator:** Updates the video or revises the publication information.
+4. **System:** Repeats validation and review using the updated content.
+5. If the content passes, continue at step 3 of the basic workflow. If it still does not pass, return to step 2 of this extension workflow and continue the cycle.
 
-### A2. 创作者放弃更新（扩展流程A1中的循环内）
+### A2. Creator Abandons the Revision (Within the A1 Cycle)
 
-1. 【创作者】撤销发布申请。
-2. 【系统】终止发布申请流程。
-3. 用例结束，发布驳回。
+1. **Creator:** Withdraws the publication application.
+2. **System:** Terminates the publication workflow.
+3. The use case ends with the publication rejected.
 
-### A3. 超时取消（扩展流程A1中的循环内）
+### A3. Cancellation After a Timeout (Within the A1 Cycle)
 
-1. 【系统】检测到【创作者】未在限制时间内进行更新。
-2. 【系统】终止发布申请流程。
-3. 用例结束，发布驳回。
+1. **System:** Detects that the creator did not submit an update within the allowed time.
+2. **System:** Terminates the publication workflow.
+3. The use case ends with the publication rejected.
 
-## 业务规则（概要）
+## Business Rules (Summary)
 
-- 发布对应一个发布申请单，反馈、修订、多版视频均关联到该申请单，反馈修订循环不创建新的发布申请单。
-- 审核不通过时必须提供可执行的反馈意见。
-- 每次更新内容后需重新执行完整的校验与审核。
-- 发布申请单在校验或审核未通过后，若创作者在 24 小时内未更新视频或发布内容，系统将自动关闭该申请单，发布流程终止；关闭后如需继续发布，需重新发起新的发布申请。
-- 超时计时从每次反馈意见生成后开始；创作者每次更新内容后，超时计时重置，从最新一次反馈生成后重新计算 24 小时。
+- Each publication corresponds to one publication application. All feedback, revisions, and video versions remain associated with that application; the feedback-and-revision cycle does not create a new publication application.
+- A failed review must include actionable feedback.
+- Every content update must undergo the complete validation and review process again.
+- After validation or review fails, the system automatically closes the publication application if the creator does not update the video or publication content within 24 hours, terminating the publication workflow. To continue after closure, the creator must initiate a new publication application.
+- Timeout measurement begins whenever feedback is generated. Each creator update resets the timer; a new 24-hour period begins when the latest feedback is generated.

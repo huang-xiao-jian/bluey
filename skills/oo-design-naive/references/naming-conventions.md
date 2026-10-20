@@ -1,32 +1,32 @@
-# 命名规范细则
+# Detailed Naming Conventions
 
-## 核心原则
+## Core Principle
 
-类名必须承载业务语义，能够让不具备技术背景的业务人员，能够基于类名大致判断类在业务上的职能定义。
+A class name must convey business meaning clearly enough that a person without a technical background can infer the class's business function from its name.
 
-## 命名规则
+## Naming Rules
 
-### 动作主体使用业务角色作为后缀
+### Use a Business Role as the Suffix for an Acting Subject
 
-后缀应描述业务角色而非技术实现方式。例如：
+The suffix should describe a business role rather than a technical implementation. For example:
 
-- `-Scheduler`：负责业务流程调度
-- `-Checker`：负责资格/条件判定
-- `-Cleaner`：负责环境清理
-- `-Calculator`：负责金额/数值计算
-- `-Drafter`：负责内容撰写
+- `-Scheduler`: Coordinates a business workflow.
+- `-Checker`: Determines eligibility or evaluates conditions.
+- `-Cleaner`: Cleans up an environment.
+- `-Calculator`: Calculates amounts or numeric values.
+- `-Drafter`: Drafts content.
 
-### 禁止使用无法推断业务职能的纯技术后缀
+### Do Not Use Purely Technical Suffixes That Do Not Reveal a Business Function
 
-以下后缀禁止用于类名：`Service`、`Manager`、`Controller`、`Component`、`Bean`。
+Do not use these suffixes in class names: `Service`, `Manager`, `Controller`, `Component`, or `Bean`.
 
-判断标准：去掉前缀后，剩下的后缀词本身是否携带业务含义？如果答案是否定的，就是技术导向命名，需要替换。
+Evaluation rule: after removing the prefix, does the suffix itself carry business meaning? If not, the name is technology-oriented and must be replaced.
 
-### 业务语义优先的最终决策
+### Let Business Semantics Decide Ambiguous Cases
 
-命名后缀存在模糊地带，使用业务语义进行最终裁决，核心的指标：是否能够从命名推断业务职能。
+Some naming suffixes are ambiguous. Resolve them according to business semantics, using this core criterion: can the business function be inferred from the name?
 
-特别说明：
+Special cases:
 
-- `Handler` / `Processor`：虽然偏技术词汇，但如果结合前缀后能清晰推断业务职能（如 `RefundExceptionHandler` 能推断出"处理退款异常"），则允许使用。
-- `Scheduler`：在流程编排上下文中，`Scheduler` 描述的是"负责流程调度"这一业务角色，具备充分的业务语义，允许使用。
+- `Handler` / `Processor`: Although these terms can sound technical, they are allowed when the prefix makes the business function clear. For example, `RefundExceptionHandler` clearly indicates that it handles refund exceptions.
+- `Scheduler`: In a workflow-orchestration context, `Scheduler` describes the business role responsible for coordinating the workflow. It carries sufficient business meaning and is allowed.

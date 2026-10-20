@@ -1,168 +1,168 @@
-# 面向对象设计分析：发布短视频
+# Object-Oriented Design Analysis: Publish a Short Video
 
 ---
 
-## 步骤一：名词提取 —— 识别业务实体
+## Step 1: Extract Nouns — Identify Business Entities
 
-从用例规约中提取名词候选，对每个名词回答三个问题：
+Extract candidate nouns from the use-case specification and answer three questions about each noun:
 
-| 名词候选   |  业务语义认可  |     独立出现     |   生命周期   | 结论                     |
-| ---------- | :------------: | :--------------: | :----------: | ------------------------ |
-| 内容创作者 |       是       |        是        |  否（角色）  | 业务角色，非独立类       |
-| 发布申请单 |       是       |        是        |      是      | **候选类**               |
-| 视频文件   | 否（技术实现） |        —         |      —       | 技术 artifact，非类      |
-| 内容校验   |       是       |    否（动作）    |      —       | 业务动作，非类           |
-| 审核       |       是       |    否（动作）    |      —       | 业务动作，非类           |
-| 反馈意见   |       是       | 否（依赖申请单） |      否      | 与申请单强关联，非独立类 |
-| 短视频     |       是       |        是        |      是      | **候选类**               |
-| 可分发状态 |       是       |        是        | 否（状态值） | 状态概念，非独立类       |
+| Candidate Noun       | Recognized Business Meaning | Independent Existence         | Lifecycle        | Conclusion                                      |
+| -------------------- | :-------------------------: | :---------------------------: | :--------------: | ----------------------------------------------- |
+| Content creator      | Yes                           | Yes                           | No (role)        | Business role, not an independent class         |
+| Publication application | Yes                        | Yes                           | Yes              | **Candidate class**                             |
+| Video file           | No (technical implementation) | —                             | —                | Technical artifact, not a class                 |
+| Content validation   | Yes                           | No (action)                   | —                | Business action, not a class                    |
+| Review               | Yes                           | No (action)                   | —                | Business action, not a class                    |
+| Review feedback      | Yes                           | No (depends on the application) | No             | Strongly associated with the application; not an independent class |
+| Short video          | Yes                           | Yes                           | Yes              | **Candidate class**                             |
+| Distributable state  | Yes                           | Yes                           | No (state value) | State concept, not an independent class         |
 
-**候选类列表**：
+**Candidate classes:**
 
-1. **VideoPublishApplication**（发布申请单）— 承载一次发布申请的完整生命周期
-2. **VideoContent**（短视频内容）— 代表被发布的视频内容实体
-3. **ReviewFeedback**（审核反馈）— 记录审核反馈意见
-
----
-
-## 步骤二：动词识别 —— 识别业务职能
-
-从用例规约的事件流中提取动词，按业务职能聚类：
-
-| 动词              | 业务职能     | 候选类                          |
-| ----------------- | ------------ | ------------------------------- |
-| 执行校验          | 内容合规判定 | VideoContentValidator           |
-| 执行审核          | 内容审核判定 | ContentReviewer                 |
-| 记录反馈意见      | 反馈管理     | ReviewFeedback（实体）          |
-| 通知创作者        | 通知发送     | PublishNotificationDrafter      |
-| 更新视频/修订信息 | 内容更新     | VideoContent（实体）            |
-| 置为可分发状态    | 状态变更     | VideoPublishApplication（实体） |
-| 终止发布申请流程  | 流程终止     | VideoPublishApplicationManager  |
-| 创建发布申请单    | 申请单创建   | VideoPublishApplicationManager  |
-
-**候选类列表（新增）**：
-
-1. **VideoContentValidator** — 负责视频内容合规校验
-2. **ContentReviewer** — 负责内容审核判定
-3. **PublishNotificationDrafter** — 负责撰写并发送反馈通知
-4. **VideoPublishApplicationManager** — 负责发布申请单生命周期管理
+1. **VideoPublishApplication** (publication application) — Owns the complete lifecycle of one publication application.
+2. **VideoContent** (short-video content) — Represents the video content being published.
+3. **ReviewFeedback** (review feedback) — Records review feedback.
 
 ---
 
-## 步骤三：责任分配 —— 串联业务流程
+## Step 2: Identify Verbs — Identify Business Functions
 
-### "系统创建发布申请单，并执行校验与审核"
+Extract verbs from the use-case specification's event flows and group them by business function:
 
-| 追问                       | 负责类                         | 职责             |
-| -------------------------- | ------------------------------ | ---------------- |
-| 谁负责创建申请单？         | VideoPublishApplicationManager | 创建并发布申请单 |
-| 谁负责触发校验？           | VideoPublishWorkflowScheduler  | 编排校验流程     |
-| 谁负责执行校验？           | VideoContentValidator          | 执行内容合规校验 |
-| 谁负责审核？               | ContentReviewer                | 执行内容审核     |
-| 谁负责置视频为可分发状态？ | VideoPublishApplicationManager | 变更申请单状态   |
+| Verb                              | Business Function             | Candidate Class                    |
+| --------------------------------- | ----------------------------- | ---------------------------------- |
+| Perform validation                | Determine content compliance  | VideoContentValidator              |
+| Perform review                    | Make a content-review decision | ContentReviewer                   |
+| Record feedback                   | Manage feedback               | ReviewFeedback (entity)            |
+| Notify the creator                | Send notifications            | PublishNotificationDrafter         |
+| Update the video/revise information | Update content              | VideoContent (entity)              |
+| Mark as distributable             | Change state                  | VideoPublishApplication (entity)   |
+| Terminate the publication workflow | Terminate the workflow       | VideoPublishApplicationManager     |
+| Create a publication application  | Create the application        | VideoPublishApplicationManager     |
 
-### "系统将反馈意见记录到当前发布申请单，并通知创作者"
+**Additional candidate classes:**
 
-| 追问                 | 负责类                         | 职责               |
-| -------------------- | ------------------------------ | ------------------ |
-| 谁负责记录反馈？     | VideoPublishApplicationManager | 将反馈关联到申请单 |
-| 谁负责撰写通知内容？ | PublishNotificationDrafter     | 撰写反馈通知内容   |
-| 谁负责发送通知？     | PublishNotificationDrafter     | 发送通知给创作者   |
-
-### 新增协调类
-
-- **VideoPublishWorkflowScheduler**：负责整体发布流程编排，协调校验、审核、状态变更等步骤
+1. **VideoContentValidator** — Validates video-content compliance.
+2. **ContentReviewer** — Makes content-review decisions.
+3. **PublishNotificationDrafter** — Drafts and sends feedback notifications.
+4. **VideoPublishApplicationManager** — Manages the publication application's lifecycle.
 
 ---
 
-## 步骤四：异常处理 —— 提升健壮性
+## Step 3: Assign Responsibilities — Connect the Business Workflow
 
-### 异常场景识别
+### "The system creates a publication application, then performs validation and review"
 
-| 异常场景        |             可删除性测试             |     业务人员卷入测试     | 结论                     |
-| --------------- | :----------------------------------: | :----------------------: | ------------------------ |
-| 校验/审核未通过 | 删掉后主流程无法继续（无法进入分发） | 需要业务人员理解审核规则 | **业务异常**             |
-| 创作者放弃更新  |        删掉后流程无法正确终止        | 需要业务人员定义撤销规则 | **业务异常**             |
-| 超时未更新      |         删掉后申请单永远挂起         | 需要业务人员定义超时策略 | **业务异常**             |
-| 网络中断        |                  —                   |            —             | 技术异常，不在本阶段范围 |
-| 数据库连接失败  |                  —                   |            —             | 技术异常，不在本阶段范围 |
+| Question                                      | Responsible Class                | Responsibility                         |
+| --------------------------------------------- | -------------------------------- | -------------------------------------- |
+| Who creates the application?                  | VideoPublishApplicationManager   | Create and submit the application      |
+| Who triggers validation?                      | VideoPublishWorkflowScheduler    | Coordinate the validation workflow     |
+| Who performs validation?                      | VideoContentValidator            | Validate content compliance            |
+| Who performs the review?                      | ContentReviewer                  | Perform content review                 |
+| Who marks the video as distributable?         | VideoPublishApplicationManager   | Change the application's state         |
 
-### 异常职责分配
+### "The system records feedback in the current publication application and notifies the creator"
 
-**异常1：校验/审核未通过**
+| Question                              | Responsible Class                | Responsibility                              |
+| ------------------------------------- | -------------------------------- | ------------------------------------------- |
+| Who records the feedback?             | VideoPublishApplicationManager   | Associate feedback with the application     |
+| Who drafts the notification content?  | PublishNotificationDrafter       | Draft the feedback notification              |
+| Who sends the notification?           | PublishNotificationDrafter       | Send the notification to the creator         |
 
-- 发现者：VideoContentValidator / ContentReviewer
-- 决策者：VideoPublishApplicationManager
-- 执行者：PublishNotificationDrafter（发送反馈通知）
+### Additional Coordination Class
 
-**异常2：创作者放弃更新**
-
-- 发现者：创作者（外部参与者）
-- 决策者：VideoPublishApplicationManager
-- 执行者：VideoPublishCancellationHandler（执行终止流程）
-
-**异常3：超时未更新**
-
-- 发现者：VideoPublishTimeoutInspector
-- 决策者：VideoPublishApplicationManager
-- 执行者：VideoPublishTimeoutHandler（执行自动关闭）
-
-### 新增异常处理类
-
-- **VideoPublishCancellationHandler**：负责处理创作者主动撤销发布申请
-- **VideoPublishTimeoutInspector**：负责检测创作者是否超时未更新内容
-- **VideoPublishTimeoutHandler**：负责执行超时自动关闭流程
-
-### 异常流与主流程关联
-
-- 主流程：VideoPublishApplicationManager → VideoContentValidator → ContentReviewer → VideoPublishApplicationManager（状态变更）
-- 异常流1：VideoContentValidator/ContentReviewer →（校验/审核未通过）→ PublishNotificationDrafter → 返回校验
-- 异常流2：创作者 →（主动撤销）→ VideoPublishCancellationHandler → VideoPublishApplicationManager
-- 异常流3：VideoPublishTimeoutInspector →（超时未更新）→ VideoPublishTimeoutHandler → VideoPublishApplicationManager
+- **VideoPublishWorkflowScheduler:** Coordinates the overall publication workflow, including validation, review, and state changes.
 
 ---
 
-## 步骤五：边界优化 —— 避免职能混叠
+## Step 4: Handle Exceptions — Improve Robustness
 
-### 职能边界优化
+### Identify Exception Scenarios
 
-| 类别   | 类                              | 职责定位             |
-| ------ | ------------------------------- | -------------------- |
-| 决策类 | VideoContentValidator           | 判断视频内容是否合规 |
-| 决策类 | ContentReviewer                 | 判断内容是否通过审核 |
-| 决策类 | VideoPublishTimeoutInspector    | 判断是否触发超时     |
-| 执行类 | PublishNotificationDrafter      | 撰写并发送反馈通知   |
-| 执行类 | VideoPublishApplicationManager  | 管理申请单状态变更   |
-| 执行类 | VideoPublishCancellationHandler | 执行撤销流程         |
-| 执行类 | VideoPublishTimeoutHandler      | 执行超时关闭流程     |
-| 协调类 | VideoPublishWorkflowScheduler   | 编排整体发布流程     |
+| Exception Scenario            | Removal Test                                             | Business-Stakeholder Involvement Test       | Conclusion                         |
+| ----------------------------- | :------------------------------------------------------: | :-----------------------------------------: | ---------------------------------- |
+| Validation/review fails       | Without it, the main flow cannot continue to distribution | Business stakeholders must understand review rules | **Business exception**    |
+| Creator abandons the revision | Without it, the workflow cannot terminate correctly       | Business stakeholders must define withdrawal rules | **Business exception**   |
+| Revision deadline expires     | Without it, the application remains pending forever       | Business stakeholders must define the timeout policy | **Business exception**   |
+| Network interruption          | —                                                        | —                                           | Technical exception; out of scope  |
+| Database connection failure   | —                                                        | —                                           | Technical exception; out of scope  |
 
-### 层级边界优化
+### Assign Exception Responsibilities
 
-**用例层级**（定义整体流程，不负责节点内部实现）：
+**Exception 1: Validation/review fails**
 
-- VideoPublishWorkflowScheduler — 编排发布流程
-- VideoContentValidator — 内容校验（黑盒）
-- ContentReviewer — 内容审核（黑盒）
-- VideoPublishApplicationManager — 申请单管理（黑盒）
+- Observer: VideoContentValidator / ContentReviewer
+- Decision-maker: VideoPublishApplicationManager
+- Executor: PublishNotificationDrafter (sends the feedback notification)
 
-**子流程层级**（负责具体实现）：
+**Exception 2: Creator abandons the revision**
 
-- VideoPublishTimeoutInspector — 超时检查细化实现
-- PublishNotificationDrafter — 通知内容撰写细化实现
+- Observer: Creator (external participant)
+- Decision-maker: VideoPublishApplicationManager
+- Executor: VideoPublishCancellationHandler (performs the termination workflow)
 
-### 最终候选类清单
+**Exception 3: Revision deadline expires**
 
-| 序号 | 类名                            | 职责                                         | 协作类                                                                                             |
-| ---- | ------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| 1    | VideoPublishApplication         | 负责发布申请的完整生命周期，管理申请单状态   | VideoContent, ReviewFeedback, VideoPublishApplicationManager                                       |
-| 2    | VideoContent                    | 代表被发布的视频内容实体                     | VideoPublishApplication                                                                            |
-| 3    | ReviewFeedback                  | 记录审核反馈意见                             | VideoPublishApplication                                                                            |
-| 4    | VideoContentValidator           | 判断视频内容是否符合发布规则                 | VideoPublishWorkflowScheduler                                                                      |
-| 5    | ContentReviewer                 | 判断内容是否通过审核                         | VideoPublishWorkflowScheduler                                                                      |
-| 6    | PublishNotificationDrafter      | 撰写并发送反馈通知给创作者                   | VideoPublishApplicationManager                                                                     |
-| 7    | VideoPublishApplicationManager  | 管理发布申请单的生命周期（创建、更新、终止） | VideoPublishWorkflowScheduler, VideoPublishCancellationHandler, VideoPublishTimeoutHandler         |
-| 8    | VideoPublishWorkflowScheduler   | 编排短视频发布的整体流程                     | VideoContentValidator, ContentReviewer, PublishNotificationDrafter, VideoPublishApplicationManager |
-| 9    | VideoPublishCancellationHandler | 处理创作者主动撤销发布申请                   | VideoPublishApplicationManager                                                                     |
-| 10   | VideoPublishTimeoutInspector    | 检测创作者是否超时未更新内容                 | VideoPublishApplicationManager                                                                     |
-| 11   | VideoPublishTimeoutHandler      | 执行超时自动关闭流程                         | VideoPublishApplicationManager                                                                     |
+- Observer: VideoPublishTimeoutInspector
+- Decision-maker: VideoPublishApplicationManager
+- Executor: VideoPublishTimeoutHandler (performs automatic closure)
+
+### Additional Exception-Handling Classes
+
+- **VideoPublishCancellationHandler:** Handles the creator's voluntary withdrawal of the publication application.
+- **VideoPublishTimeoutInspector:** Detects whether the creator has missed the deadline for updating the content.
+- **VideoPublishTimeoutHandler:** Performs the automatic closure workflow after a timeout.
+
+### Relate Exception Flows to the Main Flow
+
+- Main flow: VideoPublishApplicationManager → VideoContentValidator → ContentReviewer → VideoPublishApplicationManager (state change)
+- Exception flow 1: VideoContentValidator/ContentReviewer → (validation/review fails) → PublishNotificationDrafter → return to validation
+- Exception flow 2: Creator → (voluntary withdrawal) → VideoPublishCancellationHandler → VideoPublishApplicationManager
+- Exception flow 3: VideoPublishTimeoutInspector → (revision deadline expires) → VideoPublishTimeoutHandler → VideoPublishApplicationManager
+
+---
+
+## Step 5: Refine Boundaries — Avoid Mixed Functions
+
+### Refine Functional Boundaries
+
+| Category           | Class                           | Functional Role                                      |
+| ------------------ | ------------------------------- | ---------------------------------------------------- |
+| Decision class     | VideoContentValidator           | Determine whether the video content is compliant     |
+| Decision class     | ContentReviewer                 | Determine whether the content passes review          |
+| Decision class     | VideoPublishTimeoutInspector    | Determine whether a timeout has occurred             |
+| Execution class    | PublishNotificationDrafter      | Draft and send feedback notifications                |
+| Execution class    | VideoPublishApplicationManager  | Manage application state changes                     |
+| Execution class    | VideoPublishCancellationHandler | Perform the withdrawal workflow                      |
+| Execution class    | VideoPublishTimeoutHandler      | Perform the timeout-closure workflow                 |
+| Coordination class | VideoPublishWorkflowScheduler   | Coordinate the overall publication workflow          |
+
+### Refine Hierarchical Boundaries
+
+**Use-case level** (defines the overall workflow without implementing the internals of each node):
+
+- VideoPublishWorkflowScheduler — Coordinates the publication workflow.
+- VideoContentValidator — Validates content (black box).
+- ContentReviewer — Reviews content (black box).
+- VideoPublishApplicationManager — Manages the application (black box).
+
+**Subprocess level** (provides specific implementation):
+
+- VideoPublishTimeoutInspector — Provides the timeout-check details.
+- PublishNotificationDrafter — Provides the notification-content drafting details.
+
+### Final Candidate-Class List
+
+| No. | Class                           | Responsibility                                                  | Collaborators                                                                                       |
+| --- | ------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 1   | VideoPublishApplication         | Own the complete publication-application lifecycle and manage its state | VideoContent, ReviewFeedback, VideoPublishApplicationManager                                 |
+| 2   | VideoContent                    | Represent the video-content entity being published              | VideoPublishApplication                                                                             |
+| 3   | ReviewFeedback                  | Record review feedback                                          | VideoPublishApplication                                                                             |
+| 4   | VideoContentValidator           | Determine whether the video content complies with publication rules | VideoPublishWorkflowScheduler                                                                   |
+| 5   | ContentReviewer                 | Determine whether the content passes review                     | VideoPublishWorkflowScheduler                                                                       |
+| 6   | PublishNotificationDrafter      | Draft and send feedback notifications to the creator            | VideoPublishApplicationManager                                                                      |
+| 7   | VideoPublishApplicationManager  | Manage the publication application's lifecycle: creation, updates, and termination | VideoPublishWorkflowScheduler, VideoPublishCancellationHandler, VideoPublishTimeoutHandler |
+| 8   | VideoPublishWorkflowScheduler   | Coordinate the overall short-video publication workflow         | VideoContentValidator, ContentReviewer, PublishNotificationDrafter, VideoPublishApplicationManager |
+| 9   | VideoPublishCancellationHandler | Handle the creator's voluntary withdrawal of the publication application | VideoPublishApplicationManager                                                               |
+| 10  | VideoPublishTimeoutInspector    | Detect whether the creator has missed the content-update deadline | VideoPublishApplicationManager                                                                    |
+| 11  | VideoPublishTimeoutHandler      | Perform automatic closure after a timeout                       | VideoPublishApplicationManager                                                                      |

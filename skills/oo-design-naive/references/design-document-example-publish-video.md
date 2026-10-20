@@ -138,11 +138,3 @@ classDiagram
     VideoCreator ..> VideoPublishClosureHandler
     VideoPublishClosureHandler --> VideoPublishApplication
 ```
-
-## Constraint checklist
-
-- [x] The design contains no attributes, methods, interfaces, database tables, or other implementation details.
-- [x] The design contains no controllers, service layers, message queues, or other technical-layer concepts.
-- [x] Every external participant is explicitly marked as an external actor.
-- [x] The class diagram distinguishes the use-case level from the feedback-and-revision subprocess level.
-- [x] Every candidate class uses a business-oriented name and avoids prohibited technical suffixes.

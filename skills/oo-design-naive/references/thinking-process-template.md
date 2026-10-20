@@ -1,103 +1,103 @@
-# 思考过程文档模板
+# Thinking-Process Document Template
 
-> 本文档记录从用例规约到候选类的完整分析链路，包含各步骤的推导过程和决策依据。
-> 思考过程文档为可选产出物，用于记录设计决策的推理过程。
+> This document records the complete analysis trail from the use-case specification to the candidate classes, including each step's derivation and decision rationale.
+> The thinking-process document is an optional deliverable used to record the reasoning behind design decisions.
 
 ---
 
-## 文档信息
+## Document Information
 
-- **用例名称**：[用例名称]
-- **文档版本**：[版本号]
-- **编写日期**：[日期]
+- **Use-Case Name:** [Use-case name]
+- **Document Version:** [Version number]
+- **Authoring Date:** [Date]
 
-## 步骤一：名词提取
+## Step 1: Extract Nouns
 
-### 名词候选列表
+### Candidate Nouns
 
-| 名词候选 | 业务语义认可 | 独立出现 | 生命周期 | 结论 |
-| -------- | :----------: | :------: | :------: | ---- |
-| [候选1]  |              |          |          |      |
-| [候选2]  |              |          |          |      |
+| Candidate Noun | Recognized Business Meaning | Independent Existence | Lifecycle | Conclusion |
+| -------------- | :-------------------------: | :-------------------: | :-------: | ---------- |
+| [Candidate 1]  |                             |                       |           |            |
+| [Candidate 2]  |                             |                       |           |            |
 
-### 候选类确认
+### Confirmed Candidate Classes
 
-1. **[类名1]**：[确认理由]
-2. **[类名2]**：[确认理由]
+1. **[Class Name 1]:** [Reason for confirmation]
+2. **[Class Name 2]:** [Reason for confirmation]
 
-## 步骤二：动词识别
+## Step 2: Identify Verbs
 
-### 动词提取
+### Extracted Verbs
 
-| 动词    | 业务职能 | 候选类 |
-| ------- | -------- | ------ |
-| [动词1] | [职能]   | [类名] |
-| [动词2] | [职能]   | [类名] |
+| Verb     | Business Function | Candidate Class |
+| -------- | ----------------- | --------------- |
+| [Verb 1] | [Function]        | [Class Name]    |
+| [Verb 2] | [Function]        | [Class Name]    |
 
-### 职能聚类结果
+### Functional Clustering Results
 
-1. **[类名1]**：[职责描述]
-2. **[类名2]**：[职责描述]
+1. **[Class Name 1]:** [Responsibility description]
+2. **[Class Name 2]:** [Responsibility description]
 
-## 步骤三：责任分配
+## Step 3: Assign Responsibilities
 
-### 关键动作责任追问
+### Responsibility Questions for Key Actions
 
-| 动作    | 追问   | 负责类 | 职责   |
-| ------- | ------ | ------ | ------ |
-| [动作1] | [追问] | [类名] | [职责] |
+| Action     | Question   | Responsible Class | Responsibility |
+| ---------- | ---------- | ----------------- | -------------- |
+| [Action 1] | [Question] | [Class Name]      | [Responsibility] |
 
-### 新增协调类
+### Additional Coordination Classes
 
-- **[类名]**：[职责描述]
+- **[Class Name]:** [Responsibility description]
 
-## 步骤四：异常处理
+## Step 4: Handle Exceptions
 
-### 异常场景列表
+### Exception Scenarios
 
-| 异常场景 | 可删除性测试 | 业务人员卷入测试 | 结论 |
-| -------- | :----------: | :--------------: | ---- |
-| [异常1]  |              |                  |      |
+| Exception Scenario | Removal Test | Business-Stakeholder Involvement Test | Conclusion |
+| ------------------ | :----------: | :-----------------------------------: | ---------- |
+| [Exception 1]      |              |                                       |            |
 
-### 异常职责分配
+### Exception Responsibility Assignment
 
-**异常1：[异常名称]**
+**Exception 1: [Exception Name]**
 
-- 发现者：[类名]
-- 决策者：[类名]
-- 执行者：[类名]
+- Observer: [Class Name]
+- Decision-maker: [Class Name]
+- Executor: [Class Name]
 
-### 新增异常处理类
+### Additional Exception-Handling Classes
 
-- **[类名]**：[职责描述]
+- **[Class Name]:** [Responsibility description]
 
-### 异常流与主流程关联
+### Relationship Between the Exception Flow and Main Flow
 
-- 主流程：[流程描述]
-- 异常流：[异常描述]
+- Main flow: [Flow description]
+- Exception flow: [Exception description]
 
-## 步骤五：边界优化
+## Step 5: Refine Boundaries
 
-### 职能边界分类
+### Functional-Boundary Categories
 
-| 类别   | 类     | 职责定位 |
-| ------ | ------ | -------- |
-| 决策类 | [类名] | [定位]   |
-| 执行类 | [类名] | [定位]   |
-| 协调类 | [类名] | [定位]   |
+| Category           | Class        | Functional Role |
+| ------------------ | ------------ | --------------- |
+| Decision class     | [Class Name] | [Role]          |
+| Execution class    | [Class Name] | [Role]          |
+| Coordination class | [Class Name] | [Role]          |
 
-### 层级边界
+### Hierarchical Boundaries
 
-**用例层级**：
+**Use-case level:**
 
-- [类名] — [职责]
+- [Class Name] — [Responsibility]
 
-**子流程层级**：
+**Subprocess level:**
 
-- [类名] — [职责]
+- [Class Name] — [Responsibility]
 
-## 最终候选类清单
+## Final Candidate-Class List
 
-| 序号 | 类名   | 职责   | 协作类   |
-| ---- | ------ | ------ | -------- |
-| 1    | [类名] | [职责] | [协作类] |
+| No. | Class Name   | Responsibility   | Collaborators   |
+| --- | ------------ | ---------------- | --------------- |
+| 1   | [Class Name] | [Responsibility] | [Collaborators] |

@@ -1,56 +1,91 @@
 ---
 name: oo-design-naive
-metadata:
-  version: "0.1.0"
-description: 执行从用例规约到设计文档产出的面向对象设计流程。当要求进行面向对象设计时使用
+description: Builds an early object-oriented model from use-case specifications by identifying candidate classes, responsibilities, and collaborations. Use when beginning object-oriented analysis or design.
 ---
 
 # oo-design-naive
 
 ## When to Use
 
-当用户提出"面向对象分析"或"面向对象设计"相关请求时触发。
+Use this skill when the user requests object-oriented analysis or object-oriented design.
 
-## 关键原则
+## Key Principles
 
-1. **从用例规约出发**：面向对象设计必须以结构化的用例规约为输入起点，禁止凭空猜测业务需求。
-2. **业务语义优先**：所有设计产出（类名、职责、协作关系）必须以业务语义为核心，禁止技术实现细节泄露到设计层。
-3. **产出物分离**：设计文档（最终交付物）和思考过程文档（分析链路记录）必须独立生成、独立交付。
+- **Use case specification Oriented:** Object-oriented design must begin with a structured use-case specification. Do not invent business requirements.
+- **Prioritize business semantics:** Every design artifact, including class names, responsibilities, and collaborations, must center on business semantics. Do not leak technical implementation details into the design layer.
+- **Separate design artifacts:** Generate and deliver the design document (the final deliverable) and the thinking-process document (the analysis trail) independently.
+- **Use consistent naming:** Class names must follow the style defined in the [object-oriented design naming conventions](references/naming-conventions.md).
 
-## 参考资源
+## Design Workflow
 
-- [面向对象设计命名规范](references/naming-conventions.md)
-- [用例规约案例-发布短视频](./references/use-case-specification-publish-video.md)
+Follow the [detailed design workflow](references/design-workflow.md) when performing object-oriented design.
 
-## 设计流程
+## Deliverables
 
-遵循 [详细设计流程](references/design-process-steps.md) 指导进行面向对象设计。
+The deliverables are divided into two parts and must be generated and delivered independently.
 
-## 交付产物
+### Design Document (Required)
 
-交付产物拆分为两部分，必须独立生成、独立交付。
+This is the final deliverable. It presents only the final design and excludes all analysis and derivation. Organize it according to the [design document template](references/design-document-template.md).
 
-### 设计文档（必选）
+Core content:
 
-作为最终交付物，仅呈现最终设计成果，不包含任何分析推导过程。包含：
+1. **Candidate-class descriptions:** Each candidate class includes `Class Name`, `Responsibility`, and `Collaborators`.
+2. **Candidate-class visualization:** Use `mermaid` to draw a class diagram that shows the hierarchy between the use-case level and subprocess levels.
 
-1. **候选类说明**：每个候选类包含 `Class Name`、`Responsibility`、`Collaborators`
-2. **候选类可视化**：使用 `mermaid` 绘制类图，体现用例层级与子流程层级关系
+#### Design Document Constraints
 
-强制约束：
+- External participants in the class diagram must be explicitly marked `external`.
+- Class definitions in the diagram may contain only the class name and a responsibility summary. They must not contain attribute definitions or method signatures.
+- Class definitions in the diagram must not contain implementation details such as `API`s, database tables, controllers, service layers, or message queues.
+- Relationships between classes in the diagram must use only standard `mermaid` syntax. Do not add text labels to relationships.
 
-- 类图中的外部参与者必须明确标记
-- 类图中不允许出现属性、方法、接口、数据库表、控制器、服务层、消息队列等实现细节
+#### Design Document Constraint Examples
 
-参考资源：
+Compliant example:
 
-- [设计文档模板](references/design-document-template.md)
+```mermaid
+classDiagram
+    class VideoCreator
+    class ContentManagementSystem
+    <<external>> VideoCreator
+    <<external>> ContentManagementSystem
 
-### 思考过程文档（可选）
+    class RefundWorkflowScheduler
+    class RefundEligibilityChecker
 
-完整记录从用例规约到候选类的分析链路。
+    RefundWorkflowScheduler --> RefundEligibilityChecker
+```
 
-参考资源：
+Noncompliant example:
 
-- [思考过程文档模板](references/thinking-process-template.md)
-- [思考过程文档案例-发布短视频](references/thinking-process-publish-video-example.md)
+```mermaid
+classDiagram
+    class RefundEligibilityChecker
+    class RefundWorkflowScheduler {
+        - refundService: RefundService
+        - eligibilityChecker: RefundEligibilityChecker
+        + processRefund(): void
+        + checkEligibility(): boolean
+    }
+
+    RefundWorkflowScheduler --> RefundEligibilityChecker : delegates validation
+```
+
+Reasons for noncompliance:
+
+- Attribute definitions appear (`- refundService: RefundService`), violating the rule that attributes are not allowed.
+- Method signatures appear (`+ processRefund(): void`), violating the rule that methods are not allowed.
+- A phrase labels the relationship (`RefundWorkflowScheduler --> RefundEligibilityChecker : delegates validation`), violating the rule that relationship descriptions are not allowed.
+
+### Thinking-Process Document (Optional)
+
+Record the complete analysis trail from the use-case specification to the candidate classes. Organize it according to the [thinking-process document template](references/thinking-process-template.md).
+
+## Examples
+
+The following documents apply the analysis workflow to the **use-case specification example: Publish a Short Video** and show the resulting artifacts:
+
+- [Use-case specification example: Publish a Short Video](./references/use-case-specification-publish-video.md)
+- [Design document example: Publish a Short Video](./references/design-document-example-publish-video.md)
+- [Thinking-process document example: Publish a Short Video](references/thinking-process-publish-video-example.md)
