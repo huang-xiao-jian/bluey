@@ -46,5 +46,5 @@ docs/               Conventions and operating notes
 
 - [analyze-business-rules](skills/analyze-business-rules/SKILL.md): Organize
   business requirements into a four-layer constraint model.
-- [oo-design](skills/oo-design/SKILL.md): Derive a conceptual object-oriented
-  design from workflow-based requirements.
+- [oo-design-naive](skills/oo-design-naive/SKILL.md): Derive an early
+  object-oriented design from use-case specifications.
