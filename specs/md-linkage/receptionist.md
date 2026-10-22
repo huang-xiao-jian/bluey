@@ -2,21 +2,17 @@
 
 ## Prerequities
 
-- [CLI-First MCP Architecture](../../docs/adr/cli-first-mcp-architecture.md)
 - [Link Check Delegation](glossary/LinkCheckDelegation.md)
+- [Link Check Scope](glossary/LinkCheckScope.md)
 - [Link Check Report](glossary/LinkCheckReport.md)
 - [Check Specification Documents for Dead Links](use-case/check-specification-documents-for-dead-links.md)
 
 ## Purpose
 
-The receptionist layer exposes the dead-link checking capability to final
-consumers through a CLI command and an MCP tool. Both surfaces translate a
+The Receptionist Layer exposes the dead-link checking capability to final
+consumers through a CLI command and MCP protocol. Both surfaces translate a
 consumer request into the same **Link Check Delegation**, invoke the same core
 workflow, and present the resulting **Link Check Report**.
-
-The CLI is the package's primary interface. The MCP server is available through
-the CLI's `mcp` subcommand and does not become an intermediate protocol for CLI
-requests.
 
 ## Architecture
 
@@ -43,21 +39,15 @@ The receptionist paths are sibling adapters over one core workflow:
 Neither receptionist invokes the other. Neither receptionist contains link
 checking or scope-building rules.
 
-## Shared Request Semantics
+## Request Semantics
 
-Both surfaces accept the information required to establish a **Link Check
-Delegation**:
+Both surfaces accept the information required to establish a **Link Check Delegation**:
 
 - **Project Root:** The project boundary used to resolve and contain document
   paths.
 - **Document Paths:** One or more concrete Markdown document paths. Globs are
   not supported.
 - **Check Mode:** `LinkCheckMode.Shallow` or `LinkCheckMode.Recursive`.
-
-After applying surface-specific defaults and validation, each receptionist
-constructs one **Link Check Delegation** and invokes the core workflow exactly
-once. Equivalent CLI and MCP requests must produce semantically identical
-**Link Check Reports**.
 
 ## CLI Receptionist
 
@@ -84,15 +74,13 @@ md-linkage check <files...>
 
 The default output is a concise human-readable report containing:
 
-- the number of documents admitted to the starting scope;
-- the number of scope issues;
-- the number of dead links;
-- each scope issue, including its supplied path and reason; and
-- each dead link, including its source, authored target, resolved target, and
-  dead reason.
+- the total number of scope issues;
+- the total number of dead links;
+- each scope issue
+- each dead link
 
-When `--json` is present, stdout contains only the serialized **Link Check
-Report**. Diagnostics that are not part of the report are written to stderr.
+When `--json` is present, stdout contains only the serialized **Link Check Report**.
+Diagnostics that are not part of the report are written to stderr.
 
 ### Exit Status
 
@@ -106,7 +94,7 @@ failure. The nonzero status allows shell scripts and CI jobs to detect findings.
 
 ## MCP Receptionist
 
-### Server Entry Point
+### Startup
 
 ```text
 md-linkage mcp
@@ -188,6 +176,6 @@ The receptionist layer must not:
 
 ### Cross-Surface Acceptance Tests
 
-- Submit equivalent requests through the CLI and MCP surfaces.
-- Verify that both requests produce semantically identical **Link Check
-  Reports**, excluding transport-specific envelopes and presentation.
+1. Submit equivalent requests through the CLI and MCP surfaces.
+2. Verify that both requests produce semantically identical **Link Check
+   Reports**, excluding transport-specific envelopes and presentation.

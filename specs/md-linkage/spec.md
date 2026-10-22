@@ -6,12 +6,6 @@ This document maps the use cases and business concepts for detecting dead links 
 
 - [Check Specification Documents for Dead Links](use-case/check-specification-documents-for-dead-links.md) describes how a maintainer selects documents, checks their links, and obtains a traceable report.
 
-## Receptionist Layer
-
-- [CLI and MCP Receptionist Layer](receptionist-layer.md) defines how terminal
-  consumers and AI clients invoke the shared link-checking workflow and receive
-  its report.
-
 ## Concepts
 
 - [Link Check Delegation](glossary/LinkCheckDelegation.md) defines the project boundary, explicitly delegated document paths, and traversal mode for a check.
@@ -26,3 +20,7 @@ This document maps the use cases and business concepts for detecting dead links 
 
 - [Link Check Scope Builder](roles/LinkCheckScopeBuilder.md) defines the
   exceptions and algorithm for transforming a delegation into a scope.
+
+## Receptionist
+
+- [CLI + MCP Receptionist Architecture](receptionist.md) Defines how the capabilities exposed to terminal consumers and AI clients.

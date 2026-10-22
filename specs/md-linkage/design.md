@@ -125,7 +125,7 @@ classDiagram
     direction LR
 
     class SpecificationDocumentMaintainer
-    <<external>> SpecificationDocumentMaintainer
+    <<Actor>> SpecificationDocumentMaintainer
 
     class LinkCheckDelegation
     <<Input>> LinkCheckDelegation
@@ -147,6 +147,7 @@ classDiagram
     LinkCheckWorkflowScheduler ..> LinkCheckReport
     LinkCheckScopeBuilder ..> LinkCheckDelegation
     LinkCheckScopeBuilder ..> LinkCheckScope
+    SpecificationDocumentBatchChecker ..> LinkCheckScope
     LinkCheckReportFabricator ..> LinkCheckDelegation
     LinkCheckReportFabricator ..> LinkCheckScope
     LinkCheckReportFabricator ..> ResolvedSpecificationLink
