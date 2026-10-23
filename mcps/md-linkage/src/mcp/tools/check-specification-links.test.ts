@@ -36,7 +36,7 @@ describe("CheckSpecificationLinksInputSchema", () => {
 describe("check_specification_links callback", () => {
   it("maps input to a delegation and returns a structured report with counts", async () => {
     const tool = createCheckSpecificationLinksTool({
-      async run(delegation) {
+      async checkSpecificationLinks(delegation) {
         return new LinkCheckReport(
           delegation,
           new LinkCheckScope(delegation.files, []),

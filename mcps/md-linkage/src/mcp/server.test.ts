@@ -14,7 +14,7 @@ describe("setupMcpServer", () => {
 
   it("advertises and calls the read-only specification link tool", async () => {
     const server = setupMcpServer({
-      async run(delegation) {
+      async checkSpecificationLinks(delegation) {
         return new LinkCheckReport(
           delegation,
           new LinkCheckScope(delegation.files, []),
@@ -48,7 +48,7 @@ describe("setupMcpServer", () => {
 
   it("returns an MCP error when report construction fails", async () => {
     const server = setupMcpServer({
-      async run() {
+      async checkSpecificationLinks() {
         throw new Error("Invalid project root");
       },
     });
@@ -72,7 +72,7 @@ describe("setupMcpServer", () => {
 
   it("rejects invalid input before workflow execution", async () => {
     const server = setupMcpServer({
-      async run() {
+      async checkSpecificationLinks() {
         throw new Error("workflow should not run");
       },
     });
