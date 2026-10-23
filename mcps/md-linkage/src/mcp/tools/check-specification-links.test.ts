@@ -1,11 +1,16 @@
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { createLinkCheckWorkflowScheduler } from "../../application/markdown-linkage";
 import { LinkCheckMode } from "../../core/model/link-check-delegation";
-import { LinkCheckReport } from "../../core/model/link-check-report";
-import { LinkCheckScope } from "../../core/model/link-check-scope";
 import {
   CheckSpecificationLinksInputSchema,
   createCheckSpecificationLinksTool,
 } from "./check-specification-links";
+
+const projectRoot = join(
+  import.meta.dirname,
+  "../../../tests/e2e/__fixtures__/project",
+);
 
 describe("CheckSpecificationLinksInputSchema", () => {
   it("requires an absolute root and defaults to shallow mode", () => {
@@ -35,25 +40,19 @@ describe("CheckSpecificationLinksInputSchema", () => {
 
 describe("check_specification_links callback", () => {
   it("maps input to a delegation and returns a structured report with counts", async () => {
-    const tool = createCheckSpecificationLinksTool({
-      async checkSpecificationLinks(delegation) {
-        return new LinkCheckReport(
-          delegation,
-          new LinkCheckScope(delegation.files, []),
-          [],
-        );
-      },
-    });
+    const tool = createCheckSpecificationLinksTool(
+      createLinkCheckWorkflowScheduler(),
+    );
 
     const result = await tool.callback({
-      root: "/workspace/project",
-      files: ["spec.md"],
+      root: projectRoot,
+      files: ["clean.md"],
       mode: LinkCheckMode.Recursive,
     });
 
     expect(result.report.delegation).toEqual({
-      root: "/workspace/project",
-      files: ["spec.md"],
+      root: projectRoot,
+      files: ["clean.md"],
       mode: LinkCheckMode.Recursive,
     });
     expect(result.summary).toBe("Documents: 1; scope issues: 0; dead links: 0");

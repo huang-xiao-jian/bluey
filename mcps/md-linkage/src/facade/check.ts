@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { MarkdownLinkage } from "../application/markdown-linkage";
+import { createLinkCheckWorkflowScheduler } from "../application/markdown-linkage";
 import {
   LinkCheckDelegation,
   LinkCheckMode,
@@ -18,7 +18,7 @@ export interface CheckHandlerDependencies {
 }
 
 export class CheckHandler {
-  private readonly markdownLinkage = new MarkdownLinkage();
+  private readonly scheduler = createLinkCheckWorkflowScheduler();
 
   public constructor(private readonly dependencies: CheckHandlerDependencies) {}
 
@@ -31,7 +31,7 @@ export class CheckHandler {
       options.root ?? this.dependencies.cwd(),
     );
     const delegation = new LinkCheckDelegation(root, files, options.mode);
-    const report = await this.markdownLinkage.checkSpecificationLinks(delegation);
+    const report = await this.scheduler.run(delegation);
     const output = options.json ? formatJsonReport(report) : formatHumanReport(report);
 
     this.dependencies.stdout(`${output}\n`);

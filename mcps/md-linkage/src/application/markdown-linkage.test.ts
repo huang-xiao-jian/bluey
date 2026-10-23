@@ -1,21 +1,23 @@
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { LinkCheckDelegation } from "../core/model/link-check-delegation";
-import { MarkdownLinkage } from "./markdown-linkage";
+import { LinkCheckWorkflowScheduler } from "../core/workflow/link-check-workflow-scheduler";
+import { createLinkCheckWorkflowScheduler } from "./markdown-linkage";
 
 const projectRoot = join(
   import.meta.dirname,
   "../../tests/e2e/__fixtures__/project",
 );
 
-describe("MarkdownLinkage", () => {
-  it("checks specification links through the composed core workflow", async () => {
-    const markdownLinkage = new MarkdownLinkage();
+describe("createLinkCheckWorkflowScheduler", () => {
+  it("creates a composed link check workflow scheduler", async () => {
+    const scheduler = createLinkCheckWorkflowScheduler();
 
-    const report = await markdownLinkage.checkSpecificationLinks(
+    const report = await scheduler.run(
       new LinkCheckDelegation(projectRoot, ["clean.md"]),
     );
 
+    expect(scheduler).toBeInstanceOf(LinkCheckWorkflowScheduler);
     expect(report.delegation.root).toBe(projectRoot);
     expect(report.scope.files).toEqual(["clean.md"]);
     expect(report.deadLinks).toEqual([]);

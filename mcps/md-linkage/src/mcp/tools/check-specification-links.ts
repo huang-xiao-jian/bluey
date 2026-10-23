@@ -1,6 +1,5 @@
 import { isAbsolute } from "node:path";
 import { z } from "zod";
-import type { MarkdownLinkageCapabilities } from "../../application/markdown-linkage";
 import {
   isConcreteDocumentPath,
   LinkCheckDelegation,
@@ -9,6 +8,7 @@ import {
 import { LinkCheckScopeIssueType } from "../../core/model/link-check-scope";
 import { DeadReason, ResolvedSpecificationLinkStatus } from "../../core/model/resolved-specification-link";
 import { SpecificationLinkType } from "../../core/model/specification-link";
+import type { LinkCheckWorkflowScheduler } from "../../core/workflow/link-check-workflow-scheduler";
 
 const RootSchema = z
   .string()
@@ -97,7 +97,7 @@ export type CheckSpecificationLinksOutput = z.infer<
 >;
 
 export function createCheckSpecificationLinksTool(
-  capabilities: MarkdownLinkageCapabilities,
+  scheduler: LinkCheckWorkflowScheduler,
 ) {
   return {
     name: "check_specification_links",
@@ -114,7 +114,7 @@ export function createCheckSpecificationLinksTool(
         parsed.mode,
       );
       const report = LinkCheckReportOutputSchema.parse(
-        await capabilities.checkSpecificationLinks(delegation),
+        await scheduler.run(delegation),
       );
       return {
         report,

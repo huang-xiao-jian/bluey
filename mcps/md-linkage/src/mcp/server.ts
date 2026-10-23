@@ -1,12 +1,12 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { MarkdownLinkageCapabilities } from "../application/markdown-linkage";
+import type { LinkCheckWorkflowScheduler } from "../core/workflow/link-check-workflow-scheduler";
 import { createCheckSpecificationLinksTool } from "./tools/check-specification-links";
 
 export function setupMcpServer(
-  capabilities: MarkdownLinkageCapabilities,
+  scheduler: LinkCheckWorkflowScheduler,
 ): McpServer {
   const server = new McpServer({ name: "bluey-md-linkage", version: "0.1.0" });
-  const tool = createCheckSpecificationLinksTool(capabilities);
+  const tool = createCheckSpecificationLinksTool(scheduler);
 
   server.registerTool(
     tool.name,
