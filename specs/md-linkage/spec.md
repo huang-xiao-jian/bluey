@@ -20,3 +20,10 @@ This document maps the use cases and business concepts for detecting dead links 
 
 - [Link Check Scope Builder](roles/LinkCheckScopeBuilder.md) defines the
   exceptions and algorithm for transforming a delegation into a scope.
+
+## Related Documents
+
+- [Markdown Linkage Interface Specification](interfaces/spec.md) defines how
+  CLI and MCP consumers access the capability specified here.
+- [Object-Oriented Design](design.md) translates this specification into
+  candidate classes and their relationships.
