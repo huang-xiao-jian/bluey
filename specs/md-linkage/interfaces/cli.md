@@ -1,8 +1,8 @@
-# MD Linkage CLI Interface
+# Markdown Linkage CLI Interface
 
 ## Prerequities
 
-- [MD Linkage Interface Specification](spec.md)
+- [Markdown Linkage Interface Specification](spec.md)
 
 ## Command
 
@@ -30,8 +30,8 @@ The default output is a concise human-readable report containing:
 - each scope issue; and
 - each dead link.
 
-When `--json` is present, stdout contains only the serialized **Link Check
-Report**. Diagnostics that are not part of the report are written to stderr.
+When `--json` is present, stdout contains only the serialized **Link Check Report**.
+Diagnostics that are not part of the report are written to stderr.
 
 ## Exit Status
 

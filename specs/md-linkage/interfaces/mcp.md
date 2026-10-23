@@ -1,8 +1,8 @@
-# MD Linkage MCP Interface
+# Markdown Linkage MCP Interface
 
 ## Prerequities
 
-- [MD Linkage Interface Specification](spec.md)
+- [Markdown Linkage Interface Specification](spec.md)
 
 ## Startup
 
