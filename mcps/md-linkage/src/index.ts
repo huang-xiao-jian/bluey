@@ -14,7 +14,7 @@ const check = new CheckHandler({
   cwd: () => process.cwd(),
   stdout: (text) => process.stdout.write(text),
 });
-const mcp = new McpHandler(workflow);
+const mcp = new McpHandler();
 const program = new Command()
   .name("md-linkage")
   .description("Check local links in Markdown specification documents.");
