@@ -13,7 +13,8 @@ md-linkage check <files...> [--root <path>] [--mode <shallow|recursive>] [--json
 The project root defaults to the current working directory and the mode
 defaults to `shallow`. Shallow checks inspect only the supplied documents;
 recursive checks also inspect Markdown documents reached through live local
-links.
+links. Starting file arguments resolve from the current working directory,
+while links inside documents resolve relative to the document containing them.
 
 Human-readable output lists scope issues and dead links. `--json` writes only
 the complete link-check report to stdout.

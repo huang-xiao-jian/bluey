@@ -18,8 +18,10 @@ md-linkage check <files...> [--root <path>] [--mode <shallow|recursive>] [--json
 3. A relative `--root` is resolved to an absolute path before the delegation is
    constructed.
 4. An omitted `--mode` defaults to `LinkCheckMode.Shallow`.
-5. File arguments remain as supplied. The core scope builder resolves them
-   against the established project root.
+5. Starting file arguments are resolved to absolute paths from the process's
+   current working directory before the delegation is constructed. The project
+   root remains the containment boundary. Links discovered during checking
+   continue to resolve relative to the document containing each link.
 
 ## Output
 
@@ -43,6 +45,8 @@ completion propagate and use the runtime's standard failure behavior.
 
 - Verify current-working-directory and shallow-mode defaults.
 - Verify explicit root and mode mapping.
+- Verify starting file arguments resolve from the current working directory
+  without changing recursive link resolution.
 - Verify human-readable and JSON output.
 - Verify that clean reports and reports with findings complete successfully.
 - Verify that failures preventing report construction propagate.

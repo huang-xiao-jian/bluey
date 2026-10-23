@@ -20,24 +20,25 @@ describe("CheckHandler", () => {
 
     expect(JSON.parse(output.stdout.join("")).delegation).toEqual({
       root: projectRoot,
-      files: ["clean.md"],
+      files: [join(projectRoot, "clean.md")],
       mode: LinkCheckMode.Shallow,
     });
   });
 
-  it("maps an explicit root and mode into the workflow delegation", async () => {
+  it("resolves only starting files from cwd with a relative root", async () => {
     const output = captureOutput();
-    const handler = createCheckHandler(dependenciesFor(output));
+    const cwd = join(projectRoot, "nested");
+    const handler = createCheckHandler(dependenciesFor(output, cwd));
 
     await handler.run(["next.md"], {
-      root: "nested",
+      root: "..",
       mode: LinkCheckMode.Recursive,
       json: true,
     });
 
     expect(JSON.parse(output.stdout.join("")).delegation).toMatchObject({
-      root: join(projectRoot, "nested"),
-      files: ["next.md"],
+      root: projectRoot,
+      files: [join(cwd, "next.md")],
       mode: LinkCheckMode.Recursive,
     });
   });
@@ -67,6 +68,14 @@ describe("CheckHandler", () => {
     const handler = createCheckHandler(dependenciesFor(output));
 
     await expect(handler.run(["**/*.md"], {})).rejects.toThrow("concrete paths");
+    expect(output.stdout).toEqual([]);
+  });
+
+  it("rejects an empty starting file before resolving it", async () => {
+    const output = captureOutput();
+    const handler = createCheckHandler(dependenciesFor(output));
+
+    await expect(handler.run([""], {})).rejects.toThrow("concrete paths");
     expect(output.stdout).toEqual([]);
   });
 });

@@ -8,19 +8,78 @@ const projectRoot = join(packageRoot, "tests", "e2e", "__fixtures__", "project")
 
 describe("md-linkage check", () => {
   it("returns a clean JSON report with status zero", () => {
-    const result = run("check", "clean.md", "--root", projectRoot, "--json");
+    const result = runFrom(
+      projectRoot,
+      "check",
+      "clean.md",
+      "--root",
+      projectRoot,
+      "--json",
+    );
 
     expect(result.status).toBe(0);
     expect(result.stderr).toBe("");
     expect(JSON.parse(result.stdout)).toMatchObject({
-      delegation: { root: projectRoot, files: ["clean.md"], mode: "shallow" },
+      delegation: {
+        root: projectRoot,
+        files: [join(projectRoot, "clean.md")],
+        mode: "shallow",
+      },
       scope: { files: ["clean.md"], issues: [] },
       deadLinks: [],
     });
   });
 
+  it("resolves only starting files from cwd during a recursive check", () => {
+    const cwd = join(projectRoot, "nested");
+    const result = runFrom(
+      cwd,
+      "check",
+      "next.md",
+      "--mode",
+      "recursive",
+      "--json",
+      "--root",
+      "..",
+    );
+    const report = JSON.parse(result.stdout) as {
+      deadLinks: Array<{
+        location: { filePath: string };
+        target: { filePath: string };
+      }>;
+    };
+
+    expect(result.status).toBe(0);
+    expect(result.stderr).toBe("");
+    expect(report).toMatchObject({
+      delegation: {
+        root: projectRoot,
+        files: [join(cwd, "next.md")],
+        mode: "recursive",
+      },
+      scope: { files: ["nested/next.md"], issues: [] },
+    });
+    expect(report.deadLinks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          location: expect.objectContaining({ filePath: "nested/next.md" }),
+          target: expect.objectContaining({
+            filePath: join(cwd, "missing.md"),
+          }),
+        }),
+        expect.objectContaining({
+          location: expect.objectContaining({ filePath: "broken.md" }),
+          target: expect.objectContaining({
+            filePath: join(projectRoot, "missing.md"),
+          }),
+        }),
+      ]),
+    );
+  });
+
   it("returns status zero and recursively includes reached-document findings", () => {
-    const result = run(
+    const result = runFrom(
+      projectRoot,
       "check",
       "broken.md",
       "--root",
@@ -68,8 +127,12 @@ describe("md-linkage check", () => {
 });
 
 function run(...args: string[]) {
+  return runFrom(packageRoot, ...args);
+}
+
+function runFrom(cwd: string, ...args: string[]) {
   return spawnSync(process.execPath, [executable, ...args], {
-    cwd: packageRoot,
+    cwd,
     encoding: "utf8",
   });
 }
