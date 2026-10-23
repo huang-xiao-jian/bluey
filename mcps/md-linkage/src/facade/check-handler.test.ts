@@ -1,7 +1,10 @@
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { LinkCheckMode } from "../core/model/link-check-delegation";
-import { createCheckHandler, type CheckHandlerDependencies } from "./check";
+import {
+  createCheckHandler,
+  type CheckHandlerDependencies,
+} from "./check-handler";
 
 const projectRoot = join(
   import.meta.dirname,

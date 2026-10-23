@@ -3,6 +3,10 @@
 Bluey is a personal capability repository for Codex. It intentionally has no
 multi-agent roles, routing, or orchestration.
 
+## Vibe Tech
+
+- `pnpm@12.4.2`
+
 ## References
 
 - [Skill convention](docs/conventions/skill.md) defines the rules for skill

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { McpHandler } from "./mcp";
+import { McpHandler } from "./mcp-handler";
 
 describe("McpHandler", () => {
   it("constructs without an external scheduler", () => {

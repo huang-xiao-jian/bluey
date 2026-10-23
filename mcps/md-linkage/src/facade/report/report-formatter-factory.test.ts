@@ -14,7 +14,7 @@ import { HumanReportFormatter } from "./human-report-formatter";
 import { JsonReportFormatter } from "./json-report-formatter";
 import { ReportFormatterFactory } from "./report-formatter-factory";
 
-describe("report formatters", () => {
+describe("ReportFormatterFactory", () => {
   const formatterFactory = new ReportFormatterFactory(
     new HumanReportFormatter(),
     new JsonReportFormatter(),

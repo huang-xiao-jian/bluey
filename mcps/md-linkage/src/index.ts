@@ -2,8 +2,11 @@
 import "reflect-metadata";
 import { Command, Option } from "commander";
 import { LinkCheckMode } from "./core/model/link-check-delegation";
-import { createCheckHandler, type CheckOptions } from "./facade/check";
-import { McpHandler } from "./facade/mcp";
+import {
+  createCheckHandler,
+  type CheckOptions,
+} from "./facade/check-handler";
+import { McpHandler } from "./facade/mcp-handler";
 
 const program = new Command()
   .name("md-linkage")
