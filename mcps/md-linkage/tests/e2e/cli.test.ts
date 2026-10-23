@@ -19,7 +19,7 @@ describe("md-linkage check", () => {
     });
   });
 
-  it("returns status one and recursively includes reached-document findings", () => {
+  it("returns status zero and recursively includes reached-document findings", () => {
     const result = run(
       "check",
       "broken.md",
@@ -31,12 +31,12 @@ describe("md-linkage check", () => {
     );
     const report = JSON.parse(result.stdout) as { deadLinks: unknown[] };
 
-    expect(result.status).toBe(1);
+    expect(result.status).toBe(0);
     expect(result.stderr).toBe("");
     expect(report.deadLinks).toHaveLength(4);
   });
 
-  it("returns status two and stderr diagnostics for an invalid root", () => {
+  it("returns a nonzero status and stderr diagnostics for an invalid root", () => {
     const result = run(
       "check",
       "clean.md",
@@ -44,15 +44,15 @@ describe("md-linkage check", () => {
       join(projectRoot, "missing"),
     );
 
-    expect(result.status).toBe(2);
+    expect(result.status).not.toBe(0);
     expect(result.stdout).toBe("");
     expect(result.stderr).toContain("Invalid project root");
   });
 
-  it("returns status two for invalid command arguments", () => {
+  it("returns a nonzero status for invalid command arguments", () => {
     const result = run("check");
 
-    expect(result.status).toBe(2);
+    expect(result.status).not.toBe(0);
     expect(result.stdout).toBe("");
     expect(result.stderr).toContain("missing required argument 'files'");
   });
@@ -60,7 +60,7 @@ describe("md-linkage check", () => {
   it("preserves the default root in command help", () => {
     const result = run("check", "--help");
 
-    expect(result.status).toBe(2);
+    expect(result.status).toBe(0);
     expect(result.stdout).toContain("Project boundary (default:");
     expect(result.stdout).toContain(packageRoot);
     expect(result.stderr).toBe("");

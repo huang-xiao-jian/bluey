@@ -51,7 +51,7 @@ describe("CLI and MCP report equivalence", () => {
       },
     });
 
-    expect(cli.status).toBe(1);
+    expect(cli.status).toBe(0);
     expect(mcp.isError).not.toBe(true);
     expect(mcp.structuredContent).toEqual(JSON.parse(cli.stdout));
   });

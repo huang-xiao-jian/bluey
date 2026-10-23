@@ -35,18 +35,14 @@ Diagnostics that are not part of the report are written to stderr.
 
 ## Exit Status
 
-- `0`: The check completed with no scope issues and no dead links.
-- `1`: The check completed and found at least one scope issue or dead link.
-- `2`: The request was invalid, the project root could not be established, or
-  another failure prevented a report from being produced.
-
-Finding a scope issue or dead link is a completed check, not an invocation
-failure. The nonzero status allows shell scripts and CI jobs to detect findings.
+The CLI does not assign application-specific exit statuses. A completed check
+is successful even when its report contains findings. Errors that prevent
+completion propagate and use the runtime's standard failure behavior.
 
 ## Verification Requirements
 
 - Verify current-working-directory and shallow-mode defaults.
 - Verify explicit root and mode mapping.
 - Verify human-readable and JSON output.
-- Verify exit statuses for clean reports, reports with findings, and failures
-  that prevent report construction.
+- Verify that clean reports and reports with findings complete successfully.
+- Verify that failures preventing report construction propagate.

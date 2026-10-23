@@ -12,20 +12,19 @@ describe("CheckHandler", () => {
     const output = captureOutput();
     const handler = new CheckHandler(dependenciesFor(output));
 
-    const exitCode = await handler.run(["spec.md", "docs/a.md"], {
+    const result = await handler.run(["spec.md", "docs/a.md"], {
       json: true,
     });
     const report = JSON.parse(output.stdout.join("")) as {
       delegation: { root: string; files: string[]; mode: string };
     };
 
-    expect(exitCode).toBe(0);
+    expect(result).toBeUndefined();
     expect(report.delegation).toEqual({
       root: "/workspace/project",
       files: ["spec.md", "docs/a.md"],
       mode: LinkCheckMode.Shallow,
     });
-    expect(output.stderr).toEqual([]);
   });
 
   it("maps an explicit root and mode into the workflow delegation", async () => {
@@ -45,18 +44,17 @@ describe("CheckHandler", () => {
     });
   });
 
-  it("returns status one and human output for a completed report with findings", async () => {
+  it("writes human output for a completed report with findings", async () => {
     const output = captureOutput();
     const handler = new CheckHandler(dependenciesFor(output, true));
 
-    const exitCode = await handler.run(["missing.md"], {});
+    const result = await handler.run(["missing.md"], {});
 
-    expect(exitCode).toBe(1);
+    expect(result).toBeUndefined();
     expect(output.stdout.join("")).toContain("Scope issues: 1");
-    expect(output.stderr).toEqual([]);
   });
 
-  it("returns status two and writes diagnostics when no report is produced", async () => {
+  it("propagates a workflow failure when no report is produced", async () => {
     const output = captureOutput();
     const dependencies = dependenciesFor(output);
     dependencies.workflow = {
@@ -66,37 +64,32 @@ describe("CheckHandler", () => {
     };
     const handler = new CheckHandler(dependencies);
 
-    const exitCode = await handler.run(["spec.md"], {});
-
-    expect(exitCode).toBe(2);
+    await expect(handler.run(["spec.md"], {})).rejects.toThrow(
+      "Invalid project root",
+    );
     expect(output.stdout).toEqual([]);
-    expect(output.stderr.join("")).toContain("Invalid project root");
   });
 
-  it("returns status two before invoking the workflow for invalid input", async () => {
+  it("propagates invalid input before invoking the workflow", async () => {
     const output = captureOutput();
     const handler = new CheckHandler(dependenciesFor(output));
 
-    const exitCode = await handler.run(["**/*.md"], {});
-
-    expect(exitCode).toBe(2);
+    await expect(handler.run(["**/*.md"], {})).rejects.toThrow("concrete paths");
     expect(output.stdout).toEqual([]);
-    expect(output.stderr.join("")).toContain("concrete paths");
   });
 });
 
-function captureOutput(): { stdout: string[]; stderr: string[] } {
-  return { stdout: [], stderr: [] };
+function captureOutput(): { stdout: string[] } {
+  return { stdout: [] };
 }
 
 function dependenciesFor(
-  output: { stdout: string[]; stderr: string[] },
+  output: { stdout: string[] },
   withFinding = false,
 ): CheckHandlerDependencies {
   return {
     cwd: () => "/workspace/project",
     stdout: (text) => output.stdout.push(text),
-    stderr: (text) => output.stderr.push(text),
     workflow: {
       async run(delegation) {
         const scope = new LinkCheckScope(
