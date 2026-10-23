@@ -62,7 +62,7 @@ error mechanism.
 The interface layer may:
 
 - validate command or protocol representation;
-- apply the defaults defined by this document;
+- apply the defaults defined by the selected interface contract;
 - construct a **Link Check Delegation**;
 - invoke the core workflow once;
 - render or format the returned **Link Check Report**; and
