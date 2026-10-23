@@ -1,19 +1,15 @@
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import type { LinkCheckDelegation } from "../model/link-check-delegation";
 import {
   LinkCheckScope,
   LinkCheckScopeIssueType,
   type LinkCheckScopeIssue,
 } from "../model/link-check-scope";
-import {
-  SpecificationDocumentStoreToken,
-  type SpecificationDocumentStore,
-} from "../ports/specification-document-store";
+import { SpecificationDocumentStore } from "../ports/specification-document-store";
 
 @injectable()
 export class LinkCheckScopeBuilder {
   public constructor(
-    @inject(SpecificationDocumentStoreToken)
     private readonly store: SpecificationDocumentStore,
   ) {}
 

@@ -1,4 +1,4 @@
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import {
   ResolvedSpecificationLinkStatus,
   type DeadResolvedSpecificationLink,
@@ -17,11 +17,8 @@ export interface AtomicLinkCheckArtifact {
 @injectable()
 export class SpecificationDocumentChecker {
   public constructor(
-    @inject(SpecificationLinkExtractor)
     private readonly extractor: SpecificationLinkExtractor,
-    @inject(SpecificationHeadingCataloger)
     private readonly headingCataloger: SpecificationHeadingCataloger,
-    @inject(SpecificationLinkChecker)
     private readonly linkChecker: SpecificationLinkChecker,
   ) {}
 

@@ -1,4 +1,4 @@
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import { SpecificationDocumentBatchChecker } from "../batch/specification-document-batch-checker";
 import type { LinkCheckDelegation } from "../model/link-check-delegation";
 import type { LinkCheckReport } from "../model/link-check-report";
@@ -8,11 +8,8 @@ import { LinkCheckReportFabricator } from "./link-check-report-fabricator";
 @injectable()
 export class LinkCheckWorkflowScheduler {
   public constructor(
-    @inject(LinkCheckScopeBuilder)
     private readonly scopeBuilder: LinkCheckScopeBuilder,
-    @inject(SpecificationDocumentBatchChecker)
     private readonly batchChecker: SpecificationDocumentBatchChecker,
-    @inject(LinkCheckReportFabricator)
     private readonly reportFabricator: LinkCheckReportFabricator,
   ) {}
 

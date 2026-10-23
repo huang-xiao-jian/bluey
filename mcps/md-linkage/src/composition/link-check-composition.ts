@@ -5,10 +5,7 @@ import { SpecificationDocumentChecker } from "../core/document/specification-doc
 import { SpecificationHeadingCataloger } from "../core/document/specification-heading-cataloger";
 import { SpecificationLinkChecker } from "../core/document/specification-link-checker";
 import { SpecificationLinkExtractor } from "../core/document/specification-link-extractor";
-import {
-  SpecificationDocumentStoreToken,
-  type SpecificationDocumentStore,
-} from "../core/ports/specification-document-store";
+import { SpecificationDocumentStore } from "../core/ports/specification-document-store";
 import { LinkCheckScopeBuilder } from "../core/scope/link-check-scope-builder";
 import { LinkCheckReportFabricator } from "../core/workflow/link-check-report-fabricator";
 import { LinkCheckWorkflowScheduler } from "../core/workflow/link-check-workflow-scheduler";
@@ -18,7 +15,7 @@ export function createLinkCheckWorkflowScheduler(): LinkCheckWorkflowScheduler {
   const container = new Container();
 
   container
-    .bind<SpecificationDocumentStore>(SpecificationDocumentStoreToken)
+    .bind(SpecificationDocumentStore)
     .to(NodeSpecificationDocumentStore)
     .inSingletonScope();
   container.bind(SpecificationLinkExtractor).toSelf().inSingletonScope();

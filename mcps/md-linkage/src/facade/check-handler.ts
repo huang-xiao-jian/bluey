@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { Container, inject, injectable } from "inversify";
+import { Container, injectable } from "inversify";
 import { LinkCheckComposition } from "../composition/link-check-composition";
 import {
   isConcreteDocumentPath,
@@ -9,10 +9,6 @@ import {
 import { HumanReportFormatter } from "./report/human-report-formatter";
 import { JsonReportFormatter } from "./report/json-report-formatter";
 import { ReportFormatterFactory } from "./report/report-formatter-factory";
-import {
-  ReportFormat,
-  ReportFormatter,
-} from "./report/report-formatter";
 
 export interface CheckOptions {
   readonly root?: string;
@@ -29,9 +25,7 @@ export abstract class CheckHandlerDependencies {
 export class CheckHandler {
   public constructor(
     private readonly composition: LinkCheckComposition,
-    @inject(ReportFormatterFactory)
     private readonly reportFormatterFactory: ReportFormatterFactory,
-    @inject(CheckHandlerDependencies)
     private readonly dependencies: CheckHandlerDependencies,
   ) {}
 
@@ -63,14 +57,8 @@ export function createCheckHandler(dependencies: CheckHandlerDependencies) {
   container.bind(CheckHandler).toSelf();
   container.bind(LinkCheckComposition).toSelf();
   container.bind(CheckHandlerDependencies).toConstantValue(dependencies);
-  container
-    .bind(ReportFormatter)
-    .to(HumanReportFormatter)
-    .whenNamed(ReportFormat.Human);
-  container
-    .bind(ReportFormatter)
-    .to(JsonReportFormatter)
-    .whenNamed(ReportFormat.Json);
+  container.bind(HumanReportFormatter).toSelf();
+  container.bind(JsonReportFormatter).toSelf();
   container.bind(ReportFormatterFactory).toSelf();
 
   return container.get(CheckHandler);

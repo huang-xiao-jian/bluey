@@ -1,5 +1,5 @@
 import { dirname } from "node:path";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import {
   DeadReason,
   ResolvedSpecificationLinkStatus,
@@ -13,18 +13,13 @@ import {
   SpecificationLinkType,
   type SpecificationLink,
 } from "../model/specification-link";
-import {
-  SpecificationDocumentStoreToken,
-  type SpecificationDocumentStore,
-} from "../ports/specification-document-store";
+import { SpecificationDocumentStore } from "../ports/specification-document-store";
 import { SpecificationHeadingCataloger } from "./specification-heading-cataloger";
 
 @injectable()
 export class SpecificationLinkChecker {
   public constructor(
-    @inject(SpecificationDocumentStoreToken)
     private readonly store: SpecificationDocumentStore,
-    @inject(SpecificationHeadingCataloger)
     private readonly headingCataloger: SpecificationHeadingCataloger,
   ) {}
 

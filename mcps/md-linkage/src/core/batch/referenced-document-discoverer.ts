@@ -1,16 +1,12 @@
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import type { LiveResolvedSpecificationLink } from "../model/resolved-specification-link";
 import { SpecificationLinkType } from "../model/specification-link";
-import {
-  SpecificationDocumentStoreToken,
-  type SpecificationDocumentStore,
-} from "../ports/specification-document-store";
+import { SpecificationDocumentStore } from "../ports/specification-document-store";
 import type { SpecificationDocumentRepository } from "./specification-document-repository";
 
 @injectable()
 export class ReferencedDocumentDiscoverer {
   public constructor(
-    @inject(SpecificationDocumentStoreToken)
     private readonly store: SpecificationDocumentStore,
   ) {}
 

@@ -1,23 +1,17 @@
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import { SpecificationDocumentChecker } from "../document/specification-document-checker";
 import { LinkCheckMode, type LinkCheckDelegation } from "../model/link-check-delegation";
 import type { LinkCheckScope } from "../model/link-check-scope";
 import type { DeadResolvedSpecificationLink } from "../model/resolved-specification-link";
-import {
-  SpecificationDocumentStoreToken,
-  type SpecificationDocumentStore,
-} from "../ports/specification-document-store";
+import { SpecificationDocumentStore } from "../ports/specification-document-store";
 import { ReferencedDocumentDiscoverer } from "./referenced-document-discoverer";
 import { SpecificationDocumentRepository } from "./specification-document-repository";
 
 @injectable()
 export class SpecificationDocumentBatchChecker {
   public constructor(
-    @inject(SpecificationDocumentStoreToken)
     private readonly store: SpecificationDocumentStore,
-    @inject(SpecificationDocumentChecker)
     private readonly documentChecker: SpecificationDocumentChecker,
-    @inject(ReferencedDocumentDiscoverer)
     private readonly discoverer: ReferencedDocumentDiscoverer,
   ) {}
 
