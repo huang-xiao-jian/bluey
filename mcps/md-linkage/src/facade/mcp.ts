@@ -7,6 +7,7 @@ export class McpHandler {
 
   public async run(): Promise<void> {
     const server = setupMcpServer(this.markdownLinkage);
+
     await server.connect(new StdioServerTransport());
   }
 }
