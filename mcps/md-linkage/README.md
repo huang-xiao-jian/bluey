@@ -1,10 +1,52 @@
-# Bluey Markdown linkage
+# Bluey Markdown Linkage
 
-Scaffold for the `@bluey/md-linkage` package.
+`@bluey/md-linkage` checks local links in Markdown specification documents.
+The package implements the core workflow, CLI, and MCP interfaces described in
+[the specification](../../specs/md-linkage/spec.md).
 
-The package will eventually expose Markdown dead-link detection described in
-[the specification](../../specs/md-linkage/spec.md). No detection, report, CLI,
-or MCP functionality is implemented yet.
+## CLI
+
+```sh
+md-linkage check <files...> [--root <path>] [--mode <shallow|recursive>] [--json]
+```
+
+The project root defaults to the current working directory and the mode
+defaults to `shallow`. Shallow checks inspect only the supplied documents;
+recursive checks also inspect Markdown documents reached through live local
+links.
+
+Human-readable output lists scope issues and dead links. `--json` writes only
+the complete link-check report to stdout.
+
+Exit statuses are:
+
+- `0` when the completed report has no findings;
+- `1` when the completed report contains scope issues or dead links; and
+- `2` when invalid input or another failure prevents report construction.
+
+## MCP
+
+```sh
+md-linkage mcp
+```
+
+The command starts an MCP server over stdio and registers the read-only
+`check_specification_links` tool. The tool requires an absolute `root`, one or
+more concrete `files`, and an optional `mode` of `shallow` or `recursive`.
+Successful calls return the complete report as structured content and concise
+document, scope-issue, and dead-link counts as text content.
+
+## Supported Links
+
+The checker validates inline Markdown links targeting:
+
+- local files, such as `[Design](design.md)`;
+- headings in the same document, such as `[Rules](#rules)`; and
+- headings in another document, such as `[Model](design.md#data-model)`.
+
+HTTP, HTTPS, email, protocol-relative, and image destinations are outside this
+local-link capability. Heading matching uses GitHub-compatible identifiers,
+including suffixes for duplicate headings.
 
 ## Commands
 
