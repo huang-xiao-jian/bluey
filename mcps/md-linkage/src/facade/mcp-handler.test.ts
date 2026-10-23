@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { McpHandler } from "./mcp-handler";
+import { createMcpHandler, McpHandler } from "./mcp-handler";
 
 describe("McpHandler", () => {
-  it("constructs without an external scheduler", () => {
-    expect(McpHandler.length).toBe(0);
-    expect(new McpHandler()).toBeInstanceOf(McpHandler);
+  it("resolves from the application dependency graph", () => {
+    expect(createMcpHandler()).toBeInstanceOf(McpHandler);
   });
 });

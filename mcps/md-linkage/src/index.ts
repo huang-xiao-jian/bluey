@@ -6,7 +6,7 @@ import {
   createCheckHandler,
   type CheckOptions,
 } from "./facade/check-handler";
-import { McpHandler } from "./facade/mcp-handler";
+import { createMcpHandler } from "./facade/mcp-handler";
 
 const program = new Command()
   .name("md-linkage")
@@ -36,7 +36,7 @@ program
   .command("mcp")
   .description("Start the MCP server over stdio.")
   .action(async () => {
-    const mcp = new McpHandler();
+    const mcp = createMcpHandler();
 
     await mcp.run();
   });
