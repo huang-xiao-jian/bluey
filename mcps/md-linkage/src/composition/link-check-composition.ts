@@ -35,7 +35,7 @@ export function createLinkCheckWorkflowScheduler(): LinkCheckWorkflowScheduler {
 }
 
 @injectable()
-export class MarkdownLinkage {
+export class LinkCheckComposition {
   createLinkCheckWorkflowScheduler(): LinkCheckWorkflowScheduler {
     return createLinkCheckWorkflowScheduler();
   }

@@ -1,5 +1,5 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { createLinkCheckWorkflowScheduler } from "../application/markdown-linkage";
+import { createLinkCheckWorkflowScheduler } from "../composition/link-check-composition";
 import { setupMcpServer } from "../mcp/server";
 
 export class McpHandler {

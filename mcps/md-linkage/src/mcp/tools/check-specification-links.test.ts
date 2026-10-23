@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { createLinkCheckWorkflowScheduler } from "../../application/markdown-linkage";
+import { createLinkCheckWorkflowScheduler } from "../../composition/link-check-composition";
 import { LinkCheckMode } from "../../core/model/link-check-delegation";
 import {
   CheckSpecificationLinksInputSchema,

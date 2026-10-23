@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory";
 import { afterEach, describe, expect, it } from "vitest";
-import { createLinkCheckWorkflowScheduler } from "../application/markdown-linkage";
+import { createLinkCheckWorkflowScheduler } from "../composition/link-check-composition";
 import { setupMcpServer } from "./server";
 
 const projectRoot = join(

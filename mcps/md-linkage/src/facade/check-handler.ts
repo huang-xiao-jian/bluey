@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 import { Container, inject, injectable } from "inversify";
-import { MarkdownLinkage } from "../application/markdown-linkage";
+import { LinkCheckComposition } from "../composition/link-check-composition";
 import {
   LinkCheckDelegation,
   LinkCheckMode,
@@ -27,7 +27,7 @@ export abstract class CheckHandlerDependencies {
 @injectable()
 export class CheckHandler {
   public constructor(
-    private readonly linkage: MarkdownLinkage,
+    private readonly composition: LinkCheckComposition,
     @inject(ReportFormatterFactory)
     private readonly reportFormatterFactory: ReportFormatterFactory,
     @inject(CheckHandlerDependencies)
@@ -43,7 +43,7 @@ export class CheckHandler {
       options.root ?? this.dependencies.cwd(),
     );
     const delegation = new LinkCheckDelegation(root, files, options.mode);
-    const scheduler = this.linkage.createLinkCheckWorkflowScheduler();
+    const scheduler = this.composition.createLinkCheckWorkflowScheduler();
     const report = await scheduler.run(delegation);
     const formatter = this.reportFormatterFactory.create(options);
     const output = formatter.format(report);
@@ -58,7 +58,7 @@ export function createCheckHandler(dependencies: CheckHandlerDependencies) {
   });
 
   container.bind(CheckHandler).toSelf();
-  container.bind(MarkdownLinkage).toSelf();
+  container.bind(LinkCheckComposition).toSelf();
   container.bind(CheckHandlerDependencies).toConstantValue(dependencies);
   container
     .bind(ReportFormatter)

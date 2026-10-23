@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { LinkCheckDelegation } from "../core/model/link-check-delegation";
 import { LinkCheckWorkflowScheduler } from "../core/workflow/link-check-workflow-scheduler";
-import { createLinkCheckWorkflowScheduler } from "./markdown-linkage";
+import { createLinkCheckWorkflowScheduler } from "./link-check-composition";
 
 const projectRoot = join(
   import.meta.dirname,
