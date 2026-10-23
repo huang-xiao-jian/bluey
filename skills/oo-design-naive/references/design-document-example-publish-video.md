@@ -1,6 +1,6 @@
-# Object-Oriented Design: Publish a Short Video
+# Publish a Short Video
 
-## Candidate classes
+## Candidate-Class Descriptions
 
 ### VideoPublishSubmission
 
@@ -104,12 +104,12 @@
 - **Responsibility:** Ends the current publication application when the creator withdraws it or when the latest revision window expires, preserving the applicable rejected or terminated outcome.
 - **Collaborators:** `VideoPublishApplication`, `VideoRevisionWorkflowScheduler`, `VideoPublishTimeoutInspector`, `VideoCreator`
 
-## External participants
+## External Participants
 
 - **VideoCreator — external actor:** Starts, revises, or withdraws a short-video publication application.
 - **ContentManagementSystem — external participant:** Holds uploaded video content and makes approved content publicly available during distribution.
 
-## Candidate-class visualization
+## Candidate-Class Visualization
 
 ### Apply to Publish a Short Video
 
@@ -170,8 +170,6 @@ flowchart LR
     output --> actor
 ```
 
-#### Class Design
-
 ```mermaid
 classDiagram
     direction LR
@@ -213,28 +211,12 @@ classDiagram
     VideoPublishClosureHandler ..> VideoPublishApplication
 ```
 
-### Distribute the Short Video Subprocess
-
-```mermaid
-flowchart LR
-    publishCaller["«Caller»<br/>VideoPublishWorkflowScheduler"]
-    revisionCaller["«Caller»<br/>VideoRevisionWorkflowScheduler"]
-    input["«Input»<br/>VideoContent"]
-    workflow["VideoDistributionScheduler"]
-    output["«Output»<br/>PublishedVideoContent"]
-
-    publishCaller --> workflow
-    revisionCaller --> workflow
-    input --> workflow
-    workflow --> output
-```
+### Distribute the Short Video
 
 ```mermaid
 classDiagram
     direction LR
 
-    class VideoPublishWorkflowScheduler
-    <<Caller>> VideoPublishWorkflowScheduler
     class VideoRevisionWorkflowScheduler
     <<Caller>> VideoRevisionWorkflowScheduler
     class VideoContent
@@ -242,11 +224,9 @@ classDiagram
     class VideoDistributionScheduler
     class VideoDistributor
     class ContentManagementSystem
-    <<Actor>> ContentManagementSystem
     class PublishedVideoContent
     <<Output>> PublishedVideoContent
 
-    VideoPublishWorkflowScheduler ..> VideoDistributionScheduler
     VideoRevisionWorkflowScheduler ..> VideoDistributionScheduler
     VideoDistributionScheduler ..> VideoContent
     VideoDistributionScheduler ..> VideoDistributor

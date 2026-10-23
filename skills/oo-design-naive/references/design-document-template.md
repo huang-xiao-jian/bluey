@@ -1,4 +1,4 @@
-# Object-Oriented Design: [Use Case Name]
+# [Design Name]
 
 ## Candidate-Class Descriptions
 
@@ -15,7 +15,9 @@
 
 ## Candidate-Class Visualization
 
-### Use-Case Overview
+<!-- Repeat this heading and diagram pair for each distinct use case or sub-process. -->
+
+### [Use-Case Scenario Description]
 
 ```mermaid
 flowchart LR
@@ -30,8 +32,6 @@ flowchart LR
     output --> actor
 ```
 
-### Class Design
-
 ```mermaid
 classDiagram
     class UseCaseCoordinator["[Use-Case Coordinator Name]"]
@@ -45,4 +45,29 @@ classDiagram
     UseCaseCoordinator ..> UseCaseInput
     UseCaseCoordinator ..> UseCaseCollaborator
     UseCaseCoordinator ..> UseCaseOutput
+```
+
+<!-- After all use-case diagram pairs, omit this section when the design has no nested subprocesses. -->
+
+### [Subprocess Description]
+
+```mermaid
+classDiagram
+    %% Repeat or remove caller declarations and relationships to match the actual callers.
+    class EnclosingCallerOne["[Enclosing Caller Name 1]"]
+    <<Caller>> EnclosingCallerOne
+    class EnclosingCallerTwo["[Enclosing Caller Name 2]"]
+    <<Caller>> EnclosingCallerTwo
+    class SubprocessInput["[Subprocess Input Name]"]
+    <<Input>> SubprocessInput
+    class SubprocessCoordinator["[Subprocess Coordinator Name]"]
+    class SubprocessCollaborator["[Subprocess Collaborator Name]"]
+    class SubprocessOutput["[Subprocess Output Name]"]
+    <<Output>> SubprocessOutput
+
+    EnclosingCallerOne ..> SubprocessCoordinator
+    EnclosingCallerTwo ..> SubprocessCoordinator
+    SubprocessCoordinator ..> SubprocessInput
+    SubprocessCoordinator ..> SubprocessCollaborator
+    SubprocessCoordinator ..> SubprocessOutput
 ```

@@ -1,11 +1,11 @@
-# Object-Oriented Design Example: Publish a Short Video
+# Publish a Short Video
 
 ## Participants
 
 - **Primary participant:** Content creator
-- **Secondary participants:** Content review system, content management system
+- **Secondary participants:** content management system
 
-## Summary
+## Brief
 
 A creator initiates a short-video publication application, and the system validates and reviews the content. If the application does not pass, the system must provide feedback. The creator updates the video or publication information within the same application, and the system repeats validation and review until the application reaches either a distributable or terminated state.
 

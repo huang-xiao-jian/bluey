@@ -33,7 +33,7 @@ Core content:
 2. **Candidate-class visualization:** Use a separate Mermaid diagram pair for each distinct use case:
    - Use a `flowchart` for the use-case overview.
    - Follow it immediately with a `classDiagram` for that use case's internal class design.
-   - Use additional separate `classDiagram` diagrams only for nested subprocess levels.
+   - Use one additional `classDiagram` for each unique nested subprocess. Do not add a subprocess `flowchart` or duplicate a shared subprocess diagram for each caller.
 
 #### Design Document Constraints
 
@@ -41,10 +41,11 @@ Core content:
 - Give each distinct actor goal and lifecycle entry its own use-case flowchart and following class diagram. Do not disguise a separate use case as a subprocess of another use case.
 - Treat the use-case overview as a black box. It shows only the external consumer, use-case input, meaningfully named use-case coordinator, and use-case output. It does not show any internal collaborator or subprocess coordinator.
 - Repeat the use-case coordinator's exact name in the immediately following class diagram and mark it as `Caller`. For a nested subprocess, repeat the exact name of its caller from the enclosing level.
-- Each class diagram shows the caller from the enclosing level, the level's input and output, and the candidate classes that collaborate inside that level.
+- Each class diagram shows the caller or callers from the enclosing level, the level's input and output, and the candidate classes that collaborate inside that level.
+- When multiple enclosing classes call the same nested subprocess, include all of them as `Caller` in one shared subprocess class diagram.
 - Use only these role stereotypes:
-  - `Actor`: use-case level only; marks the external consumer that initiates or consumes the use case.
-  - `Caller`: subprocess level only; marks the candidate class in the enclosing level that calls the subprocess.
+  - `Actor`: use-case overview `flowchart` only; marks the external consumer that initiates or consumes the use case.
+  - `Caller`: `classDiagram` only; marks each candidate class from the enclosing overview or class-design level that invokes the represented design level.
   - `Input`: any level; marks the necessary input to that level.
   - `Output`: any level; marks the final artifact produced by that level.
 - Do not add other role stereotypes. A class without one of these four roles remains unstereotyped.
