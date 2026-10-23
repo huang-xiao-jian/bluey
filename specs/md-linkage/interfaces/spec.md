@@ -18,14 +18,18 @@ MCP adapters over the same core workflow.
 flowchart LR
     Terminal[Terminal Consumer] --> Cli[CLI Interface]
     Agent[AI Client] --> Mcp[MCP Interface]
-    Cli --> Workflow[Core Link Check Workflow]
-    Mcp --> Workflow
+    Cli --> Application[MarkdownLinkage Application]
+    Mcp --> Application
+    Application --> Workflow[Core Link Check Workflow]
     Workflow --> Report[Link Check Report]
-    Report --> Cli
-    Report --> Mcp
+    Report --> Application
+    Application --> Cli
+    Application --> Mcp
 ```
 
-The CLI and MCP interfaces are sibling adapters. Neither invokes the other,
+The CLI and MCP interfaces are sibling adapters. Each handler constructs its
+own `MarkdownLinkage` application facade, which owns core composition and
+exposes the shared link-check capability. Neither interface invokes the other,
 and neither contains link-checking or scope-building rules.
 
 ## Adapters

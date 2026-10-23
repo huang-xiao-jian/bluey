@@ -3,8 +3,7 @@ import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { createApplicationContainer } from "../../src/composition/create-application-container";
-import { LinkCheckWorkflowScheduler } from "../../src/core/workflow/link-check-workflow-scheduler";
+import { MarkdownLinkage } from "../../src/application/markdown-linkage";
 import { setupMcpServer } from "../../src/mcp/server";
 
 const packageRoot = process.cwd();
@@ -33,8 +32,8 @@ describe("CLI and MCP report equivalence", () => {
       ],
       { cwd: packageRoot, encoding: "utf8" },
     );
-    const workflow = createApplicationContainer().get(LinkCheckWorkflowScheduler);
-    const server = setupMcpServer(workflow);
+    const markdownLinkage = new MarkdownLinkage();
+    const server = setupMcpServer(markdownLinkage);
     client = new Client({ name: "e2e-client", version: "1.0.0" });
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
     await Promise.all([
