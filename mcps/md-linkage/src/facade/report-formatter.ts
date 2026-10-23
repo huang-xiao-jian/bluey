@@ -1,4 +1,4 @@
-import type { LinkCheckReport } from "../../core/model/link-check-report";
+import type { LinkCheckReport } from "../core/model/link-check-report";
 
 export function formatHumanReport(report: LinkCheckReport): string {
   const lines = [

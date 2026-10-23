@@ -1,9 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { LinkCheckDelegation } from "../../core/model/link-check-delegation";
-import { LinkCheckReport } from "../../core/model/link-check-report";
-import { LinkCheckScope, LinkCheckScopeIssueType } from "../../core/model/link-check-scope";
-import { DeadReason, ResolvedSpecificationLinkStatus } from "../../core/model/resolved-specification-link";
-import { SpecificationLinkType } from "../../core/model/specification-link";
+import { LinkCheckDelegation } from "../core/model/link-check-delegation";
+import { LinkCheckReport } from "../core/model/link-check-report";
+import {
+  LinkCheckScope,
+  LinkCheckScopeIssueType,
+} from "../core/model/link-check-scope";
+import {
+  DeadReason,
+  ResolvedSpecificationLinkStatus,
+} from "../core/model/resolved-specification-link";
+import { SpecificationLinkType } from "../core/model/specification-link";
 import { formatHumanReport, formatJsonReport } from "./report-formatter";
 
 describe("report formatters", () => {

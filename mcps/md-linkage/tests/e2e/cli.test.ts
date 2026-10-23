@@ -48,6 +48,23 @@ describe("md-linkage check", () => {
     expect(result.stdout).toBe("");
     expect(result.stderr).toContain("Invalid project root");
   });
+
+  it("returns status two for invalid command arguments", () => {
+    const result = run("check");
+
+    expect(result.status).toBe(2);
+    expect(result.stdout).toBe("");
+    expect(result.stderr).toContain("missing required argument 'files'");
+  });
+
+  it("preserves the default root in command help", () => {
+    const result = run("check", "--help");
+
+    expect(result.status).toBe(2);
+    expect(result.stdout).toContain("Project boundary (default:");
+    expect(result.stdout).toContain(packageRoot);
+    expect(result.stderr).toBe("");
+  });
 });
 
 function run(...args: string[]) {

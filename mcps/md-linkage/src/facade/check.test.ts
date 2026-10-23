@@ -1,15 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { LinkCheckMode } from "../../core/model/link-check-delegation";
-import { LinkCheckReport } from "../../core/model/link-check-report";
-import { LinkCheckScope, LinkCheckScopeIssueType } from "../../core/model/link-check-scope";
-import { executeCli, type CliDependencies } from "./check-command";
+import { LinkCheckMode } from "../core/model/link-check-delegation";
+import { LinkCheckReport } from "../core/model/link-check-report";
+import {
+  LinkCheckScope,
+  LinkCheckScopeIssueType,
+} from "../core/model/link-check-scope";
+import { CheckHandler, type CheckHandlerDependencies } from "./check";
 
-describe("executeCli", () => {
-  it("maps default root and mode into the JSON report", async () => {
+describe("CheckHandler", () => {
+  it("maps parsed defaults into the JSON report", async () => {
     const output = captureOutput();
-    const dependencies = dependenciesFor(output);
+    const handler = new CheckHandler(dependenciesFor(output));
 
-    const exitCode = await executeCli(["check", "spec.md", "docs/a.md", "--json"], dependencies);
+    const exitCode = await handler.run(["spec.md", "docs/a.md"], {
+      json: true,
+    });
     const report = JSON.parse(output.stdout.join("")) as {
       delegation: { root: string; files: string[]; mode: string };
     };
@@ -23,13 +28,15 @@ describe("executeCli", () => {
     expect(output.stderr).toEqual([]);
   });
 
-  it("resolves an explicit relative root and maps recursive mode", async () => {
+  it("maps an explicit root and mode into the workflow delegation", async () => {
     const output = captureOutput();
+    const handler = new CheckHandler(dependenciesFor(output));
 
-    await executeCli(
-      ["check", "spec.md", "--root", "nested", "--mode", "recursive", "--json"],
-      dependenciesFor(output),
-    );
+    await handler.run(["spec.md"], {
+      root: "nested",
+      mode: LinkCheckMode.Recursive,
+      json: true,
+    });
 
     expect(JSON.parse(output.stdout.join("")).delegation).toMatchObject({
       root: "/workspace/project/nested",
@@ -40,9 +47,9 @@ describe("executeCli", () => {
 
   it("returns status one and human output for a completed report with findings", async () => {
     const output = captureOutput();
-    const dependencies = dependenciesFor(output, true);
+    const handler = new CheckHandler(dependenciesFor(output, true));
 
-    const exitCode = await executeCli(["check", "missing.md"], dependencies);
+    const exitCode = await handler.run(["missing.md"], {});
 
     expect(exitCode).toBe(1);
     expect(output.stdout.join("")).toContain("Scope issues: 1");
@@ -57,21 +64,20 @@ describe("executeCli", () => {
         throw new Error("Invalid project root");
       },
     };
+    const handler = new CheckHandler(dependencies);
 
-    const exitCode = await executeCli(["check", "spec.md"], dependencies);
+    const exitCode = await handler.run(["spec.md"], {});
 
     expect(exitCode).toBe(2);
     expect(output.stdout).toEqual([]);
     expect(output.stderr.join("")).toContain("Invalid project root");
   });
 
-  it("returns status two before invoking the workflow for invalid CLI input", async () => {
+  it("returns status two before invoking the workflow for invalid input", async () => {
     const output = captureOutput();
+    const handler = new CheckHandler(dependenciesFor(output));
 
-    const exitCode = await executeCli(
-      ["check", "**/*.md"],
-      dependenciesFor(output),
-    );
+    const exitCode = await handler.run(["**/*.md"], {});
 
     expect(exitCode).toBe(2);
     expect(output.stdout).toEqual([]);
@@ -86,7 +92,7 @@ function captureOutput(): { stdout: string[]; stderr: string[] } {
 function dependenciesFor(
   output: { stdout: string[]; stderr: string[] },
   withFinding = false,
-): CliDependencies {
+): CheckHandlerDependencies {
   return {
     cwd: () => "/workspace/project",
     stdout: (text) => output.stdout.push(text),

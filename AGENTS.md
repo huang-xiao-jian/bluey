@@ -30,14 +30,13 @@ Turborepo orchestrate the pnpm workspace. Workspace packages belong
 in `mcps/*` or `packages/*`. Turbo handles dependency ordering and caches task
 outputs.
 
-The specs and implementation structure:
+The `spec` and `implementation` split into different directory with the same name:
 
 ```shell
 └── mcps
     ├── md-linkage
 └── specs
-    ├── md-linkage #
-    ├──├── spec.md
+    ├── md-linkage
 ```
 
 <!-- CODEGRAPH_START -->
