@@ -99,10 +99,10 @@ If no existing candidate class can own the responsibilities for handling an exce
 
 ### Step 4-4: Relate Exception Flows to the Main Flow
 
-In the class diagram, use a dashed arrow or a label to show how an exception flow is triggered from the main flow. For example:
-
-- Main flow: `RefundApplicationManager` → `RefundReviewDecision`
-- Exception flow: `RefundApplicationManager` → (buyer misses the return deadline) → `RefundTimeoutHandler`
+Represent the class responsible for detecting or handling a business exception
+and connect it with an unlabeled standard Mermaid relationship. Explain the
+triggering business condition in the adjacent prose rather than as a
+relationship label.
 
 ## Step 5: Refine Boundaries — Avoid Mixed Functions
 

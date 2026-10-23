@@ -1,6 +1,6 @@
 ---
 name: oo-design-naive
-description: Builds an early object-oriented model from use-case specifications by identifying candidate classes, responsibilities, and collaborations. Use when beginning object-oriented analysis or design.
+description: Use when beginning object-oriented analysis or design from a structured use-case specification.
 ---
 
 # oo-design-naive
@@ -13,7 +13,6 @@ Use this skill when the user requests object-oriented analysis or object-oriente
 
 - **Use case specification Oriented:** Object-oriented design must begin with a structured use-case specification. Do not invent business requirements.
 - **Prioritize business semantics:** Every design artifact, including class names, responsibilities, and collaborations, must center on business semantics. Do not leak technical implementation details into the design layer.
-- **Separate design artifacts:** Generate and deliver the design document (the final deliverable) and the thinking-process document (the analysis trail) independently.
 - **Use consistent naming:** Class names must follow the style defined in the [object-oriented design naming conventions](references/naming-conventions.md).
 
 ## Design Workflow
@@ -31,11 +30,24 @@ This is the final deliverable. It presents only the final design and excludes al
 Core content:
 
 1. **Candidate-class descriptions:** Each candidate class includes `Class Name`, `Responsibility`, and `Collaborators`.
-2. **Candidate-class visualization:** Use `mermaid` to draw a class diagram that shows the hierarchy between the use-case level and subprocess levels.
+2. **Candidate-class visualization:** Use a separate Mermaid diagram pair for each distinct use case:
+   - Use a `flowchart` for the use-case overview.
+   - Follow it immediately with a `classDiagram` for that use case's internal class design.
+   - Use additional separate `classDiagram` diagrams only for nested subprocess levels.
 
 #### Design Document Constraints
 
-- External participants in the class diagram must be explicitly marked `external`.
+- Keep the use-case overview and subprocess internals in separate diagrams. Do not use namespaces or one combined diagram to simulate the hierarchy.
+- Give each distinct actor goal and lifecycle entry its own use-case flowchart and following class diagram. Do not disguise a separate use case as a subprocess of another use case.
+- Treat the use-case overview as a black box. It shows only the external consumer, use-case input, meaningfully named use-case coordinator, and use-case output. It does not show any internal collaborator or subprocess coordinator.
+- Repeat the use-case coordinator's exact name in the immediately following class diagram and mark it as `Caller`. For a nested subprocess, repeat the exact name of its caller from the enclosing level.
+- Each class diagram shows the caller from the enclosing level, the level's input and output, and the candidate classes that collaborate inside that level.
+- Use only these role stereotypes:
+  - `Actor`: use-case level only; marks the external consumer that initiates or consumes the use case.
+  - `Caller`: subprocess level only; marks the candidate class in the enclosing level that calls the subprocess.
+  - `Input`: any level; marks the necessary input to that level.
+  - `Output`: any level; marks the final artifact produced by that level.
+- Do not add other role stereotypes. A class without one of these four roles remains unstereotyped.
 - Class definitions in the diagram may contain only the class name and a responsibility summary. They must not contain attribute definitions or method signatures.
 - Class definitions in the diagram must not contain implementation details such as `API`s, database tables, controllers, service layers, or message queues.
 - Relationships between classes in the diagram must use only standard `mermaid` syntax. Do not add text labels to relationships.
@@ -45,22 +57,41 @@ Core content:
 Compliant example:
 
 ```mermaid
+flowchart LR
+    actor["«Actor»<br/>Buyer"]
+    input["«Input»<br/>RefundRequest"]
+    workflow["RefundWorkflowScheduler"]
+    output["«Output»<br/>RefundDecision"]
+
+    actor --> input
+    input --> workflow
+    workflow --> output
+    output --> actor
+```
+
+```mermaid
 classDiagram
-    class VideoCreator
-    class ContentManagementSystem
-    <<external>> VideoCreator
-    <<external>> ContentManagementSystem
-
     class RefundWorkflowScheduler
+    <<Caller>> RefundWorkflowScheduler
+    class RefundRequest
+    <<Input>> RefundRequest
+    class RefundReviewScheduler
     class RefundEligibilityChecker
+    class RefundDecision
+    <<Output>> RefundDecision
 
-    RefundWorkflowScheduler --> RefundEligibilityChecker
+    RefundWorkflowScheduler ..> RefundReviewScheduler
+    RefundReviewScheduler ..> RefundRequest
+    RefundReviewScheduler ..> RefundEligibilityChecker
+    RefundReviewScheduler ..> RefundDecision
 ```
 
 Noncompliant example:
 
 ```mermaid
 classDiagram
+    class Buyer
+    <<Actor>> Buyer
     class RefundEligibilityChecker
     class RefundWorkflowScheduler {
         - refundService: RefundService
@@ -74,6 +105,8 @@ classDiagram
 
 Reasons for noncompliance:
 
+- A `classDiagram` is used for the use-case overview instead of a `flowchart`.
+- `Actor` appears in a subprocess-style class diagram instead of only in the use-case overview.
 - Attribute definitions appear (`- refundService: RefundService`), violating the rule that attributes are not allowed.
 - Method signatures appear (`+ processRefund(): void`), violating the rule that methods are not allowed.
 - A phrase labels the relationship (`RefundWorkflowScheduler --> RefundEligibilityChecker : delegates validation`), violating the rule that relationship descriptions are not allowed.

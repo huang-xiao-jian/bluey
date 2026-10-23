@@ -1,33 +1,48 @@
-# Object-Oriented Design
+# Object-Oriented Design: [Use Case Name]
 
 ## Candidate-Class Descriptions
 
-### Class 1: [Class Name]
+### [Class Name]
 
-- **Class Name:** [Class Name]
-- **Responsibility:** [Describe the class's business responsibility]
-- **Collaborators:** [List the classes with which this class collaborates]
+- **Class Name:** `[Class Name]`
+- **Responsibility:** [Business responsibility]
+- **Collaborators:** `[Collaborator Name 1]`, `[Collaborator Name 2]`
 
-### Class 2: [Class Name]
+## External Participants
 
-- **Class Name:** [Class Name]
-- **Responsibility:** [Responsibility description]
-- **Collaborators:** [Collaborating classes]
-
-(...)
+- **[Actor Name] — external actor:** [Business responsibility]
+- **[Participant Name] — external participant:** [Business responsibility]
 
 ## Candidate-Class Visualization
 
-Use Mermaid to draw a class diagram that shows the hierarchy between the use-case level and subprocess levels:
+### Use-Case Overview
+
+```mermaid
+flowchart LR
+    actor["«Actor»<br/>[Actor Name]"]
+    input["«Input»<br/>[Input Name]"]
+    workflow["[Use-Case Coordinator Name]"]
+    output["«Output»<br/>[Output Name]"]
+
+    actor --> input
+    input --> workflow
+    workflow --> output
+    output --> actor
+```
+
+### Class Design
 
 ```mermaid
 classDiagram
-    class VideoPublishWorkflowScheduler
-    class VideoContentValidator
-    class ContentReviewer
-    class VideoPublishApplicationManager
+    class UseCaseCoordinator["[Use-Case Coordinator Name]"]
+    <<Caller>> UseCaseCoordinator
+    class UseCaseInput["[Input Name]"]
+    <<Input>> UseCaseInput
+    class UseCaseCollaborator["[Collaborator Name]"]
+    class UseCaseOutput["[Output Name]"]
+    <<Output>> UseCaseOutput
 
-    VideoPublishWorkflowScheduler --> VideoContentValidator
-    VideoPublishWorkflowScheduler --> ContentReviewer
-    VideoPublishWorkflowScheduler --> VideoPublishApplicationManager
+    UseCaseCoordinator ..> UseCaseInput
+    UseCaseCoordinator ..> UseCaseCollaborator
+    UseCaseCoordinator ..> UseCaseOutput
 ```
