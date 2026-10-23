@@ -20,7 +20,3 @@ This document maps the use cases and business concepts for detecting dead links 
 
 - [Link Check Scope Builder](roles/LinkCheckScopeBuilder.md) defines the
   exceptions and algorithm for transforming a delegation into a scope.
-
-## Receptionist
-
-- [CLI + MCP Receptionist Architecture](receptionist.md) Defines how the capabilities exposed to terminal consumers and AI clients.
