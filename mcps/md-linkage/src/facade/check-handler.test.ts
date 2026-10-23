@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { stripVTControlCharacters } from "node:util";
 import { describe, expect, it } from "vitest";
 import { LinkCheckMode } from "../core/model/link-check-delegation";
 import {
@@ -49,7 +50,9 @@ describe("CheckHandler", () => {
 
     await handler.run(["missing.md"], {});
 
-    expect(output.stdout.join("")).toContain("Scope issues: 1");
+    expect(stripVTControlCharacters(output.stdout.join(""))).toContain(
+      "Scope      1 issue",
+    );
   });
 
   it("propagates a workflow failure when no report is produced", async () => {
