@@ -1,4 +1,4 @@
-import { Container } from "inversify";
+import { Container, injectable } from "inversify";
 import { ReferencedDocumentDiscoverer } from "../core/batch/referenced-document-discoverer";
 import { SpecificationDocumentBatchChecker } from "../core/batch/specification-document-batch-checker";
 import { SpecificationDocumentChecker } from "../core/document/specification-document-checker";
@@ -32,4 +32,11 @@ export function createLinkCheckWorkflowScheduler(): LinkCheckWorkflowScheduler {
   container.bind(LinkCheckWorkflowScheduler).toSelf().inSingletonScope();
 
   return container.get(LinkCheckWorkflowScheduler);
+}
+
+@injectable()
+export class MarkdownLinkage {
+  createLinkCheckWorkflowScheduler(): LinkCheckWorkflowScheduler {
+    return createLinkCheckWorkflowScheduler();
+  }
 }

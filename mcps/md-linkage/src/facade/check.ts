@@ -1,10 +1,17 @@
 import { resolve } from "node:path";
-import { createLinkCheckWorkflowScheduler } from "../application/markdown-linkage";
+import { Container, inject, injectable } from "inversify";
+import { MarkdownLinkage } from "../application/markdown-linkage";
 import {
   LinkCheckDelegation,
   LinkCheckMode,
 } from "../core/model/link-check-delegation";
-import { formatHumanReport, formatJsonReport } from "./report-formatter";
+import { HumanReportFormatter } from "./report/human-report-formatter";
+import { JsonReportFormatter } from "./report/json-report-formatter";
+import { ReportFormatterFactory } from "./report/report-formatter-factory";
+import {
+  ReportFormat,
+  ReportFormatter,
+} from "./report/report-formatter";
 
 export interface CheckOptions {
   readonly root?: string;
@@ -12,15 +19,20 @@ export interface CheckOptions {
   readonly json?: boolean;
 }
 
-export interface CheckHandlerDependencies {
-  readonly cwd: () => string;
-  readonly stdout: (text: string) => void;
+export abstract class CheckHandlerDependencies {
+  public abstract cwd(): string;
+  public abstract stdout(text: string): void;
 }
 
+@injectable()
 export class CheckHandler {
-  private readonly scheduler = createLinkCheckWorkflowScheduler();
-
-  public constructor(private readonly dependencies: CheckHandlerDependencies) {}
+  public constructor(
+    private readonly linkage: MarkdownLinkage,
+    @inject(ReportFormatterFactory)
+    private readonly reportFormatterFactory: ReportFormatterFactory,
+    @inject(CheckHandlerDependencies)
+    private readonly dependencies: CheckHandlerDependencies,
+  ) {}
 
   public async run(
     files: readonly string[],
@@ -31,9 +43,32 @@ export class CheckHandler {
       options.root ?? this.dependencies.cwd(),
     );
     const delegation = new LinkCheckDelegation(root, files, options.mode);
-    const report = await this.scheduler.run(delegation);
-    const output = options.json ? formatJsonReport(report) : formatHumanReport(report);
+    const scheduler = this.linkage.createLinkCheckWorkflowScheduler();
+    const report = await scheduler.run(delegation);
+    const formatter = this.reportFormatterFactory.create(options);
+    const output = formatter.format(report);
 
     this.dependencies.stdout(`${output}\n`);
   }
+}
+
+export function createCheckHandler(dependencies: CheckHandlerDependencies) {
+  const container = new Container({
+    defaultScope: "Singleton",
+  });
+
+  container.bind(CheckHandler).toSelf();
+  container.bind(MarkdownLinkage).toSelf();
+  container.bind(CheckHandlerDependencies).toConstantValue(dependencies);
+  container
+    .bind(ReportFormatter)
+    .to(HumanReportFormatter)
+    .whenNamed(ReportFormat.Human);
+  container
+    .bind(ReportFormatter)
+    .to(JsonReportFormatter)
+    .whenNamed(ReportFormat.Json);
+  container.bind(ReportFormatterFactory).toSelf();
+
+  return container.get(CheckHandler);
 }

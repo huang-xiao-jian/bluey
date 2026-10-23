@@ -1,18 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { LinkCheckDelegation } from "../core/model/link-check-delegation";
-import { LinkCheckReport } from "../core/model/link-check-report";
+import { LinkCheckDelegation } from "../../core/model/link-check-delegation";
+import { LinkCheckReport } from "../../core/model/link-check-report";
 import {
   LinkCheckScope,
   LinkCheckScopeIssueType,
-} from "../core/model/link-check-scope";
+} from "../../core/model/link-check-scope";
 import {
   DeadReason,
   ResolvedSpecificationLinkStatus,
-} from "../core/model/resolved-specification-link";
-import { SpecificationLinkType } from "../core/model/specification-link";
-import { formatHumanReport, formatJsonReport } from "./report-formatter";
+} from "../../core/model/resolved-specification-link";
+import { SpecificationLinkType } from "../../core/model/specification-link";
+import { HumanReportFormatter } from "./human-report-formatter";
+import { JsonReportFormatter } from "./json-report-formatter";
+import { ReportFormatterFactory } from "./report-formatter-factory";
 
 describe("report formatters", () => {
+  const formatterFactory = new ReportFormatterFactory(
+    new HumanReportFormatter(),
+    new JsonReportFormatter(),
+  );
   const delegation = new LinkCheckDelegation("/workspace/project", ["spec.md"]);
   const report = new LinkCheckReport(
     delegation,
@@ -39,8 +45,8 @@ describe("report formatters", () => {
     ],
   );
 
-  it("renders concise counts and every finding for people", () => {
-    expect(formatHumanReport(report)).toBe(
+  it("selects human formatting by default", () => {
+    expect(formatterFactory.create({}).format(report)).toBe(
       [
         "Documents: 1",
         "Scope issues: 1",
@@ -55,7 +61,9 @@ describe("report formatters", () => {
     );
   });
 
-  it("renders only the serialized report for machines", () => {
-    expect(formatJsonReport(report)).toBe(JSON.stringify(report, null, 2));
+  it("selects JSON formatting when requested", () => {
+    expect(formatterFactory.create({ json: true }).format(report)).toBe(
+      JSON.stringify(report, null, 2),
+    );
   });
 });

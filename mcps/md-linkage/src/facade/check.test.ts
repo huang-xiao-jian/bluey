@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { LinkCheckMode } from "../core/model/link-check-delegation";
-import { CheckHandler, type CheckHandlerDependencies } from "./check";
+import { createCheckHandler, type CheckHandlerDependencies } from "./check";
 
 const projectRoot = join(
   import.meta.dirname,
@@ -11,7 +11,7 @@ const projectRoot = join(
 describe("CheckHandler", () => {
   it("maps parsed defaults into the JSON report", async () => {
     const output = captureOutput();
-    const handler = new CheckHandler(dependenciesFor(output));
+    const handler = createCheckHandler(dependenciesFor(output));
 
     await handler.run(["clean.md"], { json: true });
 
@@ -24,7 +24,7 @@ describe("CheckHandler", () => {
 
   it("maps an explicit root and mode into the workflow delegation", async () => {
     const output = captureOutput();
-    const handler = new CheckHandler(dependenciesFor(output));
+    const handler = createCheckHandler(dependenciesFor(output));
 
     await handler.run(["next.md"], {
       root: "nested",
@@ -41,7 +41,7 @@ describe("CheckHandler", () => {
 
   it("writes human output for a completed report with findings", async () => {
     const output = captureOutput();
-    const handler = new CheckHandler(dependenciesFor(output));
+    const handler = createCheckHandler(dependenciesFor(output));
 
     await handler.run(["missing.md"], {});
 
@@ -51,7 +51,7 @@ describe("CheckHandler", () => {
   it("propagates a workflow failure when no report is produced", async () => {
     const output = captureOutput();
     const missingRoot = join(projectRoot, "missing");
-    const handler = new CheckHandler(dependenciesFor(output, missingRoot));
+    const handler = createCheckHandler(dependenciesFor(output, missingRoot));
 
     await expect(handler.run(["spec.md"], {})).rejects.toThrow(
       "Invalid project root",
@@ -61,7 +61,7 @@ describe("CheckHandler", () => {
 
   it("propagates invalid input before invoking the workflow", async () => {
     const output = captureOutput();
-    const handler = new CheckHandler(dependenciesFor(output));
+    const handler = createCheckHandler(dependenciesFor(output));
 
     await expect(handler.run(["**/*.md"], {})).rejects.toThrow("concrete paths");
     expect(output.stdout).toEqual([]);

@@ -2,7 +2,7 @@
 import "reflect-metadata";
 import { Command, Option } from "commander";
 import { LinkCheckMode } from "./core/model/link-check-delegation";
-import { CheckHandler, type CheckOptions } from "./facade/check";
+import { createCheckHandler, type CheckOptions } from "./facade/check";
 import { McpHandler } from "./facade/mcp";
 
 const program = new Command()
@@ -21,7 +21,7 @@ program
   )
   .option("--json", "Write only the serialized report")
   .action(async (files: string[], options: CheckOptions) => {
-    const checker = new CheckHandler({
+    const checker = createCheckHandler({
       cwd: () => process.cwd(),
       stdout: (text) => process.stdout.write(text),
     });
