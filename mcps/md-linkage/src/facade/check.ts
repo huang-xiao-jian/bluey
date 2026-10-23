@@ -1,9 +1,9 @@
 import { resolve } from "node:path";
+import { MarkdownLinkage } from "../application/markdown-linkage";
 import {
   LinkCheckDelegation,
   LinkCheckMode,
 } from "../core/model/link-check-delegation";
-import type { LinkCheckWorkflowScheduler } from "../core/workflow/link-check-workflow-scheduler";
 import { formatHumanReport, formatJsonReport } from "./report-formatter";
 
 export interface CheckOptions {
@@ -13,12 +13,13 @@ export interface CheckOptions {
 }
 
 export interface CheckHandlerDependencies {
-  workflow: Pick<LinkCheckWorkflowScheduler, "run">;
   readonly cwd: () => string;
   readonly stdout: (text: string) => void;
 }
 
 export class CheckHandler {
+  private readonly markdownLinkage = new MarkdownLinkage();
+
   public constructor(private readonly dependencies: CheckHandlerDependencies) {}
 
   public async run(
@@ -30,7 +31,7 @@ export class CheckHandler {
       options.root ?? this.dependencies.cwd(),
     );
     const delegation = new LinkCheckDelegation(root, files, options.mode);
-    const report = await this.dependencies.workflow.run(delegation);
+    const report = await this.markdownLinkage.checkSpecificationLinks(delegation);
     const output = options.json ? formatJsonReport(report) : formatHumanReport(report);
 
     this.dependencies.stdout(`${output}\n`);

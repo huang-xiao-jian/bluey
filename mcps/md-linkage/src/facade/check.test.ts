@@ -1,28 +1,23 @@
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { LinkCheckMode } from "../core/model/link-check-delegation";
-import { LinkCheckReport } from "../core/model/link-check-report";
-import {
-  LinkCheckScope,
-  LinkCheckScopeIssueType,
-} from "../core/model/link-check-scope";
 import { CheckHandler, type CheckHandlerDependencies } from "./check";
+
+const projectRoot = join(
+  import.meta.dirname,
+  "../../tests/e2e/__fixtures__/project",
+);
 
 describe("CheckHandler", () => {
   it("maps parsed defaults into the JSON report", async () => {
     const output = captureOutput();
     const handler = new CheckHandler(dependenciesFor(output));
 
-    const result = await handler.run(["spec.md", "docs/a.md"], {
-      json: true,
-    });
-    const report = JSON.parse(output.stdout.join("")) as {
-      delegation: { root: string; files: string[]; mode: string };
-    };
+    await handler.run(["clean.md"], { json: true });
 
-    expect(result).toBeUndefined();
-    expect(report.delegation).toEqual({
-      root: "/workspace/project",
-      files: ["spec.md", "docs/a.md"],
+    expect(JSON.parse(output.stdout.join("")).delegation).toEqual({
+      root: projectRoot,
+      files: ["clean.md"],
       mode: LinkCheckMode.Shallow,
     });
   });
@@ -31,38 +26,32 @@ describe("CheckHandler", () => {
     const output = captureOutput();
     const handler = new CheckHandler(dependenciesFor(output));
 
-    await handler.run(["spec.md"], {
+    await handler.run(["next.md"], {
       root: "nested",
       mode: LinkCheckMode.Recursive,
       json: true,
     });
 
     expect(JSON.parse(output.stdout.join("")).delegation).toMatchObject({
-      root: "/workspace/project/nested",
-      files: ["spec.md"],
+      root: join(projectRoot, "nested"),
+      files: ["next.md"],
       mode: LinkCheckMode.Recursive,
     });
   });
 
   it("writes human output for a completed report with findings", async () => {
     const output = captureOutput();
-    const handler = new CheckHandler(dependenciesFor(output, true));
+    const handler = new CheckHandler(dependenciesFor(output));
 
-    const result = await handler.run(["missing.md"], {});
+    await handler.run(["missing.md"], {});
 
-    expect(result).toBeUndefined();
     expect(output.stdout.join("")).toContain("Scope issues: 1");
   });
 
   it("propagates a workflow failure when no report is produced", async () => {
     const output = captureOutput();
-    const dependencies = dependenciesFor(output);
-    dependencies.workflow = {
-      async run() {
-        throw new Error("Invalid project root");
-      },
-    };
-    const handler = new CheckHandler(dependencies);
+    const missingRoot = join(projectRoot, "missing");
+    const handler = new CheckHandler(dependenciesFor(output, missingRoot));
 
     await expect(handler.run(["spec.md"], {})).rejects.toThrow(
       "Invalid project root",
@@ -85,27 +74,10 @@ function captureOutput(): { stdout: string[] } {
 
 function dependenciesFor(
   output: { stdout: string[] },
-  withFinding = false,
+  cwd = projectRoot,
 ): CheckHandlerDependencies {
   return {
-    cwd: () => "/workspace/project",
+    cwd: () => cwd,
     stdout: (text) => output.stdout.push(text),
-    workflow: {
-      async run(delegation) {
-        const scope = new LinkCheckScope(
-          withFinding ? [] : delegation.files,
-          withFinding
-            ? [
-                {
-                  path: delegation.files[0]!,
-                  resolvedPath: `${delegation.root}/${delegation.files[0]}`,
-                  issueType: LinkCheckScopeIssueType.DocumentNotFound,
-                },
-              ]
-            : [],
-        );
-        return new LinkCheckReport(delegation, scope, []);
-      },
-    },
   };
 }
