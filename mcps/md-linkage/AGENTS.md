@@ -1,5 +1,13 @@
 # AGENTS
 
+## Vital Tech
+
+- **`commander`**: Parses the CLI commands and options.
+- **`zod`**: Validates shared request and response contracts and provides inferred TypeScript types.
+- **`@modelcontextprotocol/sdk`**: Provides MCP tool registration and transport support.
+- **`inversify`**: Provides the dependency injection container used to bind and
+  resolve application services and their collaborators by constructor token.
+
 ## Package Selections
 
 - **`mdast-util-from-markdown`**: Parses CommonMark into a syntax tree so links
@@ -13,11 +21,3 @@
   duplicate-heading suffixes required by the anchor detection stories.
 - **`@types/mdast`**: Provides TypeScript types for Markdown document roots,
   links, and headings. This is a development dependency.
-- **`inversify`**: Provides the dependency injection container used to bind and
-  resolve application services and their collaborators by constructor token.
-- **`commander`**: Parses the CLI commands and options. This dependency already
-  exists in the package.
-- **`zod`**: Validates shared request and response contracts and provides
-  inferred TypeScript types. This dependency already exists in the package.
-- **`@modelcontextprotocol/sdk`**: Provides MCP tool registration and transport
-  support. This dependency already exists in the package.

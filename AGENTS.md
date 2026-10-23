@@ -15,12 +15,10 @@ multi-agent roles, routing, or orchestration.
   style and presentation rules for repository documentation.
 - [TypeScript convention](docs/conventions/typescript.md) defines the default
   object-oriented design and import style for TypeScript code.
+- [Testing convention](docs/conventions/testing.md) defines the default test
+  organization, implementation, and execution guidance.
 
 ## ADRs
-
-The short decision for project:
-
-- Don't use git worktree feature unless i explicitly request
 
 The formal ADR for project, review files when necessary:
 
@@ -43,6 +41,7 @@ The specs and implementation structure:
 ```
 
 <!-- CODEGRAPH_START -->
+
 ## CodeGraph
 
 In repositories indexed by CodeGraph (a `.codegraph/` directory exists at the repo root), reach for it BEFORE grep/find or reading files when you need to understand or locate code:
@@ -51,4 +50,5 @@ In repositories indexed by CodeGraph (a `.codegraph/` directory exists at the re
 - **Shell** (always works): `codegraph explore "<symbol names or question>"` prints the same output.
 
 If there is no `.codegraph/` directory, skip CodeGraph entirely — indexing is the user's decision.
+
 <!-- CODEGRAPH_END -->

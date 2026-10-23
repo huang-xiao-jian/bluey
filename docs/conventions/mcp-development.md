@@ -1,11 +1,5 @@
 # MCP Server Development Guide
 
-## Vital Tech
-
-- `@modelcontextprotocol/sdk`
-- `commander`
-- `zod`
-
 ## Architecture Design
 
 ```Plaintext
@@ -22,9 +16,7 @@ Core Layer         → Provides context-agnostic capability implementations
 
 ```
 
-**Dependency Direction: Facade Layer → Application Layer → Core Layer**
-
-## Core Layer (`src/core/`)
+## Core Layer
 
 **Directory**: `src/core/`
 
@@ -59,7 +51,7 @@ export async function searchDocuments(
 
 - Supports reusability in non-`MCP` scenarios
 
-## Application Layer (`src/mcp/`)
+## Application Layer
 
 **Directory**: `src/mcp/`
 
@@ -73,7 +65,7 @@ export async function searchDocuments(
 
 3. **Registration Configuration**
 
-### Code Template
+### Application Layer Code Template
 
 ```TypeScript
 // src/mcp/tools/search-documents.ts
@@ -108,7 +100,7 @@ export const SearchDocumentsTool = {
 
 ```
 
-### Server Aggregation
+### Server Aggregation Code Template
 
 ```TypeScript
 // src/mcp/server.ts
@@ -136,7 +128,7 @@ export function createMcpServer() {
 
 ```
 
-### Testing
+### Application Layer Testing
 
 - **Schema Testing**: Verify validation rules
 
@@ -144,13 +136,13 @@ export function createMcpServer() {
 
 - **Contract Testing**: Verify `MCP` protocol compliance using an in-memory `Transport`
 
-## Facade Layer (`src/facade/`)
+## Facade Layer
 
 **Directory**: `src/facade/`
 
 **Responsibility**: Exposes services to external clients
 
-### Code Template
+### Facade Code Template
 
 ```TypeScript
 // src/facade/mcp.ts
@@ -166,15 +158,9 @@ export async function startStdioServer() {
 
 ```
 
-### Testing
-
-- E2E test coverage (verifies service initialization + transport channel I/O)
-
-- Facade Layer usually omits standalone unit tests
-
 ## Directory Structure
 
-```Plaintext
+```shell
 src/
   core/          # Core Layer: Pure domain logic
     tools/
@@ -196,9 +182,3 @@ tests/
     prompts/
 
 ```
-
-**Naming Conventions**:
-
-- Colocate unit tests with source files (`xxx.test.ts`)
-- Place `E2E` tests in `tests/e2e/`
-- Facade Layer skips unit tests by default; coverage is handled via `E2E`
