@@ -1,16 +1,11 @@
 #!/usr/bin/env node
 import "reflect-metadata";
 import { Command, Option } from "commander";
-import { createApplicationContainer } from "./composition/create-application-container";
-import { LinkCheckWorkflowScheduler } from "./core/workflow/link-check-workflow-scheduler";
 import { LinkCheckMode } from "./core/model/link-check-delegation";
 import { CheckHandler, type CheckOptions } from "./facade/check";
 import { McpHandler } from "./facade/mcp";
 
-const container = createApplicationContainer();
-const workflow = container.get(LinkCheckWorkflowScheduler);
 const check = new CheckHandler({
-  workflow,
   cwd: () => process.cwd(),
   stdout: (text) => process.stdout.write(text),
 });
