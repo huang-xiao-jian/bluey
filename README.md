@@ -41,6 +41,9 @@ docs/               Conventions and operating notes
 
 - [@bluey/echo-mcp](mcps/echo-mcp/README.md): Read-only `echo` tool used to
   verify the local MCP development setup.
+- [@bluey/md-linkage](mcps/md-linkage/README.md): Checks local Markdown links
+  through the `md-linkage` CLI and the read-only `check_specification_links`
+  MCP tool.
 
 ### In Consideration
 
