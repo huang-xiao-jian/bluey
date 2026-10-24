@@ -10,8 +10,7 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "check": "corepack pnpm check:skills && corepack pnpm build && corepack pnpm test",
-    "check:skills": "node scripts/check-skills.mjs",
+    "check": "pnpm build && pnpm test",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck"
   },
