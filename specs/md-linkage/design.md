@@ -12,13 +12,13 @@
 ### LinkCheckDelegation
 
 - **类名：** `LinkCheckDelegation`
-- **职责：** 表示维护者要求在项目边界内检查一个或多个规范文档的指令，并保留起始文档路径以及浅层或递归遍历选择。
+- **职责：** 表示维护者要求在项目边界内检查一个或多个规范文档的指令，并保留项目根目录、输入解析基准、文件路径、目录路径或 glob pattern 形式的 `files` 输入，以及浅层或递归遍历选择。
 - **协作者：** `SpecificationDocumentMaintainer`、`LinkCheckWorkflowScheduler`、`LinkCheckScopeBuilder`、`SpecificationDocumentBatchChecker`、`LinkCheckReport`
 
 ### LinkCheckScope
 
 - **类名：** `LinkCheckScope`
-- **职责：** 表示已建立且有序的起始文档，以及解释委托时发现的所有容错文档路径问题。
+- **职责：** 表示 `LinkCheckDelegation.files` 基于 `LinkCheckDelegation.base` 解析、展开后得到的有序起始文档，以及解释 `LinkCheckDelegation` 时发现的路径、glob pattern 和 glob 匹配结果问题。
 - **协作者：** `LinkCheckScopeBuilder`、`SpecificationDocumentRepository`、`SpecificationDocumentBatchChecker`、`LinkCheckReport`
 
 ### SpecificationDocumentRepository
@@ -54,13 +54,13 @@
 ### LinkCheckWorkflowScheduler
 
 - **类名：** `LinkCheckWorkflowScheduler`
-- **职责：** 协调完整用例：从接受委托开始，经过范围构建与文档检查，直至准备可追溯报告。
+- **职责：** 协调完整用例：接受 `LinkCheckDelegation`，通过 `LinkCheckScopeBuilder` 建立 `LinkCheckScope`，完成文档检查并准备 `LinkCheckReport`。
 - **协作者：** `SpecificationDocumentMaintainer`、`LinkCheckDelegation`、`LinkCheckScopeBuilder`、`SpecificationDocumentBatchChecker`、`LinkCheckReportFabricator`、`LinkCheckReport`
 
 ### LinkCheckScopeBuilder
 
 - **类名：** `LinkCheckScopeBuilder`
-- **职责：** 建立稳定项目边界，按顺序评估每个委托文档路径，记录容错路径问题，并生成 **Link Check Scope**；项目根目录无效时停止执行。
+- **职责：** 建立稳定项目边界，按顺序识别、展开并评估 `LinkCheckDelegation.files` 的每个输入项，记录 `LinkCheckScopeIssue`，并生成 **Link Check Scope**；项目根目录无效时停止执行。
 - **协作者：** `LinkCheckDelegation`、`LinkCheckScope`、`LinkCheckWorkflowScheduler`
 
 ### SpecificationDocumentBatchChecker

@@ -32,6 +32,7 @@ interface LinkCheckReport {
 {
   "delegation": {
     "root": "/var/specs",
+    "base": "/var/specs",
     "files": ["guide.md"],
     "mode": "shallow"
   },

@@ -6,8 +6,8 @@
 
 ## 概念
 
-- [Link Check Delegation](glossary/LinkCheckDelegation.md) 定义一次检查的项目边界、明确委托的文档路径和遍历模式。
-- [Link Check Scope](glossary/LinkCheckScope.md) 定义最终得到的起始文档和记录的文档路径问题。
+- [Link Check Delegation](glossary/LinkCheckDelegation.md) 定义一次检查的项目边界、输入解析基准、`files` 输入和遍历模式。
+- [Link Check Scope](glossary/LinkCheckScope.md) 定义 `files` 输入解析、展开后得到的起始文档，以及针对路径、glob pattern 和 glob 匹配结果记录的 `LinkCheckScopeIssue`。
 - [Specification Link](glossary/SpecificationLink.md) 定义为验证而提取的受支持 Markdown 链接形式。
 - [Resolved Specification Link](glossary/ResolvedSpecificationLink.md) 定义链接验证产生的、可追溯的有效与失效变体。
 - [Link Check Report](glossary/LinkCheckReport.md) 定义一次链接检查完成后的原始结果。
