@@ -1,21 +1,18 @@
-# MCP server convention
+# MCP server 规范
 
-## Naming and scope
+## 命名和范围
 
-Use a descriptive lower-case kebab-case directory name, such as
-`release-notes` or `linear-issues`.
+使用描述清晰的全小写 kebab-case 目录名，例如 `release-notes` 或
+`linear-issues`。
 
-Each MCP server has one clear responsibility. Keep changes self-contained
-within the server. When a public interface changes, update the server README
-with the new behavior, inputs, outputs, permissions, or configuration.
+每个 MCP server 只承担一项明确职责。变更应限制在该 server 内部。公共接口发生变化时，
+更新 server README，说明新的行为、输入、输出、权限或配置。
 
-## Tools and safety
+## Tool 和安全性
 
-Favor small tools with clear names. Tool descriptions should state side effects,
-required permissions, and meaningful constraints. A tool that changes external
-state must make that action unambiguous in both its name and description.
+优先设计名称清晰的小型 tool。Tool 描述应说明副作用、所需权限和有实际意义的约束。
+对于会改变外部状态的 tool，其名称和描述都必须明确表达该操作。
 
-MCP servers communicate over stdio unless another transport is explicitly
-required. Keep protocol messages on stdout and send logging to stderr. Validate
-all tool inputs and return concise, useful errors. Never commit credentials,
-tokens, or machine-specific paths.
+除非明确要求其他 transport，否则 MCP server 通过 stdio 通信。协议消息写入 stdout，
+日志写入 stderr。验证所有 tool 输入，并返回简洁且有帮助的错误。绝不提交凭据、token
+或特定于机器的路径。

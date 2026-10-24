@@ -1,16 +1,16 @@
-# Automation Testing Conventions
+# 自动化测试规范
 
-## Vibe Tech
+## 技术选型
 
-- Test Runner: `vitest`
+- 测试运行器：`vitest`
 
-## Testing Conventions
+## 测试规范
 
-### File Organization Conventions
+### 文件组织规范
 
-- Colocate unit test with source files
-- Colocate unit test **fixtures** with source files
-- Place `E2E` tests in `tests/e2e/`
+- 单元测试与源文件放在一起。
+- 单元测试的 **fixture** 与源文件放在一起。
+- `E2E` 测试放在 `tests/e2e/` 中。
 
 ```shell
 ├── inference
@@ -19,33 +19,32 @@
 │   ├── observer.test.ts
 ```
 
-### Test Code Conventions
+### 测试代码规范
 
-- `vitest` APIs must be explicitly imported;
-- `vitest` test case must be written entirely in English
-- Resolve dependency-injected systems and their managed collaborators from a
-  test-local container or the production composition factory. Do not manually
-  reconstruct their object graph with `new`.
-- Construct value objects, immutable test data, and collaborators outside the
-  dependency-injection graph directly when doing so keeps the test explicit.
+- 必须显式导入 `vitest` API。
+- `vitest` 测试用例必须完全使用英语编写。
+- 通过测试局部 container 或生产环境 composition factory 解析采用依赖注入的系统及其
+  托管协作者。不要使用 `new` 手动重建其 object graph。
+- 当直接构造 value object、不可变测试数据和依赖注入图外的协作者能让测试更明确时，
+  应直接构造它们。
 
 ```ts
 import { describe, expect, it, rstest } from "vitest";
 
 it("should return single point", () => {
-  // Arrange, Act, Assert pattern
+  // Arrange、Act、Assert 模式
 });
 ```
 
-### Running Tests
+### 运行测试
 
 ```bash
-# Run specific test cases
+# 运行指定测试用例
 pnpm vitest run -t "should return single point"
 
-# Run test cases with file names containing "observer"
+# 运行文件名包含 "observer" 的测试用例
 pnpm vitest run "observer"
 
-# Run test cases for a specific package
+# 运行指定 package 的测试用例
 pnpm vitest run --project @bluey/echo-mcp
 ```

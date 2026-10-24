@@ -1,51 +1,46 @@
-# MCP Server Development Guide
+# MCP Server 开发指南
 
-## Architecture Design
+## 架构设计
 
-The core capability is the primary implementation. CLI and MCP support are
-adapters that expose the same capability through different external
-interfaces.
+核心能力是主要实现。CLI 和 MCP 支持均为 adapter，通过不同的外部 interface
+公开同一项能力。
 
 ```Plaintext
-Host / Client (External)
+Host / Client（外部）
         │
         ▼
-Facade Layer       → Parses CLI commands or starts an MCP transport
+Facade Layer       → 解析 CLI 命令或启动 MCP transport
         │
         ├───────────────┐
         ▼               ▼
-CLI Handling        MCP Adapter     → Adapts the capability to MCP
+CLI 处理             MCP Adapter     → 将能力适配至 MCP
         │               │
         └───────┬───────┘
                 ▼
-Core Layer                         → Implements the primary capability
+Core Layer                         → 实现主要能力
                 ▲
                 │
-Optional Infrastructure           → Implements external-system ports
+可选 Infrastructure                → 实现外部系统 port
 
-Composition Root wires core dependencies and optional infrastructure for
-either external interface.
+Composition Root 为任一外部 interface 装配 core 依赖和可选 infrastructure。
 ```
 
-Business logic must remain independent of CLI and MCP protocol concerns. Both
-interfaces may invoke the core capability directly after translating their
-inputs into core models.
+业务逻辑必须独立于 CLI 和 MCP 协议相关事项。两种 interface 将输入转换为 core model
+后，均可直接调用核心能力。
 
-## Core Layer
+## 核心层（Core Layer）
 
-**Directory**: `src/core/`
+**目录**：`src/core/`
 
-**Responsibility**: Implements domain logic for tools, resources, and prompts,
-decoupled from the MCP protocol and transport layers. Organize the directory by
-capability or domain concepts rather than requiring `tools`, `resources`, and
-`prompts` subdirectories.
+**职责**：实现 tool、resource 和 prompt 的领域逻辑，并与 MCP 协议和 transport layer
+解耦。按能力或领域概念组织目录，不强制划分为 `tools`、`resources` 和 `prompts`
+子目录。
 
-Framework-assisted dependency injection, including decorators such as those
-provided by Inversify, is compatible with core purity. Purity here means that
-the capability does not depend on MCP or CLI protocol behavior and can be used
-and tested without starting either interface.
+框架辅助的依赖注入（包括 Inversify 提供的 decorator）与 core 的纯粹性并不冲突。
+这里的纯粹性是指能力不依赖 MCP 或 CLI 协议行为，并且无需启动任一 interface
+即可使用和测试。
 
-### Code Template
+### 代码模板
 
 ```TypeScript
 // src/core/search/search-documents.ts
@@ -68,43 +63,39 @@ export const searchDocuments: SearchDocuments = async (input) => {
 };
 ```
 
-### Testing
+### 测试
 
-- Use colocated unit tests to verify business logic correctness.
-- Verify that capabilities can run without CLI or MCP environment simulation.
+- 使用与源文件放在一起的单元测试验证业务逻辑的正确性。
+- 验证能力无需模拟 CLI 或 MCP 环境即可运行。
 
-## Composition Layer
+## 组装层（Composition Layer）
 
-**Directory**: `src/composition/`
+**目录**：`src/composition/`
 
-**Responsibility**: Acts as the dependency-composition root. It constructs core
-workflows, binds ports to concrete implementations, and returns ready-to-use
-capabilities to CLI and MCP adapters.
+**职责**：作为依赖的 composition root。它构造 core workflow，将 port 绑定到具体实现，
+并向 CLI 和 MCP adapter 返回可直接使用的能力。
 
-The composition layer contains wiring, not business or protocol logic. Name
-files after the capability they compose, such as
-`link-check-composition.ts`.
+Composition layer 只包含装配逻辑，不包含业务逻辑或协议逻辑。文件以其装配的能力命名，
+例如 `link-check-composition.ts`。
 
-## MCP Adapter Layer
+## MCP 适配层（MCP Adapter Layer）
 
-**Directory**: `src/mcp/`
+**目录**：`src/mcp/`
 
-**Responsibility**: Defines the MCP server and adapts core capabilities into MCP
-tools, resources, and prompts. It holds Zod schemas, callbacks, resource URIs,
-prompt templates, registration configuration, and server response aggregation.
+**职责**：定义 MCP server，并将核心能力适配为 MCP tool、resource 和 prompt。
+该层包含 Zod schema、callback、resource URI、prompt template、注册配置以及
+server response 聚合。
 
-### Key Components of a Tool
+### Tool 的关键组成部分
 
-1. **Schema**: Input and structured-output contracts defined using Zod.
-2. **Callback**: Validates parameters, translates them to core models, invokes
-   the core capability, validates its output, and returns adapter-level result
-   data.
-3. **Registration Configuration**: Defines the tool name, title, description,
-   schemas, and annotations.
-4. **Server Aggregation**: Registers the tool, formats MCP `content` and
-   `structuredContent`, and maps failures to MCP error responses.
+1. **Schema**：使用 Zod 定义 input 和 structured-output contract。
+2. **Callback**：验证参数、将参数转换为 core model、调用核心能力、验证其输出，
+   并返回 adapter-level result data。
+3. **注册配置**：定义 tool 名称、标题、描述、schema 和 annotation。
+4. **Server 聚合**：注册 tool、格式化 MCP `content` 和 `structuredContent`，
+   并将失败映射为 MCP error response。
 
-### Tool Code Template
+### Tool 代码模板
 
 ```TypeScript
 // src/mcp/tools/search-documents.ts
@@ -142,7 +133,7 @@ export function createSearchDocumentsTool(searchDocuments: SearchDocuments) {
 }
 ```
 
-### Server Aggregation Code Template
+### Server 聚合代码模板
 
 ```TypeScript
 // src/mcp/server.ts
@@ -188,25 +179,21 @@ export function setupMcpServer(searchDocuments: SearchDocuments) {
 }
 ```
 
-### MCP Adapter Testing
+### MCP Adapter 测试
 
-- **Schema testing**: Verify validation and defaults for MCP input and output
-  contracts.
-- **Callback testing**: Verify translation to core inputs and adapter-level
-  result data.
-- **Contract testing**: Verify registered capabilities and MCP response
-  structures using an in-memory transport. Keep these tests colocated with the
-  MCP server or capability they exercise.
+- **Schema 测试**：验证 MCP input 和 output contract 的校验及默认值。
+- **Callback 测试**：验证向 core input 的转换以及 adapter-level result data。
+- **Contract 测试**：使用 in-memory transport 验证已注册的能力和 MCP response
+  结构。这些测试应与其覆盖的 MCP server 或能力放在一起。
 
-## Facade Layer
+## 门面层（Facade Layer）
 
-**Directory**: `src/facade/`
+**目录**：`src/facade/`
 
-**Responsibility**: Exposes services to external clients. CLI handlers parse
-and translate command inputs before invoking a composed core capability. MCP
-handlers create the server, attach a transport, and run it.
+**职责**：向外部 client 公开 service。CLI handler 在调用已装配的核心能力前解析并转换
+命令输入。MCP handler 创建 server、连接 transport 并运行 server。
 
-### Facade Code Template
+### Facade 代码模板
 
 ```TypeScript
 // src/facade/mcp-handler.ts
@@ -223,42 +210,38 @@ export class McpHandler {
 }
 ```
 
-## Optional Infrastructure Layer
+## 可选 Infrastructure Layer
 
-**Directory**: `src/infrastructure/`, when needed
+**目录**：需要时使用 `src/infrastructure/`
 
-**Responsibility**: Implements core ports for external systems such as the
-filesystem, network services, or databases. Do not create this layer when a
-capability has no such dependency. The composition root selects and wires these
-implementations.
+**职责**：为 filesystem、network service 或 database 等外部系统实现 core port。
+当能力没有此类依赖时，不要创建这一层。Composition root 负责选择并装配这些实现。
 
-## Directory Structure
+## 目录结构
 
-Create only capability directories and optional adapters that the package
-actually needs.
+仅创建 package 实际需要的能力目录和可选 adapter。
 
 ```shell
 src/
-  core/                    # Primary, MCP-independent capability
+  core/                    # 主要且独立于 MCP 的能力
     [capability]/
     model/
     ports/
-  composition/             # Dependency-composition roots
+  composition/             # 依赖的 composition root
     [capability]-composition.ts
-  mcp/                     # MCP adaptation
-    tools/                 # When the server exposes tools
-    resources/             # When the server exposes resources
-    prompts/               # When the server exposes prompts
+  mcp/                     # MCP 适配
+    tools/                 # Server 公开 tool 时使用
+    resources/             # Server 公开 resource 时使用
+    prompts/               # Server 公开 prompt 时使用
     server.ts
-  facade/                  # External CLI and MCP entry points
+  facade/                  # 外部 CLI 和 MCP 入口
     mcp-handler.ts
     [command]-handler.ts
-  [infrastructure/]        # Optional external-system adapters
-  index.ts                 # CLI parsing and delegation
+  [infrastructure/]        # 可选的外部系统 adapter
+  index.ts                 # CLI 解析和委托
 tests/
-  e2e/                     # Built executable and external-interface tests
+  e2e/                     # 构建后可执行文件和外部 interface 测试
 ```
 
-Unit and contract tests may remain colocated with their source files. Reserve
-`tests/e2e/` for tests that execute the built package or otherwise cross the
-package's external boundary.
+单元测试和 contract test 可以与源文件放在一起。`tests/e2e/` 仅用于执行构建后 package
+或以其他方式跨越 package 外部边界的测试。

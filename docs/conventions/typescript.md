@@ -1,56 +1,45 @@
-# TypeScript convention
+# TypeScript 规范
 
-This document defines the default TypeScript code style for the repository.
-Apply it unless a package or runtime has a more specific requirement.
+本文档定义仓库默认的 TypeScript 代码风格。除非 package 或 runtime 有更具体的要求，
+否则应遵循本规范。
 
-## Object-oriented design
+## 面向对象设计
 
-- Prefer classes for stateful domain behavior, services, and dependency
-  boundaries.
-- Use functions for small stateless transformations, predicates, schemas, and
-  other behavior that does not benefit from an object lifecycle.
-- Keep each class focused on one responsibility and expose a small, explicit
-  public API.
-- Encapsulate mutable state. Prefer `private` or `protected` members over
-  publicly writable properties.
-- Supply required collaborators through the constructor so dependencies are
-  visible and instances are easy to test.
-- Favor composition and delegation over inheritance. Use inheritance only when
-  subtypes have a genuine substitutable relationship with the base type.
-- Define interfaces at meaningful boundaries, such as repositories, external
-  services, and interchangeable strategies. Do not create an interface solely
-  to mirror every class.
-- Avoid static utility classes and classes that only wrap a single stateless
-  function.
+- 对于有状态的领域行为、service 和依赖边界，优先使用 class。
+- 对于小型无状态转换、predicate、schema，以及其他无法从 object 生命周期获益的行为，
+  使用 function。
+- 每个 class 应聚焦于一项职责，并公开精简、明确的 public API。
+- 封装可变状态。相较于可公开写入的 property，优先使用 `private` 或 `protected` member。
+- 通过 constructor 提供必需的协作者，使依赖清晰可见，并让 instance 易于测试。
+- 优先使用 composition 和 delegation，而不是 inheritance。仅当 subtype 与 base type
+  之间存在真正可替换的关系时使用 inheritance。
+- 在 repository、外部 service 和可替换 strategy 等有意义的边界定义 interface。
+  不要仅为了映射每个 class 而创建 interface。
+- 避免 static utility class，以及仅包装单个无状态 function 的 class。
 
-## Class implementation
+## 类实现（Class）
 
-- Use descriptive nouns for class names and verbs for methods.
-- Declare member visibility explicitly when it improves the public contract.
-- Prefer `readonly` fields for dependencies and state that is not reassigned.
-- Keep constructors free of I/O and substantial business logic.
-- Preserve class invariants inside the class instead of requiring callers to
-  coordinate internal state.
-- Test observable behavior through the public API. Avoid tests coupled to
-  private implementation details.
+- Class 名称使用描述清晰的名词，method 名称使用动词。
+- 当显式声明 member 可见性能够改善 public contract 时，应进行声明。
+- 对于不会被重新赋值的依赖和状态，优先使用 `readonly` field。
+- Constructor 中不应包含 I/O 或大量业务逻辑。
+- 在 class 内部维护 class invariant，不要要求调用者协调内部状态。
+- 通过 public API 测试可观察行为。避免测试与 private 实现细节耦合。
 
-## Dependency injection
+## 依赖注入
 
-- Use concrete or abstract classes as service identifiers so constructor type
-  metadata can resolve dependencies without parameter-level injection
-  decorators.
-- Do not introduce string or symbol service identifiers when a concrete or
-  abstract class can express the dependency.
-- Injection decorators are allowed. Use a class service identifier with
-  `@inject` when explicit annotation is useful and with `@multiInject` when a
-  constructor consumes multiple implementations of one abstract class.
-- Keep service bindings in the composition root and use `@injectable` to make
-  constructor metadata available to the container.
+- 使用 concrete class 或 abstract class 作为 service identifier，使 constructor type
+  metadata 无需 parameter-level injection decorator 即可解析依赖。
+- 当 concrete class 或 abstract class 能够表达依赖时，不要引入 string 或 symbol
+  service identifier。
+- 允许使用 injection decorator。显式标注有帮助时，对 class service identifier 使用
+  `@inject`；当 constructor 使用同一 abstract class 的多个实现时，使用 `@multiInject`。
+- 将 service binding 保留在 composition root 中，并使用 `@injectable` 向 container
+  提供 constructor metadata。
 
-## Imports
+## 导入（Import）
 
-- Write imports without file extensions, including relative imports.
-- Import from the narrowest stable module boundary available.
-- Use `import type` when an import is used only as a type.
-- Include a file extension only when a runtime, compiler, or external tool
-  explicitly requires it.
+- Import 不包含文件扩展名，relative import 也不例外。
+- 从可用的最窄稳定 module boundary 导入。
+- 当 import 仅作为 type 使用时，使用 `import type`。
+- 仅当 runtime、compiler 或外部 tool 明确要求时，才包含文件扩展名。

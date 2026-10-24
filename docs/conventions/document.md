@@ -1,47 +1,42 @@
-# Document convention
+# 文档规范
 
-This document defines presentation preferences for repository documentation.
-Apply these preferences when creating or editing Markdown documents unless a
-more specific file-level instruction overrides them.
+本文档定义仓库文档的呈现偏好。创建或编辑 Markdown 文档时应遵循这些偏好，
+除非文件中存在更具体的规则。
 
-## Structure
+## 结构
 
-- Keep each document focused on one purpose.
-- Prefer links to the authoritative document over repeating the same content.
-- Use headings only when they improve scanning and navigation.
-- Keep prose concise and use plain language.
+- 每份文档应聚焦于一个目的。
+- 优先链接至权威文档，避免重复相同内容。
+- 仅在标题有助于快速浏览和导航时使用标题。
+- 正文应简洁并使用直白的语言。
 
-## Lists and tables
+## 列表和表格
 
-- Prefer Markdown lists for collections of capabilities, steps, options, or
-  items with descriptions.
-- Use a table only when readers need to compare the same fields across multiple
-  items.
-- Do not use a table merely to place a name beside a long description; use a
-  list instead so the text wraps naturally.
+- 对于功能、步骤、选项或带有说明的项目集合，优先使用 Markdown 列表。
+- 仅当读者需要在多个项目间比较相同字段时使用表格。
+- 不要仅为了将名称与长篇说明并排而使用表格；应改用列表，使文本自然换行。
 
-## Links
+## 链接
 
-- When a document depends on reference files, add a `Prerequities` section near
-  the beginning and list the reference links there.
-- After a reference is listed under `Prerequities`, use its **bold name** in
-  the remaining document instead of repeating the link.
-- Use descriptive link text.
-- Link to the most specific relevant file or section.
-- Avoid adding cross-links between peer files in `docs/` by default; the
-  documentation map in `AGENTS.md` provides navigation.
+- 当文档依赖参考文件时，在文档开头附近添加“前置资料”章节，并在其中列出参考链接。
+- 在“前置资料”中列出参考资料后，文档其余部分应使用其**加粗名称**，
+  不要重复链接。
+- 使用能够描述目标内容的链接文本。
+- 链接至最具体的相关文件或章节。
+- 默认不要在 `docs/` 下的同级文件之间添加交叉链接；`AGENTS.md` 中的文档索引
+  负责提供导航。
 
-## Typescript Constraint
+## TypeScript 约束
 
-> A simple guideline for `Typescript` in document file
+> 文档文件中 `TypeScript` 示例应遵循的简单准则
 
-- MUST use enum for limited values instead of literal value.
+- 对于有限取值，必须使用 enum，而不是字面量类型。
 
 ```ts
-// BAD!
+// 错误示例
 type LinkCheckMode = "shallow" | "recursive";
 
-// GOOD!
+// 正确示例
 enum LinkCheckMode {
   Shallow = "shallow",
   Recursive = "recursive",
