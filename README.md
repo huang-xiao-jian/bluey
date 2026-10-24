@@ -8,10 +8,31 @@ A personal, Codex-first workspace for reusable agent capabilities:
 
 This repository deliberately targets one primary agent: **Codex**. It does not add multi-agent roles, routing, or orchestration.
 
-## Requirements
+## 环境准备
 
-- Node.js `26.8.2` (pinned in `.nvmrc`)
-- pnpm `12.4.2` (pinned through Corepack in `package.json`)
+本项目使用 [mise](https://mise.jdx.dev/) 管理 Node.js 和 pnpm。`mise.toml` 中的精确
+版本与 `.nvmrc`、`package.json` 的 `packageManager` 字段保持一致，不依赖 Corepack；
+安装前校验会阻止这些声明静默漂移。
+
+按照 mise 的 [shell activation 文档](https://mise.jdx.dev/installing-mise.html#shells)
+完成激活并打开新终端后，在新 clone 或新 worktree 中执行：
+
+```sh
+mise install
+mise exec -- pnpm install --frozen-lockfile
+```
+
+交互式 shell 会在进入项目或 worktree 时自动切换工具版本。脚本、CI 或其他非交互式
+shell 应显式使用 `mise exec -- <command>`，避免依赖父进程的 `PATH`。例如：
+
+```sh
+mise exec -- node --version
+mise exec -- pnpm --version
+mise exec -- pnpm check
+```
+
+mise 的工具安装和下载缓存由同一台机器上的所有 worktree 共享，但每个 worktree 都有
+独立的 `node_modules`，因此首次使用时仍需安装项目依赖。项目暂未定义 mise task。
 
 ## Repository layout
 

@@ -1,0 +1,5 @@
+[tools]
+# Keep synchronized with .nvmrc. The preinstall check rejects drift.
+node = "26.8.2"
+# Keep synchronized with package.json#packageManager.
+pnpm = "12.4.2"
