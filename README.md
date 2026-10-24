@@ -10,8 +10,9 @@ This repository deliberately targets one primary agent: **Codex**. It does not a
 
 ## 环境准备
 
-本项目使用 [mise](https://mise.jdx.dev/) 管理 Node.js 和 pnpm。Node.js 版本来自
-`.nvmrc`，pnpm 版本来自 `package.json` 的 `packageManager` 字段，不依赖 Corepack。
+本项目使用 [mise](https://mise.jdx.dev/) 管理 Node.js 和 pnpm。`mise.toml` 中的精确
+版本与 `.nvmrc`、`package.json` 的 `packageManager` 字段保持一致，不依赖 Corepack；
+安装前校验会阻止这些声明静默漂移。
 
 按照 mise 的 [shell activation 文档](https://mise.jdx.dev/installing-mise.html#shells)
 完成激活并打开新终端后，在新 clone 或新 worktree 中执行：
