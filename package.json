@@ -9,11 +9,9 @@
     "pnpm": ">=12"
   },
   "scripts": {
-    "preinstall": "node scripts/verify-toolchain.mjs",
     "build": "turbo run build",
     "check": "pnpm build && pnpm test",
-    "test": "pnpm test:toolchain && turbo run test",
-    "test:toolchain": "vitest run scripts/verify-toolchain.test.mjs",
+    "test": "turbo run test",
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {

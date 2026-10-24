@@ -15,9 +15,18 @@
 
 - `CodeGraph` 自动注入区块保持原状，不受上述语言规则约束。
 
-## 技术栈
+## 环境说明
 
-- `pnpm@12.4.2`
+本项目使用 [mise](https://mise.jdx.dev/) 管理 `Node.js` 和 `pnpm`。
+交互式 shell 会在进入项目或 worktree 时自动切换工具版本。
+脚本、CI 或其他非交互式 shell 应显式使用 `mise exec -- <command>`，避免依赖父进程的 `PATH`。
+
+例如：
+
+```sh
+mise exec -- node --version
+mise exec -- pnpm --version
+```
 
 ## 参考资料
 
