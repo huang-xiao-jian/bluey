@@ -1,38 +1,28 @@
 # Resolved Specification Link
 
-## Prerequities
+## 参考资料
 
 - [Specification Link](./SpecificationLink.md)
 
-## 1. Definition
+## 定义
 
-A **Resolved Specification Link** is the traceable result of validating one
-supported **Specification Link**. It preserves the authored link and identifies
-the resolved target. Its `status` discriminates between the live and dead
-variants.
+**Resolved Specification Link** 是验证一个受支持 **Specification Link** 后得到的可追溯结果。它保留作者写下的链接并标识解析后的目标。其 `status` 用于区分有效与失效变体。
 
-## 2. Key Attributes
+## 关键属性
 
-- **Status:** Whether the resolved link is live or dead.
-- **Location:** The project boundary and project-relative path of the Markdown
-  document containing the link.
-- **Link:** The original **Specification Link** that was validated.
-- **Target:** The resolved target file and, when applicable, the anchor used
-  for validation and its known heading name.
-- **Dead Reason:** For the dead variant only, the reason the target is invalid.
+- **Status：** 已解析链接是有效还是失效。
+- **Location：** 包含该链接的 Markdown 文档所在的项目边界与项目相对路径。
+- **Link：** 接受验证的原始 **Specification Link**。
+- **Target：** 解析后的目标文件，以及验证时使用的锚点和已知标题名称（若适用）。
+- **Dead Reason：** 仅用于失效变体，说明目标无效的原因。
 
-### 3.1 Data Model
+### 数据模型
 
-- `DeadReason.FileNotFound` means the resolved target file does not exist.
-- `DeadReason.AnchorNotFound` applies only when the resolved target file exists
-  but the specified anchor does not identify a supported heading in that file.
-- `DeadReason.TargetOutsideProjectRoot` means the resolved target path is
-  outside the project boundary established by `location.root`.
-- Target containment is checked before file or anchor existence. When the
-  target is outside the project root, validation stops with
-  `DeadReason.TargetOutsideProjectRoot`.
-- When a cross-file target does not exist, validation stops with
-  `DeadReason.FileNotFound`; it does not also produce an anchor-missing result.
+- `DeadReason.FileNotFound` 表示解析后的目标文件不存在。
+- `DeadReason.AnchorNotFound` 仅在解析后的目标文件存在，但指定锚点未标识该文件中受支持的标题时适用。
+- `DeadReason.TargetOutsideProjectRoot` 表示解析后的目标路径位于 `location.root` 建立的项目边界之外。
+- 目标包含关系先于文件或锚点是否存在进行检查。目标位于项目根目录之外时，验证以 `DeadReason.TargetOutsideProjectRoot` 停止。
+- 跨文件目标不存在时，验证以 `DeadReason.FileNotFound` 停止，不会再生成锚点缺失结果。
 
 ```ts
 enum DeadReason {
@@ -47,22 +37,22 @@ enum ResolvedSpecificationLinkStatus {
 }
 
 interface ResolvedSpecificationLinkBase {
-  /** Identifies the Markdown document that contains the link. */
+  /** 标识包含该链接的 Markdown 文档。 */
   readonly location: {
-    /** Absolute project boundary established for the link check. */
+    /** 为链接检查建立的绝对项目边界。 */
     readonly root: string;
-    /** Path of the source Markdown document, relative to root. */
+    /** 源 Markdown 文档相对于根目录的路径。 */
     readonly filePath: string;
   };
-  /** Preserves the original specification link that was validated. */
+  /** 保留接受验证的原始 Specification Link。 */
   readonly link: SpecificationLink;
-  /** Identifies the destination used during link validation. */
+  /** 标识链接验证期间使用的目标。 */
   readonly target: {
-    /** Fully resolved path; resolves to the source file for an in-file anchor. */
+    /** 完整解析路径；对于文档内锚点，该路径解析为源文件。 */
     readonly filePath: string;
-    /** Normalized anchor ID used when the link specifies an anchor. */
+    /** 链接指定锚点时使用的规范化锚点 ID。 */
     readonly anchorId?: string;
-    /** Human-readable heading name when known without inference. */
+    /** 无需推断即可得知时的人类可读标题名称。 */
     readonly anchorName?: string;
   };
 }
@@ -81,10 +71,9 @@ type ResolvedSpecificationLink =
   | DeadResolvedSpecificationLink;
 ```
 
-#### Example
+### 数据模型案例
 
-The following dead variant represents a cross-file link whose target file
-exists but whose requested heading does not:
+以下失效变体表示一个跨文件链接：目标文件存在，但请求的标题不存在。
 
 ```ts
 const example: DeadResolvedSpecificationLink = {
@@ -109,14 +98,7 @@ const example: DeadResolvedSpecificationLink = {
 };
 ```
 
-## 3. Rules and Constraints
+## 规则与约束
 
-1. Each **Specification Link** produces exactly one **Resolved Specification Link**.
-2. Each **Resolved Specification Link** remain unchanged after established.
-
-## 4. Relationships
-
-- **Transformation:** Validation transforms one **Specification Link** into one
-  live or dead **Resolved Specification Link** variant.
-- **Aggregation:** A [Link Check Report](./LinkCheckReport.md) aggregates zero
-  or more dead variants.
+1. 每个 **Specification Link** 恰好产生一个 **Resolved Specification Link**。
+2. **Resolved Specification Link** 一经建立便保持不变。

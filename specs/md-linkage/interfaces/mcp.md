@@ -1,54 +1,45 @@
-# Markdown Linkage MCP Interface
+# md-linkage MCP 接入层设计
 
-## Prerequities
+## 参考资料
 
-- [Markdown Linkage Interface Specification](spec.md)
+- [Markdown 链接引用检查规约](../spec.md)
+- [Markdown 链接引用检查接入层设计](spec.md)
 
-## Startup
+## 启动
 
 ```text
 md-linkage mcp
 ```
 
-The subcommand starts the MCP server over stdio. Protocol messages are written
-to stdout, while logs and diagnostics are written to stderr.
+子命令通过 `stdio` 启动 `MCP server`。
 
-## Tool
+## 工具
 
-The read-only `check_specification_links` tool accepts:
+只读工具 `check_specification_links` 接受以下输入：
 
 ```ts
 interface CheckSpecificationLinksInput {
-  /** Explicit absolute project boundary for this check. */
+  /** 此次检查明确指定的绝对项目边界。 */
   readonly root: string;
-  /** One or more concrete document paths. */
+  /** 一个或多个具体文档路径。 */
   readonly files: readonly string[];
-  /** Defaults to LinkCheckMode.Shallow. */
+  /** 默认为 LinkCheckMode.Shallow。 */
   readonly mode?: LinkCheckMode;
 }
 ```
 
-The tool requires `root`; it never derives a project boundary from the MCP
-server's current working directory. Its input schema rejects a relative or empty
-root, an empty file collection, empty file paths, globs, and unsupported mode
-values before the core workflow is invoked.
+要求提供 `root`，绝不会根据当前工作目录推断项目边界。
 
-## Result
+## 响应结果
 
-For a completed check, the tool returns:
+- `content`：包含文档数、范围问题数和失效链接数的简短文本摘要。
+- `structuredContent`：完整的 **Link Check Report**；
 
-- `structuredContent`: the complete **Link Check Report**; and
-- `content`: a concise text summary containing document, scope-issue, and
-  dead-link counts.
+无效输入、无效项目根目录或其他阻止报告构造的失败会成为 `MCP` 错误。`LinkScopeIssue` 和 `DeadResolvedSpecificationLink` 属于预期检查发现，作为成功的工具结果返回。
 
-Scope issues and dead links remain successful tool results because they are
-expected findings. Invalid input, an invalid project root, or another failure
-that prevents report construction becomes an MCP error.
+## 验证要求
 
-## Verification Requirements
-
-- Verify input-schema constraints and the shallow-mode default.
-- Verify that no implicit project root is accepted.
-- Verify delegation mapping, structured report output, and text summaries.
-- Verify MCP errors for invalid requests and failures that prevent report
-  construction.
+- 验证输入 schema 约束和浅层模式默认值。
+- 验证不接受隐式项目根目录。
+- 验证委托映射、结构化报告输出和文本摘要。
+- 验证无效请求和阻止报告构造的失败会产生 MCP 错误。

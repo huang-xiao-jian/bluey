@@ -1,52 +1,42 @@
-# Markdown Linkage CLI Interface
+# md-linkage Cli
 
-## Prerequities
+## 参考资料
 
-- [Markdown Linkage Interface Specification](spec.md)
+- [业务逻辑描述](spec.md)
 
-## Command
+## 命令
 
 ```text
 md-linkage check <files...> [--root <path>] [--mode <shallow|recursive>] [--json]
 ```
 
-## Input Rules
+## 输入规则
 
-1. `files` contains at least one non-empty, concrete document path. Globs are
-   not supported.
-2. An omitted `--root` defaults to the process's current working directory.
-3. A relative `--root` is resolved to an absolute path before the delegation is
-   constructed.
-4. An omitted `--mode` defaults to `LinkCheckMode.Shallow`.
-5. Starting file arguments are resolved to absolute paths from the process's
-   current working directory before the delegation is constructed. The project
-   root remains the containment boundary. Links discovered during checking
-   continue to resolve relative to the document containing each link.
+1. 入参 `files` 至少包含一个非空的具体文档路径，不支持 glob。
+2. 省略 `--root` 时，默认使用进程的当前工作目录。
+3. 省略 `--mode` 时，默认使用 `LinkCheckMode.Shallow`。
+4. 构造委托前，根据进程的当前工作目录将起始文件参数解析为绝对路径。项目根目录仍是包含边界。检查期间发现的链接仍相对于包含各链接的文档进行解析。
 
-## Output
+## 输出
 
-The default output is a concise human-readable report containing:
+默认输出为简洁的人类可读报告，包含：
 
-- the total number of scope issues;
-- the total number of dead links;
-- each scope issue; and
-- each dead link.
+- `LinkCheckScopeIssue` 问题总数
+- `LinkCheckScopeIssue` 详细说明
+- `DeadResolvedSpecificationLink` 问题总数
+- `DeadResolvedSpecificationLink` 问题详情
 
-When `--json` is present, stdout contains only the serialized **Link Check Report**.
-Diagnostics that are not part of the report are written to stderr.
+指定 `--json` 时，stdout 仅包含序列化后的 **Link Check Report**。不属于报告的诊断信息写入 stderr。
 
-## Exit Status
+## 退出状态
 
-The CLI does not assign application-specific exit statuses. A completed check
-is successful even when its report contains findings. Errors that prevent
-completion propagate and use the runtime's standard failure behavior.
+CLI 未抛出执行异常即看做执行成功，即使报告中包含检测问题。
 
-## Verification Requirements
+## 验证要求
 
-- Verify current-working-directory and shallow-mode defaults.
-- Verify explicit root and mode mapping.
-- Verify starting file arguments resolve from the current working directory
-  without changing recursive link resolution.
-- Verify human-readable and JSON output.
-- Verify that clean reports and reports with findings complete successfully.
-- Verify that failures preventing report construction propagate.
+- 验证当前工作目录与浅层模式的默认值。
+- 验证明示根目录和模式的映射。
+- 验证起始文件参数基于当前工作目录解析，且不改变递归链接解析方式。
+- 验证人类可读输出和 JSON 输出。
+- 验证无问题报告和包含检查发现的报告都能成功完成。
+- 验证阻止报告构造的失败会继续传播。

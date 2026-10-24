@@ -1,22 +1,22 @@
 # Link Check Report
 
-## Prerequities
+## 参考资料
 
 - [Link Check Delegation](./LinkCheckDelegation.md)
 - [Link Check Scope](./LinkCheckScope.md)
 - [Resolved Specification Link](./ResolvedSpecificationLink.md)
 
-## 1. Definition
+## 定义
 
-A **Link Check Report** is the raw check result of one completed **Link Check Delegation**.
+**Link Check Report** 是执行 **Link Check Delegation** 任务成功完成后的原始检查结果。
 
-## 2. Key Attributes
+## 关键属性
 
-- **Check Delegation:**
-- **Check Scope:**
-- **Dead Resolved Specification Links:**
+- **Check Delegation：**
+- **Check Scope：**
+- **Dead Resolved Specification Links：**
 
-### 3.1 Data Model
+### 数据模型
 
 ```ts
 interface LinkCheckReport {
@@ -26,15 +26,41 @@ interface LinkCheckReport {
 }
 ```
 
-## 3. Rules and Constraints
+### 数据模型案例
 
-None!
+```json
+{
+  "delegation": {
+    "root": "/var/specs",
+    "files": ["guide.md"],
+    "mode": "shallow"
+  },
+  "scope": {
+    "files": ["guide.md"],
+    "issues": []
+  },
+  "deadLinks": [
+    {
+      "status": "dead",
+      "location": {
+        "root": "/var/specs",
+        "filePath": "guide.md"
+      },
+      "link": {
+        "type": "local-file",
+        "text": "[Missing](missing.md)",
+        "name": "Missing",
+        "path": "missing.md"
+      },
+      "target": {
+        "filePath": "/var/specs/missing.md"
+      },
+      "reason": "file-not-found"
+    }
+  ]
+}
+```
 
-## 4. Relationships
+## 规则与约束
 
-- **Association:** A **Link Check Report** is the result of one successfully
-  completed **Link Check Delegation**.
-- **Aggregation:** A **Link Check Report** contains one **Link Check Scope**
-  without changing its contents.
-- **Aggregation:** A **Link Check Report** aggregates zero or more dead
-  **Resolved Specification Link** variants without changing their contents.
+无。

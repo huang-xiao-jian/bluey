@@ -1,148 +1,143 @@
-# Object-Oriented Design: Check Specification Documents for Dead Links
+# 面向对象设计：检查规范文档中的失效链接
 
-## Prerequities
+## 参考资料
 
-- [Markdown Linkage Specification](spec.md)
-- [Check Specification Documents for Dead Links](use-case/check-specification-documents-for-dead-links.md)
-- [Single-Document Check](use-case/workflows/single-document-check-workflow.md)
-- [Multiple-Document Check](use-case/workflows/multiple-document-check-workflow.md)
 - [Link Check Scope Builder](roles/LinkCheckScopeBuilder.md)
+- [用例规约 -> 检查失效链接](../use-case/check-specification-documents-for-dead-links.md)
+- [单文档检查](use-case/workflows/single-document-check-workflow.md)
+- [多文档检查](use-case/workflows/multiple-document-check-workflow.md)
 
-## Candidate-Class Descriptions
+## 候选类说明
 
 ### LinkCheckDelegation
 
-- **Class Name:** `LinkCheckDelegation`
-- **Responsibility:** Represents a maintainer's instruction to check one or more specification documents within a project boundary, preserving the starting document paths and the shallow or recursive traversal choice.
-- **Collaborators:** `SpecificationDocumentMaintainer`, `LinkCheckWorkflowScheduler`, `LinkCheckScopeBuilder`, `SpecificationDocumentBatchChecker`, `LinkCheckReport`
+- **类名：** `LinkCheckDelegation`
+- **职责：** 表示维护者要求在项目边界内检查一个或多个规范文档的指令，并保留起始文档路径以及浅层或递归遍历选择。
+- **协作者：** `SpecificationDocumentMaintainer`、`LinkCheckWorkflowScheduler`、`LinkCheckScopeBuilder`、`SpecificationDocumentBatchChecker`、`LinkCheckReport`
 
 ### LinkCheckScope
 
-- **Class Name:** `LinkCheckScope`
-- **Responsibility:** Represents the established, ordered starting documents and every tolerated document-path issue discovered while interpreting a delegation.
-- **Collaborators:** `LinkCheckScopeBuilder`, `SpecificationDocumentRepository`, `SpecificationDocumentBatchChecker`, `LinkCheckReport`
+- **类名：** `LinkCheckScope`
+- **职责：** 表示已建立且有序的起始文档，以及解释委托时发现的所有容错文档路径问题。
+- **协作者：** `LinkCheckScopeBuilder`、`SpecificationDocumentRepository`、`SpecificationDocumentBatchChecker`、`LinkCheckReport`
 
 ### SpecificationDocumentRepository
 
-- **Class Name:** `SpecificationDocumentRepository`
-- **Responsibility:** Represents the ordered working set of pending and checked specification documents for one batch check, admits each starting or discovered document once, and supplies the next unchecked document.
-- **Collaborators:** `LinkCheckScope`, `SpecificationDocument`, `SpecificationDocumentBatchChecker`, `ReferencedDocumentDiscoverer`
+- **类名：** `SpecificationDocumentRepository`
+- **职责：** 表示一次批量检查中有序的待检查和已检查规范文档工作集；每个起始或新发现的文档只接收一次，并提供下一个未检查文档。
+- **协作者：** `LinkCheckScope`、`SpecificationDocument`、`SpecificationDocumentBatchChecker`、`ReferencedDocumentDiscoverer`
 
 ### SpecificationDocument
 
-- **Class Name:** `SpecificationDocument`
-- **Responsibility:** Represents one Markdown specification document by its project-relative identity and authored content while its headings and links are checked.
-- **Collaborators:** `SpecificationDocumentRepository`, `SpecificationDocumentChecker`, `SpecificationLinkExtractor`, `SpecificationHeadingCataloger`
+- **类名：** `SpecificationDocument`
+- **职责：** 在检查标题和链接期间，通过项目相对标识与作者原始内容表示一份 Markdown 规范文档。
+- **协作者：** `SpecificationDocumentRepository`、`SpecificationDocumentChecker`、`SpecificationLinkExtractor`、`SpecificationHeadingCataloger`
 
 ### SpecificationLink
 
-- **Class Name:** `SpecificationLink`
-- **Responsibility:** Represents one supported Markdown link exactly as authored, including its visible name and the path or anchor supplied by the document maintainer.
-- **Collaborators:** `SpecificationLinkExtractor`, `SpecificationLinkChecker`, `ResolvedSpecificationLink`
+- **类名：** `SpecificationLink`
+- **职责：** 与作者所写内容完全一致地表示一个受支持的 Markdown 链接，包括可见名称，以及文档维护者提供的路径或锚点。
+- **协作者：** `SpecificationLinkExtractor`、`SpecificationLinkChecker`、`ResolvedSpecificationLink`
 
 ### ResolvedSpecificationLink
 
-- **Class Name:** `ResolvedSpecificationLink`
-- **Responsibility:** Represents the immutable, traceable live or dead outcome of checking one specification link, including its source location, resolved target, and one dead reason when applicable.
-- **Collaborators:** `SpecificationLink`, `SpecificationLinkChecker`, `SpecificationDocumentChecker`, `ReferencedDocumentDiscoverer`, `SpecificationDocumentBatchChecker`, `LinkCheckReport`
+- **类名：** `ResolvedSpecificationLink`
+- **职责：** 表示检查一个 **Specification Link** 后得到的不可变、可追溯的有效或失效结果，包括源位置、解析后的目标，以及适用时的一个失效原因。
+- **协作者：** `SpecificationLink`、`SpecificationLinkChecker`、`SpecificationDocumentChecker`、`ReferencedDocumentDiscoverer`、`SpecificationDocumentBatchChecker`、`LinkCheckReport`
 
 ### LinkCheckReport
 
-- **Class Name:** `LinkCheckReport`
-- **Responsibility:** Represents the raw result of one completed delegation by preserving the delegation, established scope, and every dead resolved specification link.
-- **Collaborators:** `LinkCheckDelegation`, `LinkCheckScope`, `ResolvedSpecificationLink`, `LinkCheckReportFabricator`, `SpecificationDocumentMaintainer`
+- **类名：** `LinkCheckReport`
+- **职责：** 通过保留委托、已建立的范围和每个失效的 **Resolved Specification Link**，表示一次已完成委托的原始结果。
+- **协作者：** `LinkCheckDelegation`、`LinkCheckScope`、`ResolvedSpecificationLink`、`LinkCheckReportFabricator`、`SpecificationDocumentMaintainer`
 
 ### LinkCheckWorkflowScheduler
 
-- **Class Name:** `LinkCheckWorkflowScheduler`
-- **Responsibility:** Coordinates the complete use case from an accepted delegation through scope construction and document checking to preparation of a traceable report.
-- **Collaborators:** `SpecificationDocumentMaintainer`, `LinkCheckDelegation`, `LinkCheckScopeBuilder`, `SpecificationDocumentBatchChecker`, `LinkCheckReportFabricator`, `LinkCheckReport`
+- **类名：** `LinkCheckWorkflowScheduler`
+- **职责：** 协调完整用例：从接受委托开始，经过范围构建与文档检查，直至准备可追溯报告。
+- **协作者：** `SpecificationDocumentMaintainer`、`LinkCheckDelegation`、`LinkCheckScopeBuilder`、`SpecificationDocumentBatchChecker`、`LinkCheckReportFabricator`、`LinkCheckReport`
 
 ### LinkCheckScopeBuilder
 
-- **Class Name:** `LinkCheckScopeBuilder`
-- **Responsibility:** Establishes the stable project boundary, evaluates each delegated document path in order, records tolerated path issues, and either produces a link check scope or stops for an invalid project root.
-- **Collaborators:** `LinkCheckDelegation`, `LinkCheckScope`, `LinkCheckWorkflowScheduler`
+- **类名：** `LinkCheckScopeBuilder`
+- **职责：** 建立稳定项目边界，按顺序评估每个委托文档路径，记录容错路径问题，并生成 **Link Check Scope**；项目根目录无效时停止执行。
+- **协作者：** `LinkCheckDelegation`、`LinkCheckScope`、`LinkCheckWorkflowScheduler`
 
 ### SpecificationDocumentBatchChecker
 
-- **Class Name:** `SpecificationDocumentBatchChecker`
-- **Responsibility:** Coordinates checking the ordered collection of pending documents, ensures that each document is checked at most once, aggregates dead-link outcomes, and applies the delegation's traversal mode.
-- **Collaborators:** `LinkCheckDelegation`, `LinkCheckScope`, `SpecificationDocumentRepository`, `SpecificationDocumentChecker`, `ReferencedDocumentDiscoverer`, `ResolvedSpecificationLink`, `LinkCheckWorkflowScheduler`
+- **类名：** `SpecificationDocumentBatchChecker`
+- **职责：** 协调检查有序的待检查文档集合，确保每份文档至多检查一次，聚合失效链接结果，并应用委托的遍历模式。
+- **协作者：** `LinkCheckDelegation`、`LinkCheckScope`、`SpecificationDocumentRepository`、`SpecificationDocumentChecker`、`ReferencedDocumentDiscoverer`、`ResolvedSpecificationLink`、`LinkCheckWorkflowScheduler`
 
 ### SpecificationDocumentChecker
 
-- **Class Name:** `SpecificationDocumentChecker`
-- **Responsibility:** Coordinates one document check by obtaining its supported links and heading identifiers, checking every supported link exactly once, and separating any resulting live and dead outcomes.
-- **Collaborators:** `SpecificationDocument`, `SpecificationLinkExtractor`, `SpecificationHeadingCataloger`, `SpecificationLinkChecker`, `ResolvedSpecificationLink`, `SpecificationDocumentBatchChecker`
+- **类名：** `SpecificationDocumentChecker`
+- **职责：** 通过获取文档中受支持的链接和标题标识、恰好检查每个受支持链接一次，并分离产生的有效与失效结果，协调一次文档检查。
+- **协作者：** `SpecificationDocument`、`SpecificationLinkExtractor`、`SpecificationHeadingCataloger`、`SpecificationLinkChecker`、`ResolvedSpecificationLink`、`SpecificationDocumentBatchChecker`
 
 ### SpecificationLinkExtractor
 
-- **Class Name:** `SpecificationLinkExtractor`
-- **Responsibility:** Identifies the supported local-file, in-file-anchor, and cross-file-anchor links in a specification document while preserving their authored material.
-- **Collaborators:** `SpecificationDocument`, `SpecificationLink`, `SpecificationDocumentChecker`
+- **类名：** `SpecificationLinkExtractor`
+- **职责：** 识别规范文档中受支持的本地文件、文档内锚点和跨文件锚点链接，同时保留作者原始内容。
+- **协作者：** `SpecificationDocument`、`SpecificationLink`、`SpecificationDocumentChecker`
 
 ### SpecificationHeadingCataloger
 
-- **Class Name:** `SpecificationHeadingCataloger`
-- **Responsibility:** Establishes the heading identifiers available in a specification document so in-file and cross-file anchors can be checked against authored headings.
-- **Collaborators:** `SpecificationDocument`, `SpecificationDocumentChecker`, `CrossFileAnchorLinkCheckStrategy`
+- **类名：** `SpecificationHeadingCataloger`
+- **职责：** 建立规范文档中可用的标题标识，以便对照作者写下的标题检查文档内与跨文件锚点。
+- **协作者：** `SpecificationDocument`、`SpecificationDocumentChecker`、`CrossFileAnchorLinkCheckStrategy`
 
 ### SpecificationLinkChecker
 
-- **Class Name:** `SpecificationLinkChecker`
-- **Responsibility:** Selects the strategy for one specification link from its composed strategy collection, delegates the scenario-specific check, and returns an array containing one resolved-link outcome or an empty array when no strategy matches.
-- **Collaborators:** `SpecificationLink`, `SpecificationLinkCheckStrategy`, `ResolvedSpecificationLink`, `SpecificationDocumentChecker`
+- **类名：** `SpecificationLinkChecker`
+- **职责：** 从组合的策略集合中为一个 **Specification Link** 选择策略，将场景特有的检查委托给该策略，并返回仅包含一个 **Resolved Specification Link** 结果的数组；无匹配策略时返回空数组。
+- **协作者：** `SpecificationLink`、`SpecificationLinkCheckStrategy`、`ResolvedSpecificationLink`、`SpecificationDocumentChecker`
 
 ### SpecificationLinkCheckStrategy
 
-- **Class Name:** `SpecificationLinkCheckStrategy`
-- **Responsibility:** Defines the abstract, interchangeable contract for recognizing and checking one supported specification-link scenario while serving as the dependency-injection identifier for the strategy collection.
-- **Collaborators:** `SpecificationLink`, `SpecificationLinkChecker`, `ResolvedSpecificationLink`
+- **类名：** `SpecificationLinkCheckStrategy`
+- **职责：** 定义用于识别和检查一个受支持 **Specification Link** 场景的抽象、可互换契约，同时作为策略集合的依赖注入标识符。
+- **协作者：** `SpecificationLink`、`SpecificationLinkChecker`、`ResolvedSpecificationLink`
 
 ### InFileAnchorLinkCheckStrategy
 
-- **Class Name:** `InFileAnchorLinkCheckStrategy`
-- **Responsibility:** Checks an in-file-anchor link against the source document's cataloged headings and establishes a live outcome or an anchor-not-found outcome.
-- **Collaborators:** `SpecificationLinkCheckStrategy`, `SpecificationLink`, `ResolvedSpecificationLink`
+- **类名：** `InFileAnchorLinkCheckStrategy`
+- **职责：** 对照源文档已编目的标题检查文档内锚点链接，并建立有效结果或锚点未找到结果。
+- **协作者：** `SpecificationLinkCheckStrategy`、`SpecificationLink`、`ResolvedSpecificationLink`
 
 ### LocalFileLinkCheckStrategy
 
-- **Class Name:** `LocalFileLinkCheckStrategy`
-- **Responsibility:** Resolves a local-file link, tests project containment before target existence, and establishes a live outcome or the applicable dead outcome.
-- **Collaborators:** `SpecificationLinkCheckStrategy`, `SpecificationLink`, `ResolvedSpecificationLink`
+- **类名：** `LocalFileLinkCheckStrategy`
+- **职责：** 解析本地文件链接，在检查目标是否存在之前检查项目包含关系，并建立有效结果或适用的失效结果。
+- **协作者：** `SpecificationLinkCheckStrategy`、`SpecificationLink`、`ResolvedSpecificationLink`
 
 ### CrossFileAnchorLinkCheckStrategy
 
-- **Class Name:** `CrossFileAnchorLinkCheckStrategy`
-- **Responsibility:** Resolves a cross-file-anchor link, tests project containment and target existence before heading identity, and establishes a live outcome or the applicable dead outcome.
-- **Collaborators:** `SpecificationLinkCheckStrategy`, `SpecificationLink`, `SpecificationHeadingCataloger`, `ResolvedSpecificationLink`
+- **类名：** `CrossFileAnchorLinkCheckStrategy`
+- **职责：** 解析跨文件锚点链接，依次检查项目包含关系、目标是否存在和标题标识，并建立有效结果或适用的失效结果。
+- **协作者：** `SpecificationLinkCheckStrategy`、`SpecificationLink`、`SpecificationHeadingCataloger`、`ResolvedSpecificationLink`
 
 ### ReferencedDocumentDiscoverer
 
-- **Class Name:** `ReferencedDocumentDiscoverer`
-- **Responsibility:** In recursive mode, identifies unchecked Markdown documents reached through live resolved links while excluding documents already pending or checked.
-- **Collaborators:** `LinkCheckDelegation`, `ResolvedSpecificationLink`, `SpecificationDocumentRepository`, `SpecificationDocumentBatchChecker`
+- **类名：** `ReferencedDocumentDiscoverer`
+- **职责：** 在递归模式下识别通过有效的已解析链接到达且尚未检查的 Markdown 文档，同时排除已在待检查集合中或已检查的文档。
+- **协作者：** `LinkCheckDelegation`、`ResolvedSpecificationLink`、`SpecificationDocumentRepository`、`SpecificationDocumentBatchChecker`
 
 ### LinkCheckReportFabricator
 
-- **Class Name:** `LinkCheckReportFabricator`
-- **Responsibility:** Prepares the raw report for a completed check from the original delegation, established scope, and aggregated dead resolved links.
-- **Collaborators:** `LinkCheckDelegation`, `LinkCheckScope`, `ResolvedSpecificationLink`, `LinkCheckReport`, `LinkCheckWorkflowScheduler`
+- **类名：** `LinkCheckReportFabricator`
+- **职责：** 根据原始委托、已建立范围和聚合后的失效已解析链接，为已完成的检查准备原始报告。
+- **协作者：** `LinkCheckDelegation`、`LinkCheckScope`、`ResolvedSpecificationLink`、`LinkCheckReport`、`LinkCheckWorkflowScheduler`
 
-## External Participants
+## 外部参与者
 
-- **SpecificationDocumentMaintainer — external actor:** Delegates the documents and traversal mode to check, then receives the completed traceable report.
+- **SpecificationDocumentMaintainer — 外部参与者：** 委托需要检查的文档与遍历模式，随后接收已完成且可追溯的报告。
 
-## Candidate-Class Visualization
+## 候选类可视化
 
-The diagrams present static class relationships at the use-case, batch-check,
-and single-document levels. They use composition, aggregation, association,
-dependency, and multiplicity rather than execution order. Boundary classes are
-repeated where they connect adjacent levels. Relationship labels are omitted,
-while the `Input`, `Output`, and `Caller` class stereotypes are preserved.
+以下图分别呈现用例层、批量检查层和单文档层的静态类关系。图中使用组合、聚合、关联、依赖和多重性，而不是执行顺序。连接相邻层级时会重复展示边界类。关系标签被省略，但保留 `Input`、`Output` 和 `Caller` 类构造型。
 
-### Use-Case Overview
+### 用例概览
 
 ```mermaid
 classDiagram
@@ -182,13 +177,9 @@ classDiagram
     SpecificationDocumentMaintainer ..> LinkCheckReport
 ```
 
-### Specification Document Batch Check
+### 规范文档批量检查
 
-`LinkCheckScope` and `SpecificationDocumentRepository` aggregate documents for
-different lifetimes: the scope preserves accepted starting documents, while the
-repository preserves the mutable working set for one batch check. The batch
-checker depends on both aggregates and on its document-checking and discovery
-collaborators.
+`LinkCheckScope` 和 `SpecificationDocumentRepository` 为不同生命周期聚合文档：范围保留已接受的起始文档，repository 保留一次批量检查中可变的工作集。批量检查器同时依赖这两个聚合，以及文档检查和发现协作者。
 
 ```mermaid
 classDiagram
@@ -222,7 +213,7 @@ classDiagram
     ReferencedDocumentDiscoverer ..> SpecificationDocumentRepository
 ```
 
-### Single-Document Subprocess
+### 单文档子流程
 
 ```mermaid
 classDiagram

@@ -1,29 +1,28 @@
-# Single-Document Check
+# 单文档检查
 
-## Prerequities
+## 参考资料
 
 - [Specification Link](../../glossary/SpecificationLink.md)
 - [Resolved Specification Link](../../glossary/ResolvedSpecificationLink.md)
 
-## Brief Description
+## 简述
 
-Validate every **Specification Link** in one document and classify
-each link as either a live or dead **Resolved Specification Link** variant.
+验证一份文档中的每个 **Specification Link**，并将每个链接分类为有效或失效的 **Resolved Specification Link** 变体。
 
-## Input
+## 输入
 
 ```ts
 interface AtomicLinkCheckTask {
-  /** Absolute project boundary and frame of reference for link resolution. */
+  /** 用于解析链接的绝对项目边界与参照系。 */
   readonly root: string;
-  /** Project-relative path of the specification document. */
+  /** 规范文档相对于项目的路径。 */
   readonly filePath: string;
-  /** Raw content of the specification document. */
+  /** 规范文档的原始内容。 */
   readonly content: string;
 }
 ```
 
-## Output
+## 输出
 
 ```ts
 interface AtomicLinkCheckArtifact {
@@ -32,7 +31,7 @@ interface AtomicLinkCheckArtifact {
 }
 ```
 
-## Workflow
+## 工作流
 
 ```mermaid
 flowchart TD

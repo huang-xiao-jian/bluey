@@ -1,37 +1,37 @@
-# Check Link's Accessibility in Specification Documents
+# 检查规范文档中链接的可访问性
 
-## Prerequities
+## 参考资料
 
 - [Specification Link](../glossary/SpecificationLink.md)
 - [Resolved Specification Link](../glossary/ResolvedSpecificationLink.md)
 - [Link Check Delegation](../glossary/LinkCheckDelegation.md)
 - [Link Check Scope](../glossary/LinkCheckScope.md)
 
-## Actors
+## 参与者
 
-- **Primary Actor:** **Specification Document Maintainer**
+- **主要参与者：\*\***规范文档维护者\*\*
 
-## Brief Description
+## 简述
 
-A Specification Document Maintainer want to detect dead links in specification documents, automatic and fast, so that maintainers can promptly discover and repair invalid references.
+规范文档维护者希望自动、快速地检测规范文档中的失效链接，以便及时发现并修复无效引用。
 
-## Preconditions
+## 前置条件
 
-None
+无。
 
-## Workflow
+## 工作流
 
-- [Single-Document Check](./workflows/single-document-check-workflow.md)
-- [Multiple-Document Check](./workflows/multiple-document-check-workflow.md)
+- [单文档检查](./workflows/single-document-check-workflow.md)
+- [多文档检查](./workflows/multiple-document-check-workflow.md)
 
-## Rules and Constraints
+## 规则与约束
 
-None
+无。
 
-## Special Requirements
+## 特殊要求
 
-None
+无。
 
-## Extension Points
+## 扩展点
 
-None
+无。

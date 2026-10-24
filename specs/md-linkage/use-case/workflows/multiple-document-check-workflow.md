@@ -1,31 +1,30 @@
-# Multiple-Document Check
+# 多文档检查
 
-## Prerequities
+## 参考资料
 
-- [Single-Document Check](./single-document-check.md)
+- [单文档检查](./single-document-check-workflow.md)
 - [Link Check Delegation](../../glossary/LinkCheckDelegation.md)
 - [Link Check Scope](../../glossary/LinkCheckScope.md)
 - [Resolved Specification Link](../../glossary/ResolvedSpecificationLink.md)
 
-## Brief Description
+## 简述
 
-Check an ordered collection of documents and optionally follow live Markdown
-links to additional documents, aggregating every single-document outcome.
+检查一个有序文档集合，并可选择沿有效 Markdown 链接继续检查其他文档，同时聚合每个单文档检查结果。
 
-## Input
+## 输入
 
 ```ts
 interface BatchLinkCheckTask {
-  /** Absolute project boundary and frame of reference for link resolution. */
+  /** 用于解析链接的绝对项目边界与参照系。 */
   readonly root: string;
-  /** Project-relative path of the specification document. */
+  /** 规范文档相对于项目的路径。 */
   readonly scope: LinkCheckScope;
-  /** Check mode for further files. */
+  /** 用于处理后续文件的检查模式。 */
   readonly mode: LinkCheckMode;
 }
 ```
 
-## Output
+## 输出
 
 ```ts
 interface AtomicLinkCheckArtifact {
@@ -33,7 +32,7 @@ interface AtomicLinkCheckArtifact {
 }
 ```
 
-## Workflow
+## 工作流
 
 ```mermaid
 flowchart TD
@@ -51,7 +50,7 @@ flowchart TD
         CheckDocument --> Aggregate["Mark the document and<br/>append its outcomes"]
     end
 
-    Aggregate --> CheckMode{"LinkCheckMode?"}
+    Aggregate --> CheckMode{"LinkCheckMode？"}
     CheckMode -- Shallow --> HasPending
     CheckMode -- Recursive --> RecursiveDiscovery
 

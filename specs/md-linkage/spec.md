@@ -1,29 +1,22 @@
-# Markdown Linkage Specification
+# Markdown 链接引用检查规约
 
-This document maps the use cases and business concepts for detecting dead links in Markdown specification documents.
+## 用例
 
-## Use Cases
+- [检查规范文档中的失效链接](use-case/check-specification-documents-for-dead-links.md)描述维护者如何选择文档、检查链接并获得可追溯的报告。
 
-- [Check Specification Documents for Dead Links](use-case/check-specification-documents-for-dead-links.md) describes how a maintainer selects documents, checks their links, and obtains a traceable report.
+## 概念
 
-## Concepts
+- [Link Check Delegation](glossary/LinkCheckDelegation.md) 定义一次检查的项目边界、明确委托的文档路径和遍历模式。
+- [Link Check Scope](glossary/LinkCheckScope.md) 定义最终得到的起始文档和记录的文档路径问题。
+- [Specification Link](glossary/SpecificationLink.md) 定义为验证而提取的受支持 Markdown 链接形式。
+- [Resolved Specification Link](glossary/ResolvedSpecificationLink.md) 定义链接验证产生的、可追溯的有效与失效变体。
+- [Link Check Report](glossary/LinkCheckReport.md) 定义一次链接检查完成后的原始结果。
 
-- [Link Check Delegation](glossary/LinkCheckDelegation.md) defines the project boundary, explicitly delegated document paths, and traversal mode for a check.
-- [Link Check Scope](glossary/LinkCheckScope.md) defines the resulting starting
-  documents and recorded document-path issues.
-- [Specification Link](glossary/SpecificationLink.md) defines the supported Markdown link forms extracted for validation.
-- [Resolved Specification Link](glossary/ResolvedSpecificationLink.md) defines
-  the traceable live and dead variants produced by link validation.
-- [Link Check Report](glossary/LinkCheckReport.md) defines the raw result of one completed link check.
+## 角色
 
-## Roles
+- [Link Check Scope Builder](roles/LinkCheckScopeBuilder.md) 定义将委托转换为范围时使用的异常与算法。
 
-- [Link Check Scope Builder](roles/LinkCheckScopeBuilder.md) defines the
-  exceptions and algorithm for transforming a delegation into a scope.
+## 相关文档
 
-## Related Documents
-
-- [Markdown Linkage Interface Specification](interfaces/spec.md) defines how
-  CLI and MCP consumers access the capability specified here.
-- [Object-Oriented Design](design.md) translates this specification into
-  candidate classes and their relationships.
+- [Markdown 链接接口规范](interfaces/spec.md)定义 CLI 和 MCP 使用方如何访问本文规定的能力。
+- [面向对象设计](design.md)将本规范转换为候选类及其关系。

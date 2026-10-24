@@ -1,22 +1,19 @@
 # Link Check Scope
 
-## Prerequisites
+## 参考资料
 
 - [Link Check Delegation](./LinkCheckDelegation.md)
 
-## 1. Definition
+## 定义
 
-A **Link Check Scope** is the formal internal representation for internal link check workflow .
+**Link Check Scope** 是内部链接检查工作流的正式表示。
 
-## 2. Key Attributes
+## 关键属性
 
-- **Files:** Project-relative identities of the starting documents supplied to
-  the check.
-- **Issues:** Delegated document paths that encountered a path exception
-  defined by the
-  [Link Check Scope Builder](../roles/LinkCheckScopeBuilder.md#32-path-exceptions).
+- **Files：** 提交给检查的起始文档在项目内的相对标识。
+- **Issues：** 委托文档路径遇到的、由 [Link Check Scope Builder](../roles/LinkCheckScopeBuilder.md#容错异常) 定义的路径异常。
 
-### 3.1 Data Model
+### 数据模型
 
 ```ts
 enum LinkCheckScopeIssueType {
@@ -26,11 +23,11 @@ enum LinkCheckScopeIssueType {
 }
 
 interface LinkCheckScopeIssue {
-  // the original document path
+  // 原始文档路径
   path: string;
-  // the resolved absolute path
+  // 解析后的绝对路径
   resolvedPath: string;
-  // the cause for issue
+  // 问题原因
   issueType: LinkCheckScopeIssueType;
 }
 
@@ -40,12 +37,23 @@ interface LinkCheckScope {
 }
 ```
 
-## 3. Rules and Constraints
+### 数据模型案例
 
-1. The scope remains unchanged after it has been established.
-2. A resolved path with issues should not appear in `files`.
-3. The resolved path in `files` is unique
+```json
+{
+  "files": ["guide.md"],
+  "issues": [
+    {
+      "path": "missing.md",
+      "resolvedPath": "/var/specs/missing.md",
+      "issueType": "document-not-found"
+    }
+  ]
+}
+```
 
-## 4. Relationships
+## 规则与约束
 
-- **Aggregation:** [Link Check Report](./LinkCheckReport.md) contains the scope as one task descriptor.
+1. 范围一经建立便保持不变。
+2. 存在问题的已解析路径不应出现在 `files` 中。
+3. `files` 中的已解析路径必须唯一。

@@ -1,47 +1,51 @@
-# Markdown Linkage Interface Specification
+# Markdown 链接引用检查接入层设计
 
-## Prerequities
+## 参考资料
 
-- [Markdown Linkage Specification](../spec.md)
+- [Markdown 链接引用检查规约](../spec.md)
 - [Link Check Delegation](../glossary/LinkCheckDelegation.md)
 - [Link Check Report](../glossary/LinkCheckReport.md)
-- [Check Specification Documents for Dead Links](../use-case/check-specification-documents-for-dead-links.md)
+- [用例规约 -> 检查失效链接](../use-case/check-specification-documents-for-dead-links.md)
 
-## Purpose
+## 目的
 
-The interface layer exposes the dead-link checking capability through CLI and
-MCP adapters over the same core workflow.
+接入层通过 `CLI` 和 `MCP`适配器，对外提供失效链接检查能力。
 
-## Architecture
+## 架构设计
 
 ```mermaid
-flowchart LR
-    Terminal[Terminal Consumer] --> Cli[CLI Interface]
-    Agent[AI Client] --> Mcp[MCP Interface]
-    Cli --> Factory[createLinkCheckWorkflowScheduler]
-    Mcp --> Factory
-    Factory --> Workflow[LinkCheckWorkflowScheduler]
-    Cli --> Workflow
-    Mcp --> Workflow
-    Workflow --> Report[Link Check Report]
-    Report --> Cli
-    Report --> Mcp
+sequenceDiagram
+    participant U as Terminal Consumer
+    participant C as CLI Interface
+    participant W as Workflow
+    participant R as Link Check Report
+
+    U->>C: 触发链接检查
+    C->>W: 调用工作流
+    W->>R: 生成链接检查报告
+    R-->>C: 返回报告
+    C-->>U: 展示报告
 ```
 
-The CLI and MCP interfaces are sibling adapters. Each handler calls
-`createLinkCheckWorkflowScheduler` to create its own scheduler. The factory
-owns the complete dependency-container composition. The adapters depend on the
-concrete scheduler and invoke its workflow directly. Neither interface invokes
-the other, and neither contains link-checking or scope-building rules.
+```mermaid
+sequenceDiagram
+    participant A as AI Client
+    participant M as MCP Interface
+    participant W as Workflow
+    participant R as Link Check Report
 
-## Adapters
+    A->>M: 发起链接检查请求
+    M->>W: 调用工作流
+    W->>R: 生成链接检查报告
+    R-->>M: 返回报告
+    M-->>A: 返回报告
+```
 
-- [CLI Interface](cli.md) defines how terminal consumers invoke the
-  capability.
-- [MCP Interface](mcp.md) defines how AI clients invoke the capability.
+## 适配器
 
-## Cross-Interface Verification
+- [CLI 接入层](cli.md)：定义终端使用方如何调用该能力。
+- [MCP 接入层](mcp.md)：定义 AI 客户端如何调用该能力。
 
-Equivalent **Link Check Delegations** submitted through the CLI and MCP
-interfaces must produce semantically identical **Link Check Reports**,
-excluding adapter-specific envelopes and presentation.
+## 跨接口验证
+
+通过 `CLI` 与 `MCP` 接口提交的等价 **Link Check Delegation** 必须产生语义一致的 **Link Check Report**，不考虑适配器特有的封装与呈现形式。

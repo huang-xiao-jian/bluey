@@ -21,19 +21,17 @@
 
 ## 参考资料
 
-- [能力规范](docs/conventions/capability.md)定义了 `Skill` 和 `MCP server` 的通用命名，
-  以及各自的结构与通信约定。
-- [`MCP` 开发规范](docs/conventions/mcp-development.md)定义了 `MCP server` 的开发流程和实现指南。
 - [文档规范](docs/conventions/document.md)定义了仓库文档的默认风格和呈现规则。
-- [`TypeScript` 规范](docs/conventions/typescript.md)定义了 `TypeScript` 代码默认的
-  `object-oriented design` 和 `import` 风格。
-- [测试规范](docs/conventions/testing.md)定义了测试的默认组织方式、实现方式和执行指南。
+- [能力规范](docs/conventions/capability.md) 定义了 `Skill` 和 `MCP server` 的结构指导。
+- [MCP 开发规范](docs/conventions/mcp-development.md)定义了 `MCP server` 的开发流程和实现指南。
+- [TypeScript规范](docs/conventions/typescript.md) 定义 `TypeScript` 代码默认的编写风格
+- [测试规范](docs/conventions/testing.md)：定义自动化测试的默认组织方式、实现方式和执行指南。
 
-## `ADR`
+## ADR
 
 以下是本项目的正式 `ADR`，请在需要时查阅：
 
-- [`CLI` 与 `MCP` 双模式架构](./docs/adr/cli-first-mcp-architecture.md)
+- [CLI 与 MCP 双模式架构](./docs/adr/cli-first-mcp-architecture.md)
 
 ## 工作区
 

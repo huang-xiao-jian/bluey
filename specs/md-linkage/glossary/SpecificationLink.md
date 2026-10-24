@@ -1,18 +1,18 @@
 # Specification Link
 
-## 1. Definition
+## 定义
 
-A **Specification Link** is an original link extracted from a specific markdown document. It preserves what the author wrote and identifies the supported link form before any target is resolved or validated.
+**Specification Link** 是从特定 Markdown 文档中提取的原始链接。它保留作者写下的内容，并在解析或验证任何目标之前标识受支持的链接形式。
 
-## 2. Key Attributes
+## 关键属性
 
-- **Type:** Identifies whether the link targets a local file, an anchor in its source document, or an anchor in another file.
-- **Text:** The complete Markdown link exactly as authored.
-- **Name:** The visible link text.
-- **Path:** The authored target-file path for a local-file or cross-file-anchor link.
-- **Anchor:** The authored anchor for an in-file-anchor or cross-file-anchor link.
+- **Type：** 标识链接指向本地文件、源文档内的锚点，还是另一文件中的锚点。
+- **Text：** 与作者所写内容完全一致的完整 Markdown 链接。
+- **Name：** 可见的链接文本。
+- **Path：** 本地文件链接或跨文件锚点链接中由作者写下的目标文件路径。
+- **Anchor：** 文档内锚点链接或跨文件锚点链接中由作者写下的锚点。
 
-### 3.1 Data Model
+### 数据模型
 
 ```ts
 enum SpecificationLinkType {
@@ -23,33 +23,33 @@ enum SpecificationLinkType {
 
 interface LocalFileSpecificationLink {
   type: SpecificationLinkType.LocalFile;
-  /** Complete Markdown link exactly as authored. */
+  /** 与作者所写内容完全一致的完整 Markdown 链接。 */
   text: string;
-  /** Visible link text. */
+  /** 可见的链接文本。 */
   name: string;
-  /** Authored target-file path. */
+  /** 作者写下的目标文件路径。 */
   path: string;
 }
 
 interface InFileAnchorSpecificationLink {
   type: SpecificationLinkType.InFileAnchor;
-  /** Complete Markdown link exactly as authored. */
+  /** 与作者所写内容完全一致的完整 Markdown 链接。 */
   text: string;
-  /** Visible link text. */
+  /** 可见的链接文本。 */
   name: string;
-  /** Authored anchor in the source document. */
+  /** 作者在源文档中写下的锚点。 */
   anchor: string;
 }
 
 interface CrossFileAnchorSpecificationLink {
   type: SpecificationLinkType.CrossFileAnchor;
-  /** Complete Markdown link exactly as authored. */
+  /** 与作者所写内容完全一致的完整 Markdown 链接。 */
   text: string;
-  /** Visible link text. */
+  /** 可见的链接文本。 */
   name: string;
-  /** Authored target-file path. */
+  /** 作者写下的目标文件路径。 */
   path: string;
-  /** Authored anchor in the target file. */
+  /** 作者在目标文件中写下的锚点。 */
   anchor: string;
 }
 
@@ -59,7 +59,7 @@ type SpecificationLink =
   | CrossFileAnchorSpecificationLink;
 ```
 
-### Data Model Examples
+### 数据模型案例
 
 ```ts
 const localFileLink: LocalFileSpecificationLink = {
@@ -85,19 +85,8 @@ const crossFileAnchorLink: CrossFileAnchorSpecificationLink = {
 };
 ```
 
-## 3. Rules and Constraints
+## 规则与约束
 
-1. A supported link extracted from a specification document is represented by exactly one **Specification Link**.
-2. A **Specification Link** remain unchanged after established
-3. A **Specification Link** exists before validation and represents the same authored material whether its target is valid or invalid.
-
-## 4. Relationships
-
-- **Aggregation:** A Markdown specification document contains zero or more **Specification Links**.
-- **Transformation:** Validation transforms a **Specification Link** into one
-  live or dead [Resolved Specification Link](./ResolvedSpecificationLink.md)
-  variant.
-
-## References
-
-- [Specification Link Material](./assets/SpecificationLinkMaterial.md) A simple markdown material that includes links
+1. 从规范文档中提取的每个受支持链接仅由一个 **Specification Link** 表示。
+2. **Specification Link** 一经建立便保持不变。
+3. **Specification Link** 在验证之前便已存在；无论目标有效还是无效，它都表示同一份作者原始内容。
