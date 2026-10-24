@@ -1,9 +1,14 @@
+import { Container } from "inversify";
 import { describe, expect, it } from "vitest";
 import { SpecificationDocument } from "../model/specification-document";
 import { SpecificationLinkType } from "../model/specification-link";
 import { SpecificationLinkExtractor } from "./specification-link-extractor";
 
 describe("SpecificationLinkExtractor", () => {
+  const container = new Container();
+  container.bind(SpecificationLinkExtractor).toSelf();
+  const extractor = container.get(SpecificationLinkExtractor);
+
   it("extracts supported links in authored order and preserves their material", () => {
     const content = [
       "[Guide](docs/guide.md)",
@@ -11,7 +16,7 @@ describe("SpecificationLinkExtractor", () => {
       "[Target section](docs/guide.md#target-section)",
     ].join("\n");
 
-    const links = new SpecificationLinkExtractor().extract(
+    const links = extractor.extract(
       new SpecificationDocument("spec.md", content),
     );
 
@@ -48,7 +53,7 @@ describe("SpecificationLinkExtractor", () => {
     ].join("\n");
 
     expect(
-      new SpecificationLinkExtractor().extract(
+      extractor.extract(
         new SpecificationDocument("spec.md", content),
       ),
     ).toEqual([]);

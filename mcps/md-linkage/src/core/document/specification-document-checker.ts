@@ -31,11 +31,13 @@ export class SpecificationDocumentChecker {
     const headings = this.headingCataloger.catalog(document.content);
 
     for (const link of this.extractor.extract(document)) {
-      const result = await this.linkChecker.check(root, document, link, headings);
-      if (result.status === ResolvedSpecificationLinkStatus.Live) {
-        liveLinks.push(result);
-      } else {
-        deadLinks.push(result);
+      const results = await this.linkChecker.check(root, document, link, headings);
+      for (const result of results) {
+        if (result.status === ResolvedSpecificationLinkStatus.Live) {
+          liveLinks.push(result);
+        } else {
+          deadLinks.push(result);
+        }
       }
     }
 

@@ -1,8 +1,12 @@
 import { Container, injectable } from "inversify";
 import { ReferencedDocumentDiscoverer } from "../core/batch/referenced-document-discoverer";
 import { SpecificationDocumentBatchChecker } from "../core/batch/specification-document-batch-checker";
+import { CrossFileAnchorLinkCheckStrategy } from "../core/document/cross-file-anchor-link-check-strategy";
+import { InFileAnchorLinkCheckStrategy } from "../core/document/in-file-anchor-link-check-strategy";
+import { LocalFileLinkCheckStrategy } from "../core/document/local-file-link-check-strategy";
 import { SpecificationDocumentChecker } from "../core/document/specification-document-checker";
 import { SpecificationHeadingCataloger } from "../core/document/specification-heading-cataloger";
+import { SpecificationLinkCheckStrategy } from "../core/document/specification-link-check-strategy";
 import { SpecificationLinkChecker } from "../core/document/specification-link-checker";
 import { SpecificationLinkExtractor } from "../core/document/specification-link-extractor";
 import { SpecificationDocumentStore } from "../core/ports/specification-document-store";
@@ -20,6 +24,18 @@ export function createLinkCheckWorkflowScheduler(): LinkCheckWorkflowScheduler {
     .inSingletonScope();
   container.bind(SpecificationLinkExtractor).toSelf().inSingletonScope();
   container.bind(SpecificationHeadingCataloger).toSelf().inSingletonScope();
+  container
+    .bind(SpecificationLinkCheckStrategy)
+    .to(InFileAnchorLinkCheckStrategy)
+    .inSingletonScope();
+  container
+    .bind(SpecificationLinkCheckStrategy)
+    .to(LocalFileLinkCheckStrategy)
+    .inSingletonScope();
+  container
+    .bind(SpecificationLinkCheckStrategy)
+    .to(CrossFileAnchorLinkCheckStrategy)
+    .inSingletonScope();
   container.bind(SpecificationLinkChecker).toSelf().inSingletonScope();
   container.bind(SpecificationDocumentChecker).toSelf().inSingletonScope();
   container.bind(ReferencedDocumentDiscoverer).toSelf().inSingletonScope();

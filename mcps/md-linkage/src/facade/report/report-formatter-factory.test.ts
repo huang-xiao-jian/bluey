@@ -1,5 +1,6 @@
 import { stripVTControlCharacters } from "node:util";
 import chalk from "chalk";
+import { Container } from "inversify";
 import { afterEach, describe, expect, it } from "vitest";
 import { LinkCheckDelegation } from "../../core/model/link-check-delegation";
 import { LinkCheckReport } from "../../core/model/link-check-report";
@@ -18,10 +19,11 @@ import { ReportFormatterFactory } from "./report-formatter-factory";
 
 describe("ReportFormatterFactory", () => {
   const colorLevel = chalk.level;
-  const formatterFactory = new ReportFormatterFactory(
-    new HumanReportFormatter(),
-    new JsonReportFormatter(),
-  );
+  const container = new Container();
+  container.bind(HumanReportFormatter).toSelf();
+  container.bind(JsonReportFormatter).toSelf();
+  container.bind(ReportFormatterFactory).toSelf();
+  const formatterFactory = container.get(ReportFormatterFactory);
 
   afterEach(() => {
     chalk.level = colorLevel;

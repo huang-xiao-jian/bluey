@@ -1,16 +1,23 @@
 import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
+import { Container } from "inversify";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { NodeSpecificationDocumentStore } from "../../infrastructure/filesystem/node-specification-document-store";
 import { LinkCheckDelegation } from "../model/link-check-delegation";
 import { LinkCheckScopeIssueType } from "../model/link-check-scope";
+import { SpecificationDocumentStore } from "../ports/specification-document-store";
 import { LinkCheckScopeBuilder } from "./link-check-scope-builder";
 
 describe("LinkCheckScopeBuilder", () => {
   let root: string;
   let outside: string;
-  const builder = new LinkCheckScopeBuilder(new NodeSpecificationDocumentStore());
+  const container = new Container();
+  container
+    .bind(SpecificationDocumentStore)
+    .to(NodeSpecificationDocumentStore);
+  container.bind(LinkCheckScopeBuilder).toSelf();
+  const builder = container.get(LinkCheckScopeBuilder);
 
   beforeEach(async () => {
     root = await mkdtemp(join(tmpdir(), "md-linkage-scope-"));

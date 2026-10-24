@@ -34,6 +34,19 @@ Apply it unless a package or runtime has a more specific requirement.
 - Test observable behavior through the public API. Avoid tests coupled to
   private implementation details.
 
+## Dependency injection
+
+- Use concrete or abstract classes as service identifiers so constructor type
+  metadata can resolve dependencies without parameter-level injection
+  decorators.
+- Do not introduce string or symbol service identifiers when a concrete or
+  abstract class can express the dependency.
+- Injection decorators are allowed. Use a class service identifier with
+  `@inject` when explicit annotation is useful and with `@multiInject` when a
+  constructor consumes multiple implementations of one abstract class.
+- Keep service bindings in the composition root and use `@injectable` to make
+  constructor metadata available to the container.
+
 ## Imports
 
 - Write imports without file extensions, including relative imports.

@@ -23,6 +23,11 @@
 
 - `vitest` APIs must be explicitly imported;
 - `vitest` test case must be written entirely in English
+- Resolve dependency-injected systems and their managed collaborators from a
+  test-local container or the production composition factory. Do not manually
+  reconstruct their object graph with `new`.
+- Construct value objects, immutable test data, and collaborators outside the
+  dependency-injection graph directly when doing so keeps the test explicit.
 
 ```ts
 import { describe, expect, it, rstest } from "vitest";

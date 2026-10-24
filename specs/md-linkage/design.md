@@ -73,7 +73,7 @@
 ### SpecificationDocumentChecker
 
 - **Class Name:** `SpecificationDocumentChecker`
-- **Responsibility:** Coordinates one document check by obtaining its supported links and heading identifiers, checking every supported link exactly once, and separating the resulting live and dead outcomes.
+- **Responsibility:** Coordinates one document check by obtaining its supported links and heading identifiers, checking every supported link exactly once, and separating any resulting live and dead outcomes.
 - **Collaborators:** `SpecificationDocument`, `SpecificationLinkExtractor`, `SpecificationHeadingCataloger`, `SpecificationLinkChecker`, `ResolvedSpecificationLink`, `SpecificationDocumentBatchChecker`
 
 ### SpecificationLinkExtractor
@@ -86,13 +86,37 @@
 
 - **Class Name:** `SpecificationHeadingCataloger`
 - **Responsibility:** Establishes the heading identifiers available in a specification document so in-file and cross-file anchors can be checked against authored headings.
-- **Collaborators:** `SpecificationDocument`, `SpecificationDocumentChecker`, `SpecificationLinkChecker`
+- **Collaborators:** `SpecificationDocument`, `SpecificationDocumentChecker`, `CrossFileAnchorLinkCheckStrategy`
 
 ### SpecificationLinkChecker
 
 - **Class Name:** `SpecificationLinkChecker`
-- **Responsibility:** Resolves and checks one specification link, tests project containment before target existence or heading identity, and establishes exactly one live or dead resolved-link outcome.
-- **Collaborators:** `SpecificationLink`, `SpecificationHeadingCataloger`, `ResolvedSpecificationLink`, `SpecificationDocumentChecker`
+- **Responsibility:** Selects the strategy for one specification link from its composed strategy collection, delegates the scenario-specific check, and returns an array containing one resolved-link outcome or an empty array when no strategy matches.
+- **Collaborators:** `SpecificationLink`, `SpecificationLinkCheckStrategy`, `ResolvedSpecificationLink`, `SpecificationDocumentChecker`
+
+### SpecificationLinkCheckStrategy
+
+- **Class Name:** `SpecificationLinkCheckStrategy`
+- **Responsibility:** Defines the abstract, interchangeable contract for recognizing and checking one supported specification-link scenario while serving as the dependency-injection identifier for the strategy collection.
+- **Collaborators:** `SpecificationLink`, `SpecificationLinkChecker`, `ResolvedSpecificationLink`
+
+### InFileAnchorLinkCheckStrategy
+
+- **Class Name:** `InFileAnchorLinkCheckStrategy`
+- **Responsibility:** Checks an in-file-anchor link against the source document's cataloged headings and establishes a live outcome or an anchor-not-found outcome.
+- **Collaborators:** `SpecificationLinkCheckStrategy`, `SpecificationLink`, `ResolvedSpecificationLink`
+
+### LocalFileLinkCheckStrategy
+
+- **Class Name:** `LocalFileLinkCheckStrategy`
+- **Responsibility:** Resolves a local-file link, tests project containment before target existence, and establishes a live outcome or the applicable dead outcome.
+- **Collaborators:** `SpecificationLinkCheckStrategy`, `SpecificationLink`, `ResolvedSpecificationLink`
+
+### CrossFileAnchorLinkCheckStrategy
+
+- **Class Name:** `CrossFileAnchorLinkCheckStrategy`
+- **Responsibility:** Resolves a cross-file-anchor link, tests project containment and target existence before heading identity, and establishes a live outcome or the applicable dead outcome.
+- **Collaborators:** `SpecificationLinkCheckStrategy`, `SpecificationLink`, `SpecificationHeadingCataloger`, `ResolvedSpecificationLink`
 
 ### ReferencedDocumentDiscoverer
 
@@ -213,6 +237,11 @@ classDiagram
     class SpecificationLinkExtractor
     class SpecificationHeadingCataloger
     class SpecificationLinkChecker
+    class SpecificationLinkCheckStrategy
+    <<abstract>> SpecificationLinkCheckStrategy
+    class InFileAnchorLinkCheckStrategy
+    class LocalFileLinkCheckStrategy
+    class CrossFileAnchorLinkCheckStrategy
     class SpecificationLink
     class ResolvedSpecificationLink
     <<Output>> ResolvedSpecificationLink
@@ -229,6 +258,16 @@ classDiagram
     SpecificationLinkExtractor ..> SpecificationLink
     SpecificationHeadingCataloger ..> SpecificationDocument
     SpecificationLinkChecker ..> SpecificationLink
-    SpecificationLinkChecker ..> SpecificationHeadingCataloger
     SpecificationLinkChecker ..> ResolvedSpecificationLink
+    SpecificationLinkChecker "1" o-- "3" SpecificationLinkCheckStrategy
+    InFileAnchorLinkCheckStrategy ..|> SpecificationLinkCheckStrategy
+    LocalFileLinkCheckStrategy ..|> SpecificationLinkCheckStrategy
+    CrossFileAnchorLinkCheckStrategy ..|> SpecificationLinkCheckStrategy
+    InFileAnchorLinkCheckStrategy ..> SpecificationLink
+    InFileAnchorLinkCheckStrategy ..> ResolvedSpecificationLink
+    LocalFileLinkCheckStrategy ..> SpecificationLink
+    LocalFileLinkCheckStrategy ..> ResolvedSpecificationLink
+    CrossFileAnchorLinkCheckStrategy ..> SpecificationLink
+    CrossFileAnchorLinkCheckStrategy ..> SpecificationHeadingCataloger
+    CrossFileAnchorLinkCheckStrategy ..> ResolvedSpecificationLink
 ```

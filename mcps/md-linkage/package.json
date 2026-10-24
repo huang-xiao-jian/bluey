@@ -16,7 +16,9 @@
   },
   "scripts": {
     "build": "tsdown",
-    "test": "vitest run",
+    "test": "vitest run --exclude 'tests/e2e/**' && vitest run tests/e2e",
+    "test:e2e": "vitest run tests/e2e",
+    "test:unit": "vitest run --exclude 'tests/e2e/**'",
     "typecheck": "tsc --noEmit --project tsconfig.json"
   },
   "dependencies": {

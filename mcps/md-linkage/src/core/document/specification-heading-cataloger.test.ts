@@ -1,8 +1,11 @@
+import { Container } from "inversify";
 import { describe, expect, it } from "vitest";
 import { SpecificationHeadingCataloger } from "./specification-heading-cataloger";
 
 describe("SpecificationHeadingCataloger", () => {
   it("catalogs GitHub-compatible identifiers and duplicate suffixes", () => {
+    const container = new Container();
+    container.bind(SpecificationHeadingCataloger).toSelf();
     const content = [
       "# Getting *Started*!",
       "## Getting Started!",
@@ -10,7 +13,9 @@ describe("SpecificationHeadingCataloger", () => {
       "### Section 3.1",
     ].join("\n\n");
 
-    expect([...new SpecificationHeadingCataloger().catalog(content)]).toEqual([
+    expect([
+      ...container.get(SpecificationHeadingCataloger).catalog(content),
+    ]).toEqual([
       ["getting-started", "Getting Started!"],
       ["getting-started-1", "Getting Started!"],
       ["权限控制", "权限控制"],
