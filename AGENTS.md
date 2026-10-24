@@ -1,40 +1,42 @@
 # Bluey
 
-Bluey is a personal capability repository for Codex. It intentionally has no
-multi-agent roles, routing, or orchestration.
+面向 `Codex` 的个人能力仓库。本仓库有意不包含多智能体角色、路由或编排。
 
-## Vibe Tech
+## 语言
+
+- 仓库维护的自然语言内容默认使用简体中文。
+- 源代码中仅注释使用中文，其他代码内容遵循既有规范。
+- 专业术语、产品名、协议名、技术名、代码标识符、文件路径、命令和代码示例保持原状。
+- `CodeGraph` 自动注入区块保持原状，不受上述语言规则约束。
+
+## 技术栈
 
 - `pnpm@12.4.2`
 
-## References
+## 参考资料
 
-- [Skill convention](docs/conventions/skill.md) defines the rules for skill
-  naming, scope, package structure, documentation, and review.
-- [MCP server convention](docs/conventions/mcp.md) defines the rules for MCP
-  server naming, scope, package structure, tools, safety, versioning, and review.
-- [MCP development convention](docs/conventions/mcp-development.md) defines the
-  development workflow and implementation guidance for MCP servers.
-- [Document convention](docs/conventions/document.md) defines the default
-  style and presentation rules for repository documentation.
-- [TypeScript convention](docs/conventions/typescript.md) defines the default
-  object-oriented design and import style for TypeScript code.
-- [Testing convention](docs/conventions/testing.md) defines the default test
-  organization, implementation, and execution guidance.
+- [`Skill` 规范](docs/conventions/skill.md)定义了 `Skill` 的命名、范围、`package` 结构、
+  文档和审查规则。
+- [`MCP server` 规范](docs/conventions/mcp.md)定义了 `MCP server` 的命名、范围、
+  `package` 结构、`tool`、安全、版本控制和审查规则。
+- [`MCP` 开发规范](docs/conventions/mcp-development.md)定义了 `MCP server` 的开发流程和实现指南。
+- [文档规范](docs/conventions/document.md)定义了仓库文档的默认风格和呈现规则。
+- [`TypeScript` 规范](docs/conventions/typescript.md)定义了 `TypeScript` 代码默认的
+  `object-oriented design` 和 `import` 风格。
+- [测试规范](docs/conventions/testing.md)定义了测试的默认组织方式、实现方式和执行指南。
 
-## ADRs
+## `ADR`
 
-The formal ADR for project, review files when necessary:
+以下是本项目的正式 `ADR`，请在需要时查阅：
 
-- [Dual mode architecture for CLI and MCP](./docs/adr/cli-first-mcp-architecture.md)
+- [`CLI` 与 `MCP` 双模式架构](./docs/adr/cli-first-mcp-architecture.md)
 
-## Workspace
+## 工作区
 
-Turborepo orchestrate the pnpm workspace. Workspace packages belong
-in `mcps/*` or `packages/*`. Turbo handles dependency ordering and caches task
-outputs.
+`Turborepo` 负责组织 `pnpm workspace`。`workspace package` 位于 `mcps/*` 或
+`packages/*`。`Turbo` 负责依赖排序并缓存任务输出。
 
-The `spec` and `implementation` split into different directory with the same name:
+`spec` 和 `implementation` 分别位于名称相同的不同目录中：
 
 ```shell
 └── mcps
