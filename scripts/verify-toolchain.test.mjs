@@ -65,4 +65,34 @@ describe("verifyToolchain", () => {
       }),
     ).toThrow("pnpm 12.4.2 is required; received unknown");
   });
+
+  it("rejects a mise Node.js pin that differs from .nvmrc", async () => {
+    const { verifyToolchain } = await import("./verify-toolchain.mjs");
+
+    expect(() =>
+      verifyToolchain({
+        actualNodeVersion: "26.8.2",
+        actualUserAgent: "pnpm/12.4.2 npm/? node/v26.8.2 darwin arm64",
+        expectedNodeVersion: "26.8.2",
+        expectedPackageManager: "pnpm@12.4.2",
+        miseNodeVersion: "26.9.0",
+        misePnpmVersion: "12.4.2",
+      }),
+    ).toThrow("mise Node.js 26.9.0 does not match .nvmrc 26.8.2");
+  });
+
+  it("rejects a mise pnpm pin that differs from packageManager", async () => {
+    const { verifyToolchain } = await import("./verify-toolchain.mjs");
+
+    expect(() =>
+      verifyToolchain({
+        actualNodeVersion: "26.8.2",
+        actualUserAgent: "pnpm/12.4.2 npm/? node/v26.8.2 darwin arm64",
+        expectedNodeVersion: "26.8.2",
+        expectedPackageManager: "pnpm@12.4.2",
+        miseNodeVersion: "26.8.2",
+        misePnpmVersion: "12.3.0",
+      }),
+    ).toThrow("mise pnpm 12.3.0 does not match packageManager 12.4.2");
+  });
 });
