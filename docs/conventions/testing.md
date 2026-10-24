@@ -21,18 +21,14 @@
 
 ### 测试代码规范
 
-- 必须显式导入 `vitest` API。
-- `vitest` 测试用例必须完全使用英语编写。
-- 通过测试局部 container 或生产环境 composition factory 解析采用依赖注入的系统及其
-  托管协作者。不要使用 `new` 手动重建其 object graph。
-- 当直接构造 value object、不可变测试数据和依赖注入图外的协作者能让测试更明确时，
-  应直接构造它们。
+- 测试用例必须显式导入 `vitest API`
+- 测试用例必须完全使用英语编写
 
 ```ts
 import { describe, expect, it, rstest } from "vitest";
 
 it("should return single point", () => {
-  // Arrange、Act、Assert 模式
+  // 使用 Arrange、Act、Assert 模式
 });
 ```
 

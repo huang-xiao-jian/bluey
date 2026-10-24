@@ -21,10 +21,8 @@
 
 ## 参考资料
 
-- [`Skill` 规范](docs/conventions/skill.md)定义了 `Skill` 的命名、范围、`package` 结构、
-  文档和审查规则。
-- [`MCP server` 规范](docs/conventions/mcp.md)定义了 `MCP server` 的命名、范围、
-  `package` 结构、`tool`、安全、版本控制和审查规则。
+- [能力规范](docs/conventions/capability.md)定义了 `Skill` 和 `MCP server` 的通用命名，
+  以及各自的结构与通信约定。
 - [`MCP` 开发规范](docs/conventions/mcp-development.md)定义了 `MCP server` 的开发流程和实现指南。
 - [文档规范](docs/conventions/document.md)定义了仓库文档的默认风格和呈现规则。
 - [`TypeScript` 规范](docs/conventions/typescript.md)定义了 `TypeScript` 代码默认的
