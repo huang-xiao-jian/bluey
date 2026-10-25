@@ -1,55 +1,71 @@
 ---
 name: analyze-business-concepts
-description: Draft business concept descriptions from business-source material. Used when user ask to identify or define business concepts.
+description: 从业务材料中识别并定义业务概念。适用于用户要求分析、识别或定义业务概念，且输入是清晰的业务需求或业务文档时。
 ---
 
-# analyze-business-concepts
+# 分析业务概念
 
-## Input
+## 参考资料
 
-The user must provide a clear requirement description or document that is strongly related to the business domain.
+- [业务概念描述模板](assets/template.md)
+- [业务概念描述示例](references/example.md)
+- [业务概念规则发现指南](assets/rules-discovery.md)
+- [业务概念规则示例](assets/rules-example.md)
 
-### Exception Handling
+## 输入
 
-| Condition                                     | Handling strategy                                                                                              |
-| :-------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
-| The user provides a technical design document | Decline the task and ask for material related to the business domain.                                          |
-| The input material is ambiguous               | Decline the task and ask the user to provide a clearer requirements description. Do not infer missing details. |
+用户必须提供清晰且与业务领域高度相关的需求描述或文档。
 
-## Core Principles
+### 异常处理
 
-1. **Business-focused**: Use natural language and avoid obscure technical concepts so that non-technical stakeholders can understand the description.
-2. **Minimum viable content**: A business definition, key attributes, and business rules must all be present.
-3. **Single source of truth**: The concept document is the authoritative source for terminology. Definitions in use-case specifications and technical implementations must remain consistent with it.
-4. **Reference rather than duplicate**: When referring across concepts, identify the source of the referenced business concept. Do not duplicate attribute definitions in concept documents, to avoid maintaining the same information in multiple places.
-5. **Precise relationship descriptions**: Use defined UML relationships rather than simplified natural-language descriptions.
+- 用户提供技术设计文档时，拒绝执行，并要求提供与业务领域相关的材料。
+- 输入材料含糊时，拒绝执行，并要求用户提供更清晰的需求描述。不得推断缺失细节。
 
-## Resources
+## 语言
 
-- [concept description template](assets/template.md)
-- [concept description example](references/example.md)
-- [guideline to discover rules for concept](./assets/rules-discovery.md)
-- [concrete rules example based on the discovery rules](./assets/rules-example.md)
+默认使用简体中文编写业务概念描述。产品名、协议名、技术名、代码标识符、文件路径和命令保留英语；用户在当前请求中明确指定其他语言时，以用户要求为准。
 
-## Workflow
+## 核心原则
 
-<!-- The concept-extraction strategy is inclusive and need not be followed rigidly. -->
+1. **聚焦业务**：使用自然语言，避免晦涩的技术概念，确保非技术利益相关者能够理解描述。
+2. **最小可行内容**：业务定义、关键属性和业务规则缺一不可。
+3. **单一事实来源**：概念文档是术语的权威来源。用例规约和技术实现中的定义必须与概念文档保持一致。
+4. **引用而非重复**：跨概念引用时，指出所引用业务概念的来源。不要在概念文档中重复属性定义，避免在多个位置维护相同信息。
+5. **精确描述关系**：使用定义明确的 UML 关系，不要使用简化的自然语言描述代替关系类型。
 
-1. Extract business concepts: Read the user-provided material and identify candidate business concepts using the extraction strategy.
-2. Infer relationships: Analyze business-level relationships among the identified concepts.
-3. For each business concept:
-   - Consult the **concept description example** and **concept description template** to refine the relevant dimensions.
-   - Generate the business-concept description from the **concept description template**.
-   - Verify that the result satisfies the constraints of the **concept description template**.
-   - Verify that the "Rules and Constraints" section satisfies the **guideline to discover rules for concept**.
+## 工作流
 
-### Business-Concept Extraction Strategy
+<!-- 业务概念提取策略是启发式建议，无需机械遵循。 -->
 
-- Identify recurring noun terms.
-- Identify entities governed by business rules or constraints.
-- Extract core participants in processes or use cases.
-- Mark entities with a distinct business value or business boundary.
+1. 提取业务概念：阅读用户提供的材料，使用**业务概念提取策略**识别候选业务概念。
+2. 推断关系：分析已识别概念之间的业务层关系。
+3. 针对每个业务概念：
+   - 查阅**业务概念描述示例**和**业务概念描述模板**，明确相关描述维度。
+   - 严格按照**业务概念描述模板**生成业务概念描述。
+   - 验证结果是否满足**业务概念描述模板**的约束。
+   - 验证“规则与约束”章节是否符合**业务概念规则发现指南**。
+4. 按照**审查清单**检查结果，并在输出前修正全部问题。
 
-## Output Convention
+### 业务概念提取策略
 
-Generate every business-concept description from the template. Do not alter or optimize the template without authorization.
+- 识别反复出现的名词术语。
+- 识别受业务规则或约束治理的实体。
+- 提取流程或用例中的核心参与对象。
+- 标记具有独立业务价值或业务边界的实体。
+
+## 输出约定
+
+必须根据模板生成每一份业务概念描述。未经用户授权，不得修改或优化模板结构。
+
+## 审查清单
+
+每份业务概念描述必须通过以下全部检查项：
+
+- [ ] 包含“定义”“关键属性”“规则与约束”和“关系”四个必填章节，名称、层级和顺序与模板一致。
+- [ ] “定义”说明概念的业务含义、目的和业务价值。
+- [ ] “关键属性”仅描述业务特征，不包含技术实现细节。
+- [ ] “规则与约束”覆盖材料中能够识别的业务规则；适用规则发现指南中的分类时，分类必须准确。
+- [ ] “关系”使用定义明确的 UML 关系，并指出相关业务概念。
+- [ ] “前置依赖”和“数据模型”仅在确有价值时出现。
+- [ ] 跨概念内容使用引用，不重复维护其他概念的属性定义。
+- [ ] 最终文档中没有模板说明、占位符或缺乏依据的推断。

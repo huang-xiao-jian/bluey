@@ -1,77 +1,77 @@
-# Conceptual Data Model Constraints
+# 业务概念数据模型约束
 
-## Attribute-Level Constraints
+## 属性级约束
 
-Constrains the legal values of an individual attribute itself.
+约束单个属性自身的合法取值。
 
-- **Value Domain Constraint**: Attribute values must belong to a defined legal set, such as "Environment $\in$ {Development Environment, Test Environment, Production Environment}".
+- **值域约束**：属性值必须属于定义明确的合法集合，例如“环境 $\in$ {开发环境, 测试环境, 生产环境}”。
 
-- **Type/Precision/Unit Constraint**: Such as "Amount retains two decimal places" or "Quantity is a positive integer".
+- **类型、精度或单位约束**：例如“金额保留两位小数”或“数量为正整数”。
 
-- **Format Constraint**: Such as "Code must comply with the prefix + date + sequence number pattern".
+- **格式约束**：例如“编码必须符合前缀 + 日期 + 序号的模式”。
 
-- **Null Value Constraint**: Such as "Name cannot be null" or "Remarks can be null".
+- **空值约束**：例如“名称不能为空”或“备注可以为空”。
 
-- **Default Value Constraint**: Such as "Creation time defaults to the generation timestamp".
+- **默认值约束**：例如“创建时间默认为生成时的时间戳”。
 
-## Identification Constraints
+## 标识约束
 
-Constrains how to uniquely identify an instance of this concept.
+约束如何唯一标识本概念的一个实例。
 
-- **Business Identification Constraint**: Such as "Quotation number uniquely identifies a quotation".
+- **业务标识约束**：例如“报价单号唯一标识一份报价”。
 
-- **Composite Identification Constraint**: Such as "Customer ID + Quotation Date + Sequence Number jointly provide unique identification".
+- **组合标识约束**：例如“客户 ID + 报价日期 + 序号共同构成唯一标识”。
 
-- **Non-Null Identification Constraint**: Such as "Quotation must contain at least one unique identifier".
+- **非空标识约束**：例如“报价必须至少包含一个唯一标识”。
 
-## Intra-Tuple Cross-Attribute Constraints
+## 实例内跨属性约束
 
-The linkage relationships among multiple attributes within the same internal instance.
+约束同一实例内部多个属性之间的关联关系。
 
-- **Comparison Constraint**: Such as "Closing time $\geq$ Creation time" or "Discount price $\le$ Original price".
+- **比较约束**：例如“关闭时间 $\geq$ 创建时间”或“折扣价 $\leq$ 原价”。
 
-- **Conditional Existence Constraint**: Such as "When the status is 'Refunded', the refund amount must have a value".
+- **条件存在约束**：例如“状态为‘已退款’时，退款金额必须有值”。
 
-- **Conditional Value Constraint**: Such as "When the customer type is 'Enterprise', the 'Customer' must be selected from enterprise users registered in the system".
+- **条件取值约束**：例如“客户类型为‘企业’时，‘客户’必须从系统中已注册的企业用户中选择”。
 
-- **Conditional Derivation Constraint**: Such as "When the customer provides an 'ID card number', the corresponding age is automatically calculated".
+- **条件派生约束**：例如“客户提供‘身份证号’时，自动计算对应年龄”。
 
-## Inter-Instance Constraints
+## 实例间约束
 
-Static restrictions between different instances of the same concept, as well as static restrictions between instances of different concepts.
+约束同一概念不同实例之间，以及不同概念的实例之间的静态关系。
 
-- **Uniqueness Constraint**: Such as "The same customer and the same product cannot have two valid quotations simultaneously".
+- **唯一性约束**：例如“同一客户与同一产品不能同时存在两份有效报价”。
 
-- **Statistical Constraint**: Such as "The number of valid quotations for a customer does not exceed 100".
+- **统计约束**：例如“一个客户的有效报价数量不能超过 100”。
 
-- **Aggregation Constraint**: Such as "Total quotation amount = Sum of all quotation sub-item amounts".
+- **聚合约束**：例如“报价总金额 = 所有报价子项金额之和”。
 
-## Subtype Constraints
+## 子类型约束
 
-Constrains the classification structure of "what type it is" within a concept, without involving state changes.
+约束概念内部“属于哪一类型”的分类结构，不涉及状态变化。
 
-- **Subtype Mutually Exclusive Constraint**: Such as "A quotation is either a standard quotation or an enterprise framework agreement quotation, and cannot belong to both simultaneously".
+- **子类型互斥约束**：例如“一份报价要么是标准报价，要么是企业框架协议报价，不能同时属于两者”。
 
-- **Subtype Completeness Constraint**: Such as "A quotation must belong to a defined subtype".
+- **子类型完备约束**：例如“一份报价必须属于已定义的某个子类型”。
 
-- **Subtype Identification Constraint**: Such as "Quotation type is determined by the 'Quotation Type' attribute".
+- **子类型标识约束**：例如“报价类型由‘报价类型’属性决定”。
 
-## State Constraints
+## 状态约束
 
-Constrains "what state it is in" within a concept, without involving process actions.
+约束概念“处于哪一状态”，不涉及流程动作。
 
-- **State Enumeration Constraint**: Such as "Status can only take values from a defined set of states".
+- **状态枚举约束**：例如“状态只能取自定义明确的状态集合”。
 
-- **State Transition Constraint**: Such as "Status can only follow preset paths and cannot change arbitrarily".
+- **状态转换约束**：例如“状态只能沿预设路径转换，不能任意变更”。
 
-- **State Mutually Exclusive Constraint**: Such as "Can only be in a single state at any given moment".
+- **状态互斥约束**：例如“任意时刻只能处于一种状态”。
 
-- **State Derivation Constraint**: Such as "When the current time exceeds the closing time, the status should be 'Expired'".
+- **状态派生约束**：例如“当前时间超过关闭时间时，状态应为‘已过期’”。
 
-## Instance-Level Constraints
+## 实例级约束
 
-Constrains static conditions of a single instance regarding time, visibility, or validity, divided into three non-overlapping dimensions:
+约束单个实例在时间、可见性或有效性方面的静态条件：
 
-- **Timeliness Constraint**: Defines the valid time window of an instance. Such as "Quotations are valid for 10 minutes from creation".
+- **时效性约束**：定义实例的有效时间窗口。例如“报价自创建起 10 分钟内有效”。
 
-- **Visibility Constraint**: Defines whether an instance can be perceived. Such as "Expired quotations are invisible to users and visible only to internal personnel".
+- **可见性/有效性判定约束**：定义实例是否可以被感知，或是否满足业务有效条件。例如“已过期报价对用户不可见，仅内部人员可见”或“只有已提交且处于有效时间窗口内的报价才是有效报价”。

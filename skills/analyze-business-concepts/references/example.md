@@ -1,33 +1,33 @@
-# Flight Offer
+# 航班报价
 
-## Prerequisite Dependencies (Optional)
+## 前置依赖（可选）
 
-- [Flight Segment](./virtual-path/FLT-SEG-01.md)
-- [Sellable Product](./virtual-path/PROD-SALE-01.md)
+- **航段**：`./virtual-path/FLT-SEG-01.md`
+- **可售产品**：`./virtual-path/PROD-SALE-01.md`
 
-## 1. Definition
+## 1. 定义
 
-At a specific point in time, a **Flight Offer** is a **sellable combination** presented by the sales system to a traveler. It contains specific flight information, fare class, real-time pricing, and ancillary benefits. It is the direct basis on which the traveler places an order.
+在特定时间点，**航班报价**是销售系统向旅客展示的**可售组合**。它包含具体的航班信息、舱等、实时报价和附加权益，是旅客下单的直接依据。
 
-## 2. Key Attributes
+## 2. 关键属性
 
-- **ID:** The unique identifier for this offer, used to lock the price when the order is placed.
-- **Flight Number:** The operating airline's flight identifier (for example, `CA6532`).
-- **Fare Class Code:** The combination of the physical cabin (for example, economy class) and the booking class (for example, V class).
-- **Total Selling Price:** The final amount payable, including the base fare, passenger facility charge, fuel surcharge, and taxes.
-- **Validity Period:** The period for which the offer is locked (for example, 15 minutes).
+- **ID：** 报价的唯一标识，旅客下单时用于锁定价格。
+- **航班号：** 承运航司的航班标识，例如 `CA6532`。
+- **舱等代码：** 物理舱位（例如经济舱）与订座舱位（例如 V 舱）的组合。
+- **销售总价：** 包含基础票价、旅客服务费、燃油附加费和税费的最终应付金额。
+- **有效期：** 报价被锁定的时长，例如 15 分钟。
 
-## 3. Rules and Constraints
+## 3. 规则与约束
 
-1. **Business Identification Constraint:** The ID uniquely identifies a **Flight Offer** and is used to lock its price when an order is placed.
-2. **Aggregation Constraint:** The Total Selling Price equals the sum of the base fare, passenger facility charge, fuel surcharge, and taxes.
-3. **Timeliness Constraint:** A **Flight Offer** is valid only for its defined Validity Period (for example, 15 minutes). An expired offer cannot be used to place an order.
-4. **Conditional Existence Constraint:** Generating a **Flight Offer** does not consume actual inventory. A seat hold can be requested from the inventory and fare center only after the traveler submits an order and validation succeeds.
-5. **Conditional Value Constraint:** Every option in a generated **Flight Offer** must comply with the traveler's eligibility (for example, student fares or military priority) and the organization's travel policy (for example, an out-of-policy cabin).
-6. **Statistical Constraint:** A **Flight Offer** aggregates between `[1,5]` **Flight Segments**.
-7. **Value Domain Constraint:** A **Flight Offer** may contain a nonstop flight or a connecting itinerary operated by the same airline; it cannot contain an interline connection combination.
+1. **业务标识约束：** `ID` 唯一标识一份**航班报价**，并在旅客下单时用于锁定价格。
+2. **聚合约束：** 销售总价等于基础票价、旅客服务费、燃油附加费和税费之和。
+3. **时效性约束：** **航班报价**仅在定义的有效期内有效，例如 15 分钟。已过期的报价不能用于下单。
+4. **业务前置条件：** 生成**航班报价**不会消耗实际库存。只有在旅客提交订单且校验通过后，才能向库存与运价中心申请锁座。
+5. **条件取值约束：** 生成的**航班报价**中的每个选项都必须符合旅客资格（例如学生票或军人优先）和组织的差旅政策（例如舱等超标限制）。
+6. **统计约束：** 一份**航班报价**聚合 `[1,5]` 个**航段**。
+7. **值域约束：** 一份**航班报价**可以包含直飞航班或同一航司承运的中转行程，不能包含跨航司联程组合。
 
-## 4. Relationships
+## 4. 关系
 
-- **Aggregation:** This concept aggregates between `[1,5]` **Flight Segments**.
-- **Generalization:** This concept is a specialization of **Sellable Product**.
+- **聚合：** 本概念聚合 `[1,5]` 个**航段**。
+- **泛化：** 本概念是**可售产品**的特化。

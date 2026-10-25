@@ -1,63 +1,63 @@
-# Business Conceptual Data Model Constraints (Case Study)
+# 业务概念数据模型约束示例
 
-## Attribute-Level Constraints
+## 属性级约束
 
-- **Value Domain Constraint**: Quotation status $\in$ {Draft, Submitted, Expired, Voided, Closed-Won}.
+- **值域约束**：报价状态 $\in$ {草稿, 已提交, 已过期, 已作废, 已成交}。
 
-- **Type/Precision Constraint**: The quotation amount must be a positive number with two decimal places; the validity duration must be a positive integer in minutes.
+- **类型、精度或单位约束**：报价金额必须是保留两位小数的正数；有效时长必须是以分钟为单位的正整数。
 
-- **Format Constraint**: The quotation number must comply with the pattern "Q + 8-digit date + 4-digit sequence number", such as Q202610150001.
+- **格式约束**：报价单号必须符合“Q + 8 位日期 + 4 位序号”的模式，例如 `Q202610150001`。
 
-- **Null Value Constraint**: Quotation number, customer ID, creation time, and status cannot be null; remarks and void reason can be null.
+- **空值约束**：报价单号、客户 ID、创建时间和状态不能为空；备注和作废原因可以为空。
 
-- **Default Value Constraint**: The creation time defaults to the generation timestamp; the status defaults to "Draft"; the validity duration defaults to 10 minutes.
+- **默认值约束**：创建时间默认为生成时的时间戳；状态默认为“草稿”；有效时长默认为 10 分钟。
 
-## Identification Constraints
+## 标识约束
 
-- **Business Identification Constraint**: The quotation number uniquely identifies a quotation instance.
+- **业务标识约束**：报价单号唯一标识一个报价实例。
 
-- **Composite Identification Constraint**: If multiple versions are allowed, "Quotation Number + Version Number" jointly provide unique identification.
+- **组合标识约束**：如果允许存在多个版本，则“报价单号 + 版本号”共同构成唯一标识。
 
-- **Non-Null Identification Constraint**: A quotation must contain at least one unique identifier.
+- **非空标识约束**：一份报价必须至少包含一个唯一标识。
 
-## Intra-Tuple Cross-Attribute Constraints
+## 实例内跨属性约束
 
-- **Comparison Constraint**: Quotation closing time $\geq$ Creation time; Quotation amount $\geq$ 0.
+- **比较约束**：报价关闭时间 $\geq$ 创建时间；报价金额 $>$ 0。
 
-- **Conditional Existence Constraint**: When the status is "Voided", the void reason must have a value; when the status is "Closed-Won", the closing time must have a value.
+- **条件存在约束**：状态为“已作废”时，作废原因必须有值；状态为“已成交”时，成交时间必须有值。
 
-- **Conditional Value Constraint**: When the quotation type is "Framework Agreement", the agreement number must have a value; when the quotation type is "Standard Quotation", the agreement number should not have a value.
+- **条件存在约束**：报价类型为“框架协议”时，协议编号必须有值；报价类型为“标准报价”时，协议编号不应有值。
 
-- **Conditional Derivation Constraint**: The quotation closing time is jointly determined by the creation time and the validity duration, i.e., Closing Time = Creation Time + Validity Duration.
+- **条件派生约束**：报价关闭时间由创建时间和有效时长共同决定，即关闭时间 = 创建时间 + 有效时长。
 
-## Inter-Instance Constraints
+## 实例间约束
 
-- **Uniqueness Constraint**: For the same customer and the same product combination, there cannot exist two quotations with the status "Submitted" and not yet expired at the same time.
+- **唯一性约束**：对于同一客户和同一产品组合，不能同时存在两份状态为“已提交”且尚未过期的报价。
 
-- **Statistical Constraint**: The number of quotations in "Submitted" status for the same customer cannot exceed 5.
+- **统计约束**：同一客户处于“已提交”状态的报价不能超过 5 份。
 
-- **Aggregation Constraint**: Total quotation amount = Sum of all quotation line amounts.
+- **聚合约束**：报价总金额 = 所有报价行金额之和。
 
-## Subtype Constraints
+## 子类型约束
 
-- **Subtype Mutually Exclusive Constraint**: A quotation is either a "Standard Quotation" or a "Framework Agreement Quotation", and cannot belong to both simultaneously.
+- **子类型互斥约束**：一份报价要么是“标准报价”，要么是“框架协议报价”，不能同时属于两者。
 
-- **Subtype Completeness Constraint**: A quotation must belong to a defined subtype; unclassified quotations cannot exist.
+- **子类型完备约束**：一份报价必须属于已定义的某个子类型，不能存在未分类的报价。
 
-- **Subtype Identification Constraint**: The subtype is determined by the "Quotation Type" attribute, whose value is taken from {Standard Quotation, Framework Agreement}.
+- **子类型标识约束**：子类型由“报价类型”属性决定，其取值来自 {标准报价, 框架协议}。
 
-## State Constraints
+## 状态约束
 
-- **State Enumeration Constraint**: The status can only take one of {Draft, Submitted, Expired, Voided, Closed-Won}.
+- **状态枚举约束**：状态只能取 {草稿, 已提交, 已过期, 已作废, 已成交} 中的一个值。
 
-- **State Transition Constraint**: Such as "The status can only follow preset paths and cannot change arbitrarily".
+- **状态转换约束**：状态只能沿预设路径转换，不能任意变更。
 
-- **State Mutually Exclusive Constraint**: Such as "Can only be in a single state at any given moment".
+- **状态互斥约束**：任意时刻只能处于一种状态。
 
-- **State Derivation Constraint**: When "Current Time $\geq$ Quotation Closing Time", the status should be "Expired".
+- **状态派生约束**：当“当前时间 $\geq$ 报价关闭时间”时，状态应为“已过期”。
 
-## Instance-Level Constraints
+## 实例级约束
 
-- **Timeliness Constraint**: The quotation is valid for 10 minutes from creation, with the validity interval being "Creation Time, Creation Time + 10 minutes".
+- **时效性约束**：报价自创建起 10 分钟内有效，有效区间为“创建时间, 创建时间 + 10 分钟”。
 
-- **Visibility/Validity Determination Constraint**: Quotations with a status of "Expired" or "Voided" do not participate in valid quotation queries; only quotations with a status of "Submitted" and whose current time falls within the validity interval are considered valid instances.
+- **可见性/有效性判定约束**：状态为“已过期”或“已作废”的报价不参与有效报价查询；只有状态为“已提交”且当前时间处于有效区间内的报价才视为有效实例。

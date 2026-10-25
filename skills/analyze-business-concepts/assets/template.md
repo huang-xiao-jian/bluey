@@ -1,56 +1,56 @@
-# [Concept Name]
+# [概念名称]
 
-## Prerequisite Dependencies (Optional)
+## 前置依赖（可选）
 
-> List the business concepts this concept depends on. When referring to a listed concept later, use its bold name without repeating the link.
+> 列出本概念依赖的业务概念。后文引用已列出的概念时，使用其加粗名称，不要重复链接。
 
 <!--
-Format:
+格式：
 
-- [Concept Name](file-path)
+- [概念名称](文件路径)
 
-Example:
+示例：
 
-- [Workspace](./workspace.md)
+- [工作区](./workspace.md)
 -->
 
-## 1. Definition
+## 1. 定义
 
-> Define the business concept, its purpose, and the business value it represents.
+> 定义业务概念、概念目的及其代表的业务价值。
 
 <!--
-Format:
+格式：
 
-Concise prose describing the concept in business terms.
+使用简洁的自然语言，从业务视角描述该概念。
 
-Example:
+示例：
 
-A Workspace is a bounded area in which a team organizes and manages related rules.
+工作区是一个有明确边界的区域，团队在其中组织和管理相关规则。
 -->
 
-## 2. Key Attributes
+## 2. 关键属性
 
-> List business characteristics of the concept. Do not include technical implementation details.
+> 列出概念的业务特征，不要包含技术实现细节。
 
 <!--
-Format:
+格式：
 
-- **{Attribute Name}:** {Semantic meaning and constraints}
+- **{属性名称}：** {语义和约束}
 
-Example:
+示例：
 
-- **Status:** Indicates whether the Workspace is active or archived.
+- **状态：** 表示工作区处于活跃或已归档状态。
 -->
 
-### 2.1 Data Model (Optional)
+### 2.1 数据模型（可选）
 
-> Define the TypeScript data model only when a technical visualization is essential to understand the concept.
-> Use enum for limited values instead of literal
-> Avoid inheritance unless necessary
-> Add proper comment and example to gain better readability
+> 仅当技术可视化对于理解概念必不可少时，才定义 TypeScript 数据模型。
+> 有限取值必须使用 enum，不能使用字面量类型。
+> 除非确有必要，否则避免使用继承。
+> 添加恰当的说明和示例，提高可读性。
 
 <!--
-Format:
+格式：
 
 ```ts
 interface {ConceptName} {
@@ -60,10 +60,11 @@ interface {ConceptName} {
 
 ```json
 {
-  {property}: {Type}
+  "{property}": "{value}"
 }
+```
 
-Example:
+示例：
 
 ```ts
 enum WorkspaceStatus {
@@ -73,7 +74,7 @@ enum WorkspaceStatus {
 
 interface Workspace {
   id: string;
-  status: "active" | "archived";
+  status: WorkspaceStatus;
 }
 ```
 
@@ -85,31 +86,31 @@ interface Workspace {
 ```
 -->
 
-## 3. Rules and Constraints
+## 3. 规则与约束
 
-> State the rules that govern how the concept may be created, changed, or used.
+> 说明概念在创建、变更或使用时必须遵守的规则。
 
 <!--
-Format:
+格式：
 
-1. {Business rule}
+1. {业务规则}
 2. ...
 
-Example:
+示例：
 
-1. An archived Workspace cannot accept new Workspace Versions.
+1. 已归档的工作区不能接收新的工作区版本。
 -->
 
-## 4. Relationships
+## 4. 关系
 
-> Describe this concept's relationships to other business concepts using the authoritative relationship vocabulary.
+> 使用权威的关系词汇描述本概念与其他业务概念之间的关系。
 
 <!--
-Format:
+格式：
 
-- **{Relationship Type}:** {Related concept and relationship description}
+- **{关系类型}：** {相关概念及关系描述}
 
-Example:
+示例：
 
-- **Composition:** A Workspace contains its Workspace Versions.
+- **组合：** 一个工作区包含其工作区版本。
 -->
