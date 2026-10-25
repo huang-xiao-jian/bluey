@@ -1,51 +1,70 @@
-## Structural Constraints
+# 维护商品
 
-**Product**
+## 参与者
 
-- **Attribute constraints**
-  - Product name: No more than 200 characters.
-  - Product price: Must be an integer greater than 0.
-  - Product inventory: Must not be negative (≥ 0).
+- **主要参与者：** 商品管理员
 
-- **Relationship constraints**
-  - None (the current requirements contain no inter-object references).
+## 简要说明
 
-- **State-machine constraints**
-  - States: Draft, Published, Unpublished.
-  - Transition path: Draft → Published → Unpublished.
-  - An Unpublished product cannot be edited directly; it must first return to Draft.
+商品管理员创建和维护商品，并通过上架、下架和恢复草稿操作管理商品的销售状态。
 
-```mermaid
-stateDiagram-v2
-    [*] --> Draft
-    Draft --> Published
-    Published --> Unpublished
-    Unpublished --> Draft
-```
+## 前置条件
 
----
+1. 商品管理员已登录并拥有商品管理权限。
 
-## Behavioral Constraints
+## 事件流
 
-- **Precondition validation**
-  - Publish a product: The product must be in Draft.
-  - Edit a product: The product must be in Draft.
-  - Unpublish a product: The product must be Published.
+### 基本事件流
 
-- **Authorization validation**
-  - Only administrators may create, edit, publish, or unpublish products.
+1. 商品管理员输入商品名称、价格和库存。
+2. 系统确认商品名称不超过 200 个字符、价格是大于 0 的整数、库存不小于 0。
+3. 系统创建商品，并将商品状态设为“草稿”。
+4. 商品管理员编辑处于草稿状态的商品。
+5. 商品管理员上架处于草稿状态的商品。
+6. 系统将商品状态变更为“已上架”。
+7. 商品管理员下架处于已上架状态的商品。
+8. 系统将商品状态变更为“已下架”。
 
-- **Dependency and mutual-exclusion validation**
-  - A product can have only one active state at a time (mutually exclusive).
+### 备选事件流
 
----
+#### 恢复草稿后编辑
 
-## Derivation Constraints
+1. 当商品处于已下架状态且商品管理员需要编辑时，商品管理员将商品恢复为草稿状态。
+2. 系统将商品状态变更为“草稿”。
+3. 商品管理员编辑商品。
 
-- None (the current requirements contain no dynamic derivation scenarios).
+### 异常事件流
 
----
+#### 商品属性无效
 
-## Resource Constraints
+1. 当商品名称、价格或库存不满足校验条件时，系统拒绝创建商品。
+2. 用例失败，系统不保存商品。
 
-- None (the current requirements contain no system capacity, rate, or quota limits).
+## 后置条件
+
+**成功场景：**
+
+1. 商品已创建，且只处于“草稿”“已上架”或“已下架”中的一种状态。
+2. 商品的名称、价格和库存满足属性约束。
+
+**失败场景：**
+
+1. 系统未创建或保存属性无效的商品。
+
+## 业务规则
+
+- **商品管理权限**：只有商品管理员可以创建、编辑、上架、下架或恢复商品。
+- **商品名称长度**：商品名称不得超过 200 个字符。
+- **商品价格范围**：商品价格必须是大于 0 的整数。
+- **商品库存范围**：商品库存不得小于 0。
+- **商品状态互斥**：同一时间一个商品只能处于“草稿”“已上架”或“已下架”中的一种状态。
+- **商品状态转换**：商品只允许执行以下状态转换：创建后进入草稿、草稿变为已上架、已上架变为已下架、已下架恢复为草稿。不得执行其他状态转换。
+- **商品编辑条件**：只有草稿状态的商品可以编辑。
+- **商品上架条件**：只有草稿状态的商品可以上架。
+- **商品下架条件**：只有已上架状态的商品可以下架。
+- **无效商品不得保存**：商品属性不满足校验条件时，系统不得创建或保存商品。
+- **商品创建结果完整性**：商品创建成功时，商品属性必须全部有效，且商品必须进入草稿状态。
+
+## 特殊需求
+
+无。

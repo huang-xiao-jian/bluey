@@ -57,6 +57,7 @@ docs/               Conventions and operating notes
 ### In Consideration
 
 - [analyze-business-rules](skills/analyze-business-rules/SKILL.md): Organize
-  business requirements into a four-layer constraint model.
+  traceable business rules from use-case specifications into a four-layer
+  constraint model.
 - [oo-design-naive](skills/oo-design-naive/SKILL.md): Derive an early
   object-oriented design from use-case specifications.

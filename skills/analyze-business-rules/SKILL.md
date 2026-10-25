@@ -1,106 +1,96 @@
 ---
 name: analyze-business-rules
-description: Transform fragmented or ambiguous rule descriptions into clear, structured business rules. Use for business requirements analysis, business-rule governance, or requests to organize business rules, layer rules, or model constraints.
+description: 仅在用户显式调用 $analyze-business-rules 时使用。
 ---
 
-# Business Rule Analysis
+# 分析业务规则
 
-## Input
+## 参考资料
 
-The user must provide a clear requirements document. Its format is unrestricted and may be a use-case analysis, user story, workflow definition, or similar material.
+- [四层约束模型](references/four-layer-constraint-model.md)
+- [用例规约示例](references/material.md)
+- [规则推断示例](references/inference.md)
+- [规约修改示例](references/artifact.md)
 
-| Condition | Handling strategy |
-| --- | --- |
-| The input document contains no business description | Decline the task and ask the user for material related to business rules. |
-| The input document contains fewer than 100 words | Decline the task and ask the user for a more detailed requirements document. |
-| The input document is ambiguous | Decline the task and ask the user to provide a clearer requirements description. Do not infer missing details. |
+## 输入
 
----
+输入为用例规约（Use Case Specification）。不限定具体模板、章节组织或编写语言。
 
-## Scope Boundaries
+以下内容均可作为业务规则的证据来源：
 
-- **Excludes interaction-layer constraints**: Pure interaction behavior, such as requiring a second confirmation before deletion, is not a business rule.
-- **Excludes external constraints**: External constraints, such as laws and regulations, are out of scope unless the business has incorporated them into the system's internal logic.
+- 用例名称。
+- 参与者。
+- 业务目标
+- 前置条件。
+- 基本事件流。
+- 备选事件流和异常事件流。
+- 成功与失败场景的后置条件。
+- 业务规则和特殊需求。
 
----
+## 工作流
 
-## Four-Layer Constraint Model
+### 1. 读取规约
 
-### 1. Structural Constraints — Define What a Business Object Is
+读取输入的规约，识别其中现有的章节、事件和业务事实，不执行结构完整性校验。
 
-The lowest-level static constraints. They belong to the definition of a business concept, travel with that concept, and are not shared.
+### 2. 推断规则
 
-**Includes three categories:**
+规则范围边界：
 
-- **Attribute constraints**: Restrictions on an individual attribute. For example, a title must not exceed 40 characters, an amount must not be negative, or an identity-document number must match a format.
-- **Relationship constraints**: References and dependencies between objects. For example, an order must reference a valid user ID, or all employees must be removed before a department is deleted.
-- **State constraints**: The states and transition paths in an object's lifecycle. Express these with a Mermaid state diagram.
+- **不包含交互层约束**：删除前要求二次确认等纯交互行为不属于业务规则。
+- **不包含外部约束**：法律法规等外部约束不在分析范围内，除非用例规约明确将其纳入系统的内部逻辑。
 
-**Example:**
+推断前阅读**四层约束模型**，将其作为发现规则的检查提示。该模型不用于分类输出，也不要求用例规约覆盖全部约束类型。
 
-```mermaid
-stateDiagram-v2
-    [*] --> todo
-    todo --> in-progress
-    in-progress --> completed
-    in-progress --> cancelled
-    cancelled --> todo
-    completed --> todo
-```
+1. 识别用例规约明确陈述的明示规则。
+2. 根据规约事实、事件关系和约束缺口提出候选推断规则。
+3. 为每条明示规则记录来源依据；为每条候选推断规则记录来源依据和完整推导过程。
+4. 将规约中的“可能”“通常”“建议”等不确定表述作为候选推断规则或待澄清问题，不得直接视为正式业务规则。
+5. 将无法建立候选规则的缺失、含糊或冲突内容记录为依据不足。
+6. 生成待澄清问题，要求用户确认、修改或否决候选规则，并补充必要事实。
 
----
+候选推断规则在用户确认前不是正式业务规则，不得进入最终规则结果。
 
-### 2. Behavioral Constraints — Define Whether an Action May Be Performed
+### 3. 规则澄清（阻塞）
 
-These constrain the triggering and execution of business actions. They are dynamic validations that span objects and concepts.
+要求用户审阅明示规则和候选推断规则，并给出明确反馈意见。根据用户反馈更新规则集合、依据不足和待澄清问题，必要时重复本步骤。
 
-**Typical scenarios:**
+用户回答问题、补充事实或只确认部分规则时，继续停留在本步骤。只有用户明确表示“进入下一步”或给出同等明确的继续指令后，才能解除阻塞。
 
-- **Precondition validation**: For example, a user must have no balance or outstanding loan before closing an account; creating a calendar event must validate time conflicts.
-- **Authorization validation**: For example, only a department manager may approve that department's expense report.
-- **Postcondition validation**: For example, a task cannot be deleted when another task references it as a prerequisite; a product may participate in only one promotion at a time.
+### 4. 细化规则
 
----
+只细化用户确认后的规则，不按照**四层约束模型**分类。
 
-### 3. Derivation Constraints — Define How Criteria Change Dynamically
+细化时核对规则的来源依据、用户确认结果和推导过程，但不将这些中间信息写入用例规约。
 
-Derive new rules or conclusions dynamically from known facts, allowing the system to adapt to complex conditions.
+细化过程中发现新的候选推断规则时，停止细化并返回**规则澄清（阻塞）**。未经确认的新规则不得进入最终规则结果。
 
-**Typical scenarios:**
+被否决、未确认或仍有冲突的规则不得进入最终规则结果。
 
-- **Dynamic threshold derivation**: A VIP customer has a lower free-shipping threshold than a standard customer.
-- **Attribute derivation**: Derive a supplier rating from batch pass rates and delivery timeliness; derive a material's remaining shelf life from storage temperature.
-- **Adaptive rules**: For a monthly recurrence, if the target month has no corresponding date (for example, January 31 → February), automatically use the last day of that month.
+输入是可写文件时，默认直接修改原始用例规约。保留原有章节、语言和写作风格，只更新规则相关内容：
 
----
+- 将确认后的规则合并到现有业务规则章节；没有相应章节时，在合适位置新增。
+- 更新语义相同的现有规则，补充缺失规则，避免重复条目。
+- 不修改与业务规则无关的内容。
 
-### 4. Resource Constraints — Define System Capacity
+输入不是可写文件时，只输出确认后的规则相关内容，不输出修改后的完整用例规约。用户明确要求独立输出时，也只输出规则相关内容。
 
-These arise from the system's physical or logical limits and set the ceiling for business operations.
+## 输出约定
 
-**Typical scenarios:**
+直接修改原始用例规约时，沿用规约现有的规则格式。只输出规则相关内容时，使用“业务规则”标题，每条规则使用以下结构：
 
-- **Capacity constraints**: A user may have no more than 500 tasks.
-- **Rate constraints**: API rate limiting; process no more than 1,000 orders per second.
-- **Quota constraints**: A user may send no more than 10 SMS messages per day; a department's monthly expense-reimbursement quota must not exceed 50,000.
+- **{规则名称}**：{规则内容}
 
----
+没有可确认规则时，不修改原始文件，并明确说明“无可确认规则”。状态转换关系需要辅助表达时，可以附加 Mermaid 状态图。
 
-## Workflow
+## 审查清单
 
-When organizing business rules, follow these steps:
-
-1. **Validate the input**: Check whether the input meets the requirements. If it does not, decline the task and explain why.
-2. **Identify business concepts**: List the core business objects in the system (for example, tasks, orders, and users).
-3. **Populate each constraint layer**:
-   - For each business concept, document its structural constraints (attributes, relationships, and state machine). Use a Mermaid state diagram for the state machine.
-   - Identify actions spanning concepts and document their behavioral constraints.
-   - Identify scenarios requiring dynamic evaluation and document their derivation constraints.
-   - Identify system-capacity boundaries and document their resource constraints.
-4. **Produce structured output**: Organize the output by the four-layer model. Use a structured list, favor Mermaid state diagrams for state descriptions, and add natural-language explanations where needed.
-
----
-
-## Reference Example
-
-[Example input](./references/material.md) --> [Example output](./references/artifact.md)
+- [ ] 分析依据仅来自当前输入的用例规约，不包含规约外信息。
+- [ ] 每条候选推断规则都包含来源依据和完整、可复核的推导过程。
+- [ ] **四层约束模型**只用于发现规则，没有用于分类或组织最终结果。
+- [ ] 输入是可写文件时，已直接修改原始用例规约，只更新规则相关内容并保留原有结构和风格。
+- [ ] 输入不是可写文件或用户要求独立输出时，只输出规则相关内容，没有输出完整用例规约。
+- [ ] 新增、更新或独立输出的规则内容只包含用户确认后的业务规则及必要的状态图，不包含来源依据、确认依据、推导说明或其他中间分析信息。
+- [ ] 输出不包含纯交互约束或尚未内化为系统逻辑的外部约束。
+- [ ] 细化过程中发现新候选规则时，及时返回规则澄清阶段，没有直接纳入最终规则结果。
+- [ ] 被否决、未确认、存在冲突或缺乏依据的内容没有混入最终规则结果。

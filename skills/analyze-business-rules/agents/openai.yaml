@@ -1,0 +1,6 @@
+interface:
+  display_name: "Analyze Business Rules"
+  short_description: "从用例规约中提取、推断并分层分析具有来源依据的业务规则"
+  default_prompt: "使用 $analyze-business-rules 从这份用例规约推断候选业务规则，并通过用户澄清后再细化。"
+policy:
+  allow_implicit_invocation: false
