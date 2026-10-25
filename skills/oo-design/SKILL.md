@@ -1,9 +1,9 @@
 ---
-name: oo-design-naive
-description: 使用 $oo-design-naive 基于结构化用例规约进行面向对象分析与设计。
+name: oo-design
+description: 使用 $oo-design 基于结构化用例规约进行面向对象分析与设计。
 ---
 
-# oo-design-naive
+# oo-design
 
 ## 参考资料
 

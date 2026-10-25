@@ -1,7 +1,7 @@
 interface:
-  display_name: "Naive OO Design"
+  display_name: "OO Design"
   short_description: "基于结构化用例规约开展面向对象分析、候选类设计与职责分配"
-  default_prompt: "使用 $oo-design-naive 基于这份结构化用例规约完成面向对象分析与设计。"
+  default_prompt: "使用 $oo-design 基于这份结构化用例规约完成面向对象分析与设计。"
 
 policy:
   allow_implicit_invocation: false
