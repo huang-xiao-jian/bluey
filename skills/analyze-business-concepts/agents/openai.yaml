@@ -1,4 +1,4 @@
 interface:
   display_name: "Analyze Business Concepts"
-  short_description: "从业务材料中识别概念，并起草定义、关键属性、规则与关系"
-  default_prompt: "使用 $analyze-business-concepts 从业务材料中识别并定义业务概念。"
+  short_description: "从用例规约中识别概念，并起草定义、关键属性、规则与关系"
+  default_prompt: "使用 $analyze-business-concepts 从用例规约中识别并定义业务概念。"
