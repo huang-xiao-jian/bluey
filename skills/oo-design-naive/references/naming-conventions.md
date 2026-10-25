@@ -1,32 +1,32 @@
-# Detailed Naming Conventions
+# 详细命名规范
 
-## Core Principle
+## 核心原则
 
-A class name must convey business meaning clearly enough that a person without a technical background can infer the class's business function from its name.
+类名必须清晰表达业务含义，使不具备技术背景的人也能从名称中推断该类的业务职能。
 
-## Naming Rules
+## 命名规则
 
-### Use a Business Role as the Suffix for an Acting Subject
+### 使用业务角色作为行为主体的后缀
 
-The suffix should describe a business role rather than a technical implementation. For example:
+后缀应描述业务角色，而非技术实现。例如：
 
-- `-Scheduler`: Coordinates a business workflow.
-- `-Checker`: Determines eligibility or evaluates conditions.
-- `-Cleaner`: Cleans up an environment.
-- `-Calculator`: Calculates amounts or numeric values.
-- `-Drafter`: Drafts content.
+- `-Scheduler`：协调业务工作流。
+- `-Checker`：判断资格或评估条件。
+- `-Cleaner`：清理环境。
+- `-Calculator`：计算金额或数值。
+- `-Drafter`：起草内容。
 
-### Do Not Use Purely Technical Suffixes That Do Not Reveal a Business Function
+### 不使用无法体现业务职能的纯技术后缀
 
-Do not use these suffixes in class names: `Service`, `Manager`, `Controller`, `Component`, or `Bean`.
+类名不得使用以下后缀：`Service`、`Manager`、`Controller`、`Component` 或 `Bean`。
 
-Evaluation rule: after removing the prefix, does the suffix itself carry business meaning? If not, the name is technology-oriented and must be replaced.
+判断规则：去掉前缀后，后缀本身是否仍具有业务含义？如果没有，该名称以技术为导向，必须替换。
 
-### Let Business Semantics Decide Ambiguous Cases
+### 由业务语义决定模糊情况
 
-Some naming suffixes are ambiguous. Resolve them according to business semantics, using this core criterion: can the business function be inferred from the name?
+某些命名后缀存在歧义。应根据业务语义判断，并使用这一核心标准：能否从名称中推断出业务职能？
 
-Special cases:
+特殊情况：
 
-- `Handler` / `Processor`: Although these terms can sound technical, they are allowed when the prefix makes the business function clear. For example, `RefundExceptionHandler` clearly indicates that it handles refund exceptions.
-- `Scheduler`: In a workflow-orchestration context, `Scheduler` describes the business role responsible for coordinating the workflow. It carries sufficient business meaning and is allowed.
+- `Handler` / `Processor`：虽然这些词听起来可能偏技术，但当前缀能清晰表达业务职能时允许使用。例如，`RefundExceptionHandler` 清楚表明它负责处理退款异常。
+- `Scheduler`：在工作流编排语境中，`Scheduler` 表示负责协调工作流的业务角色。它具有足够明确的业务含义，允许使用。

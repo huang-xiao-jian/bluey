@@ -1,117 +1,129 @@
-# Publish a Short Video
+# 发布短视频
 
-## Candidate-Class Descriptions
+## 候选类说明
 
 ### VideoPublishSubmission
 
-- **Class Name:** `VideoPublishSubmission`
-- **Responsibility:** Represents the creator's initial submission that starts one publication application and supplies its initial video content.
-- **Collaborators:** `VideoCreator`, `VideoContent`, `VideoPublishApplication`, `VideoPublishApplicationRegistrar`, `VideoPublishWorkflowScheduler`
+- **类名：**`VideoPublishSubmission`
+- **职责：**表示创作者用于发起一次发布申请并提供初始视频内容的首次提交。
+- **协作者：**`VideoCreator`、`VideoContent`、`VideoPublishApplication`、`VideoPublishApplicationRegistrar`、`VideoPublishWorkflowScheduler`
 
 ### VideoPublishApplication
 
-- **Class Name:** `VideoPublishApplication`
-- **Responsibility:** Represents one publication attempt and owns its lifecycle from creation to distributable, rejected, or terminated. It keeps every review feedback item and content revision within the same application.
-- **Collaborators:** `VideoPublishSubmission`, `VideoContent`, `VideoContentRevision`, `FeedbackReviewer`, `VideoPublishApplicationRegistrar`, `VideoRevisionRegistrar`, `VideoPublishWorkflowScheduler`, `VideoRevisionWorkflowScheduler`, `VideoPublishClosureHandler`
+- **类名：**`VideoPublishApplication`
+- **职责：**表示一次发布尝试，并负责从创建到可发布、已拒绝或已终止的完整生命周期。它将每一条审核反馈和每一次内容修改都保留在同一申请中。
+- **协作者：**`VideoPublishSubmission`、`VideoContent`、`VideoContentRevision`、`VideoPublishWithdrawal`、`FeedbackReviewer`、`VideoPublishApplicationRegistrar`、`VideoRevisionRegistrar`、`VideoPublishWorkflowScheduler`、`VideoRevisionWorkflowScheduler`、`VideoWithdrawalWorkflowScheduler`、`VideoPublishClosureHandler`
 
 ### VideoContent
 
-- **Class Name:** `VideoContent`
-- **Responsibility:** Represents the short video and its publication information throughout validation, review, revision, and distribution readiness.
-- **Collaborators:** `VideoPublishSubmission`, `VideoPublishApplication`, `VideoContentRevision`, `PublishedVideoContent`, `VideoPublishApplicationRegistrar`, `VideoContentValidator`, `VideoContentReviewer`, `VideoRevisionRegistrar`, `VideoDistributionScheduler`, `VideoDistributor`
+- **类名：**`VideoContent`
+- **职责：**表示贯穿验证、审核、修改和发布准备过程的短视频及其发布信息。
+- **协作者：**`VideoPublishSubmission`、`VideoPublishApplication`、`VideoContentRevision`、`PublishedVideoContent`、`VideoPublishApplicationRegistrar`、`VideoContentValidator`、`VideoContentReviewer`、`VideoRevisionRegistrar`、`VideoDistributionScheduler`、`VideoDistributor`
 
 ### VideoContentRevision
 
-- **Class Name:** `VideoContentRevision`
-- **Responsibility:** Represents a creator's subsequent update after feedback, supplies the revised video content, and remains part of the existing publication application.
-- **Collaborators:** `VideoCreator`, `VideoContent`, `VideoPublishApplication`, `VideoRevisionRegistrar`, `VideoRevisionWorkflowScheduler`
+- **类名：**`VideoContentRevision`
+- **职责：**表示创作者收到反馈后进行的后续更新，提供修改后的视频内容，并继续归属于现有发布申请。
+- **协作者：**`VideoCreator`、`VideoContent`、`VideoPublishApplication`、`VideoRevisionRegistrar`、`VideoRevisionWorkflowScheduler`
+
+### VideoPublishWithdrawal
+
+- **类名：**`VideoPublishWithdrawal`
+- **职责：**表示创作者撤回现有发布申请的请求。
+- **协作者：**`VideoCreator`、`VideoPublishApplication`、`VideoWithdrawalWorkflowScheduler`、`VideoPublishClosureHandler`
 
 ### FeedbackReviewer
 
-- **Class Name:** `FeedbackReviewer`
-- **Responsibility:** Represents actionable reasons why the current video or publication information did not pass validation or review, and establishes the current 24-hour revision window.
-- **Collaborators:** `VideoPublishApplication`, `VideoContentValidator`, `VideoContentReviewer`, `VideoRevisionWorkflowScheduler`, `VideoRevisionNotifier`, `VideoPublishTimeoutInspector`
+- **类名：**`FeedbackReviewer`
+- **职责：**审阅当前视频或发布信息未通过验证或审核的原因，将其整理为可操作反馈，并确定当前 24 小时修改时限。
+- **协作者：**`VideoPublishApplication`、`VideoContentValidator`、`VideoContentReviewer`、`VideoRevisionWorkflowScheduler`、`VideoRevisionNotifier`、`VideoPublishTimeoutInspector`
 
 ### VideoPublishWorkflowScheduler
 
-- **Class Name:** `VideoPublishWorkflowScheduler`
-- **Responsibility:** Coordinates the initial publication use case from submission and application creation through validation and review, then records either actionable feedback or the result of public distribution.
-- **Collaborators:** `VideoPublishSubmission`, `VideoPublishApplicationRegistrar`, `VideoContentValidator`, `VideoContentReviewer`, `VideoDistributionScheduler`, `VideoPublishApplication`
+- **类名：**`VideoPublishWorkflowScheduler`
+- **职责：**协调首次发布用例，从提交和创建申请开始，经过验证与审核，最终记录可操作的反馈或公开发布结果。
+- **协作者：**`VideoPublishSubmission`、`VideoPublishApplicationRegistrar`、`VideoContentValidator`、`VideoContentReviewer`、`VideoDistributionScheduler`、`VideoPublishApplication`
 
 ### VideoRevisionWorkflowScheduler
 
-- **Class Name:** `VideoRevisionWorkflowScheduler`
-- **Responsibility:** Coordinates the revision use case for an existing publication application from an accepted content revision through complete validation and review, then records either actionable feedback or the result of public distribution.
-- **Collaborators:** `VideoContentRevision`, `VideoRevisionRegistrar`, `VideoContentValidator`, `VideoContentReviewer`, `FeedbackReviewer`, `VideoRevisionNotifier`, `VideoPublishTimeoutInspector`, `VideoPublishClosureHandler`, `VideoDistributionScheduler`, `VideoPublishApplication`
+- **类名：**`VideoRevisionWorkflowScheduler`
+- **职责：**协调现有发布申请的修改用例，从接受内容修改开始，经过完整验证与审核，最终记录可操作的反馈或公开发布结果。
+- **协作者：**`VideoContentRevision`、`VideoRevisionRegistrar`、`VideoContentValidator`、`VideoContentReviewer`、`FeedbackReviewer`、`VideoRevisionNotifier`、`VideoPublishTimeoutInspector`、`VideoPublishClosureHandler`、`VideoDistributionScheduler`、`VideoPublishApplication`
+
+### VideoWithdrawalWorkflowScheduler
+
+- **类名：**`VideoWithdrawalWorkflowScheduler`
+- **职责：**协调撤回发布申请用例，从接受撤回请求到结束当前申请并记录已终止结果。
+- **协作者：**`VideoPublishWithdrawal`、`VideoPublishClosureHandler`、`VideoPublishApplication`
 
 ### VideoPublishApplicationRegistrar
 
-- **Class Name:** `VideoPublishApplicationRegistrar`
-- **Responsibility:** Creates the publication application and records its association with the initially submitted video content.
-- **Collaborators:** `VideoPublishSubmission`, `VideoPublishApplication`, `VideoContent`, `VideoPublishWorkflowScheduler`
+- **类名：**`VideoPublishApplicationRegistrar`
+- **职责：**创建发布申请，并记录它与首次提交的视频内容之间的关联。
+- **协作者：**`VideoPublishSubmission`、`VideoPublishApplication`、`VideoContent`、`VideoPublishWorkflowScheduler`
 
 ### VideoContentValidator
 
-- **Class Name:** `VideoContentValidator`
-- **Responsibility:** Determines whether the current video and publication information comply with publication rules before content review.
-- **Collaborators:** `VideoContent`, `VideoPublishWorkflowScheduler`, `VideoRevisionWorkflowScheduler`, `FeedbackReviewer`
+- **类名：**`VideoContentValidator`
+- **职责：**在内容审核前判断当前视频和发布信息是否符合发布规则。
+- **协作者：**`VideoContent`、`VideoPublishWorkflowScheduler`、`VideoRevisionWorkflowScheduler`、`FeedbackReviewer`
 
 ### VideoContentReviewer
 
-- **Class Name:** `VideoContentReviewer`
-- **Responsibility:** Obtains and interprets the content-review decision for the current video, including actionable feedback when the review does not pass.
-- **Collaborators:** `VideoContent`, `VideoPublishWorkflowScheduler`, `VideoRevisionWorkflowScheduler`, `FeedbackReviewer`
+- **类名：**`VideoContentReviewer`
+- **职责：**获取并解释当前视频的内容审核决定，包括审核未通过时的可操作反馈。
+- **协作者：**`VideoContent`、`VideoPublishWorkflowScheduler`、`VideoRevisionWorkflowScheduler`、`FeedbackReviewer`
 
 ### VideoDistributor
 
-- **Class Name:** `VideoDistributor`
-- **Responsibility:** Delivers approved video content to the content management system for public availability.
-- **Collaborators:** `VideoContent`, `VideoDistributionScheduler`, `PublishedVideoContent`, `ContentManagementSystem`
+- **类名：**`VideoDistributor`
+- **职责：**将已批准的视频内容交付给内容管理系统，使其可供公开访问。
+- **协作者：**`VideoContent`、`VideoDistributionScheduler`、`PublishedVideoContent`、`ContentManagementSystem`
 
 ### VideoDistributionScheduler
 
-- **Class Name:** `VideoDistributionScheduler`
-- **Responsibility:** Coordinates the distribution subprocess for approved video content and establishes the resulting publicly available video.
-- **Collaborators:** `VideoPublishWorkflowScheduler`, `VideoRevisionWorkflowScheduler`, `VideoContent`, `VideoDistributor`, `PublishedVideoContent`
+- **类名：**`VideoDistributionScheduler`
+- **职责：**协调已批准视频内容的发布子流程，并建立最终可公开访问的视频。
+- **协作者：**`VideoPublishWorkflowScheduler`、`VideoRevisionWorkflowScheduler`、`VideoContent`、`VideoDistributor`、`PublishedVideoContent`
 
 ### PublishedVideoContent
 
-- **Class Name:** `PublishedVideoContent`
-- **Responsibility:** Represents the approved short video after it has been made publicly available.
-- **Collaborators:** `VideoContent`, `VideoDistributionScheduler`, `VideoDistributor`, `ContentManagementSystem`
+- **类名：**`PublishedVideoContent`
+- **职责：**表示已获得批准并可供公开访问的短视频。
+- **协作者：**`VideoContent`、`VideoDistributionScheduler`、`VideoDistributor`、`ContentManagementSystem`
 
 ### VideoRevisionNotifier
 
-- **Class Name:** `VideoRevisionNotifier`
-- **Responsibility:** Delivers actionable validation or review feedback to the content creator for the current publication application.
-- **Collaborators:** `FeedbackReviewer`, `VideoRevisionWorkflowScheduler`, `VideoCreator`
+- **类名：**`VideoRevisionNotifier`
+- **职责：**针对当前发布申请，将可操作的验证或审核反馈发送给内容创作者。
+- **协作者：**`FeedbackReviewer`、`VideoRevisionWorkflowScheduler`、`VideoCreator`
 
 ### VideoRevisionRegistrar
 
-- **Class Name:** `VideoRevisionRegistrar`
-- **Responsibility:** Records a creator's updated video or publication information as a new revision of the current application and records the outcome produced by its complete re-evaluation.
-- **Collaborators:** `VideoContentRevision`, `VideoPublishApplication`, `VideoContent`, `VideoRevisionWorkflowScheduler`, `VideoCreator`
+- **类名：**`VideoRevisionRegistrar`
+- **职责：**将创作者更新的视频或发布信息记录为当前申请的新修改版本，并记录对该版本进行完整重新评估后产生的结果。
+- **协作者：**`VideoContentRevision`、`VideoPublishApplication`、`VideoContent`、`VideoRevisionWorkflowScheduler`、`VideoCreator`
 
 ### VideoPublishTimeoutInspector
 
-- **Class Name:** `VideoPublishTimeoutInspector`
-- **Responsibility:** Determines whether the content creator has failed to submit an update within 24 hours of the latest feedback. Each accepted revision ends the current waiting period; a later feedback item starts a new one.
-- **Collaborators:** `FeedbackReviewer`, `VideoRevisionWorkflowScheduler`, `VideoPublishClosureHandler`
+- **类名：**`VideoPublishTimeoutInspector`
+- **职责：**判断内容创作者是否未在最近一次反馈后的 24 小时内提交更新。每次接受修改都会结束当前等待期；后续反馈会开始新的等待期。
+- **协作者：**`FeedbackReviewer`、`VideoRevisionWorkflowScheduler`、`VideoPublishClosureHandler`
 
 ### VideoPublishClosureHandler
 
-- **Class Name:** `VideoPublishClosureHandler`
-- **Responsibility:** Ends the current publication application when the creator withdraws it or when the latest revision window expires, preserving the applicable rejected or terminated outcome.
-- **Collaborators:** `VideoPublishApplication`, `VideoRevisionWorkflowScheduler`, `VideoPublishTimeoutInspector`, `VideoCreator`
+- **类名：**`VideoPublishClosureHandler`
+- **职责：**当创作者撤回申请或最新修改时限到期时，结束当前发布申请，并保留相应的已拒绝或已终止结果。
+- **协作者：**`VideoPublishApplication`、`VideoPublishWithdrawal`、`VideoRevisionWorkflowScheduler`、`VideoWithdrawalWorkflowScheduler`、`VideoPublishTimeoutInspector`、`VideoCreator`
 
-## External Participants
+## 外部参与者
 
-- **VideoCreator — external actor:** Starts, revises, or withdraws a short-video publication application.
-- **ContentManagementSystem — external participant:** Holds uploaded video content and makes approved content publicly available during distribution.
+- **VideoCreator——外部行动者：**发起、修改或撤回短视频发布申请。
+- **ContentManagementSystem——外部参与者：**保存已上传的视频内容，并在发布过程中使已批准的内容可供公开访问。
 
-## Candidate-Class Visualization
+## 候选类可视化
 
-### Apply to Publish a Short Video
+### 申请发布短视频
 
 ```mermaid
 flowchart LR
@@ -155,7 +167,7 @@ classDiagram
     VideoContentReviewer ..> VideoContent
 ```
 
-### Revise a Short Video After Feedback
+### 收到反馈后修改短视频
 
 ```mermaid
 flowchart LR
@@ -211,12 +223,47 @@ classDiagram
     VideoPublishClosureHandler ..> VideoPublishApplication
 ```
 
-### Distribute the Short Video
+### 撤回短视频发布申请
+
+```mermaid
+flowchart LR
+    actor["«Actor»<br/>VideoCreator"]
+    input["«Input»<br/>VideoPublishWithdrawal"]
+    workflow["VideoWithdrawalWorkflowScheduler"]
+    output["«Output»<br/>VideoPublishApplication"]
+
+    actor --> input
+    input --> workflow
+    workflow --> output
+    output --> actor
+```
 
 ```mermaid
 classDiagram
     direction LR
 
+    class VideoWithdrawalWorkflowScheduler
+    <<Caller>> VideoWithdrawalWorkflowScheduler
+    class VideoPublishWithdrawal
+    <<Input>> VideoPublishWithdrawal
+    class VideoPublishClosureHandler
+    class VideoPublishApplication
+    <<Output>> VideoPublishApplication
+
+    VideoWithdrawalWorkflowScheduler ..> VideoPublishWithdrawal
+    VideoWithdrawalWorkflowScheduler ..> VideoPublishClosureHandler
+    VideoWithdrawalWorkflowScheduler ..> VideoPublishApplication
+    VideoPublishClosureHandler ..> VideoPublishApplication
+```
+
+### 公开发布短视频
+
+```mermaid
+classDiagram
+    direction LR
+
+    class VideoPublishWorkflowScheduler
+    <<Caller>> VideoPublishWorkflowScheduler
     class VideoRevisionWorkflowScheduler
     <<Caller>> VideoRevisionWorkflowScheduler
     class VideoContent
@@ -227,6 +274,7 @@ classDiagram
     class PublishedVideoContent
     <<Output>> PublishedVideoContent
 
+    VideoPublishWorkflowScheduler ..> VideoDistributionScheduler
     VideoRevisionWorkflowScheduler ..> VideoDistributionScheduler
     VideoDistributionScheduler ..> VideoContent
     VideoDistributionScheduler ..> VideoDistributor

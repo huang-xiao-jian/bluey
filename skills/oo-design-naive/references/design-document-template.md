@@ -1,30 +1,30 @@
-# [Design Name]
+# [设计名称]
 
-## Candidate-Class Descriptions
+## 候选类说明
 
-### [Class Name]
+### [类名]
 
-- **Class Name:** `[Class Name]`
-- **Responsibility:** [Business responsibility]
-- **Collaborators:** `[Collaborator Name 1]`, `[Collaborator Name 2]`
+- **类名：**`[类名]`
+- **职责：**[业务职责]
+- **协作者：**`[协作者名称 1]`、`[协作者名称 2]`
 
-## External Participants
+## 外部参与者
 
-- **[Actor Name] — external actor:** [Business responsibility]
-- **[Participant Name] — external participant:** [Business responsibility]
+- **[参与者名称]——外部行动者：**[业务职责]
+- **[参与者名称]——外部参与者：**[业务职责]
 
-## Candidate-Class Visualization
+## 候选类可视化
 
-<!-- Repeat this heading and diagram pair for each distinct use case or sub-process. -->
+<!-- 为每个不同的用例或子流程重复相应标题和图组。 -->
 
-### [Use-Case Scenario Description]
+### [用例场景说明]
 
 ```mermaid
 flowchart LR
-    actor["«Actor»<br/>[Actor Name]"]
-    input["«Input»<br/>[Input Name]"]
-    workflow["[Use-Case Coordinator Name]"]
-    output["«Output»<br/>[Output Name]"]
+    actor["«Actor»<br/>[行动者名称]"]
+    input["«Input»<br/>[输入名称]"]
+    workflow["[用例协调者名称]"]
+    output["«Output»<br/>[输出名称]"]
 
     actor --> input
     input --> workflow
@@ -34,12 +34,12 @@ flowchart LR
 
 ```mermaid
 classDiagram
-    class UseCaseCoordinator["[Use-Case Coordinator Name]"]
+    class UseCaseCoordinator["[用例协调者名称]"]
     <<Caller>> UseCaseCoordinator
-    class UseCaseInput["[Input Name]"]
+    class UseCaseInput["[输入名称]"]
     <<Input>> UseCaseInput
-    class UseCaseCollaborator["[Collaborator Name]"]
-    class UseCaseOutput["[Output Name]"]
+    class UseCaseCollaborator["[协作者名称]"]
+    class UseCaseOutput["[输出名称]"]
     <<Output>> UseCaseOutput
 
     UseCaseCoordinator ..> UseCaseInput
@@ -47,22 +47,22 @@ classDiagram
     UseCaseCoordinator ..> UseCaseOutput
 ```
 
-<!-- After all use-case diagram pairs, omit this section when the design has no nested subprocesses. -->
+<!-- 完成所有用例图组后，如果设计不包含嵌套子流程，则省略以下部分。 -->
 
-### [Subprocess Description]
+### [子流程说明]
 
 ```mermaid
 classDiagram
-    %% Repeat or remove caller declarations and relationships to match the actual callers.
-    class EnclosingCallerOne["[Enclosing Caller Name 1]"]
+    %% 根据实际调用方重复或删除调用方声明及其关系。
+    class EnclosingCallerOne["[上一层调用方名称 1]"]
     <<Caller>> EnclosingCallerOne
-    class EnclosingCallerTwo["[Enclosing Caller Name 2]"]
+    class EnclosingCallerTwo["[上一层调用方名称 2]"]
     <<Caller>> EnclosingCallerTwo
-    class SubprocessInput["[Subprocess Input Name]"]
+    class SubprocessInput["[子流程输入名称]"]
     <<Input>> SubprocessInput
-    class SubprocessCoordinator["[Subprocess Coordinator Name]"]
-    class SubprocessCollaborator["[Subprocess Collaborator Name]"]
-    class SubprocessOutput["[Subprocess Output Name]"]
+    class SubprocessCoordinator["[子流程协调者名称]"]
+    class SubprocessCollaborator["[子流程协作者名称]"]
+    class SubprocessOutput["[子流程输出名称]"]
     <<Output>> SubprocessOutput
 
     EnclosingCallerOne ..> SubprocessCoordinator
