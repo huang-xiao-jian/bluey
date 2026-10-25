@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, rm, symlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { Container } from "inversify";
@@ -211,6 +211,33 @@ describe("SpecificationLinkChecker", () => {
     ]);
   });
 
+  it("rejects link targets whose symbolic links escape the project root", async () => {
+    const outside = await mkdtemp(join(tmpdir(), "md-linkage-target-outside-"));
+    try {
+      await writeFile(join(outside, "target.md"), "# Target\n", "utf8");
+      await symlink(join(outside, "target.md"), join(root, "escaped.md"));
+
+      const [result] = await checker.check(
+        root,
+        source,
+        {
+          type: SpecificationLinkType.LocalFile,
+          text: "[Escaped](escaped.md)",
+          name: "Escaped",
+          path: "escaped.md",
+        },
+        new Map(),
+      );
+
+      expect(result).toMatchObject({
+        status: ResolvedSpecificationLinkStatus.Dead,
+        reason: DeadReason.TargetOutsideProjectRoot,
+      });
+    } finally {
+      await rm(outside, { recursive: true, force: true });
+    }
+  });
+
   it("returns no results when no strategy matches", async () => {
     const container = new Container();
     container
@@ -236,5 +263,4 @@ describe("SpecificationLinkChecker", () => {
 
     expect(results).toEqual([]);
   });
-
 });

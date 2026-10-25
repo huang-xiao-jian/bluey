@@ -11,9 +11,13 @@ md-linkage check <files...> [--root <path>] [--mode <shallow|recursive>] [--json
 ```
 
 The project root defaults to the current working directory and the mode
-defaults to `shallow`. Shallow checks inspect only the supplied documents;
+defaults to `shallow`. Each input may be a file path, directory path, or glob
+pattern. Directories expand recursively, while glob matches do not implicitly
+recurse into matched directories. Quote glob patterns so the shell passes them
+unchanged, for example `md-linkage check "specs/**/*.md"`. Shallow checks inspect
+only the expanded starting documents;
 recursive checks also inspect Markdown documents reached through live local
-links. Starting file arguments resolve from the current working directory,
+links. Starting inputs resolve from the current working directory,
 while links inside documents resolve relative to the document containing them.
 
 Human-readable output lists scope issues and dead links. `--json` writes only
@@ -33,7 +37,8 @@ md-linkage mcp
 
 The command starts an MCP server over stdio and registers the read-only
 `check_specification_links` tool. The tool requires an absolute `root`, one or
-more concrete `files`, and an optional `mode` of `shallow` or `recursive`.
+more file paths, directory paths, or glob patterns in `files`, and an optional
+`mode` of `shallow` or `recursive`. MCP inputs resolve from `root`.
 Successful calls return the complete report as structured content and concise
 document, scope-issue, and dead-link counts as text content.
 

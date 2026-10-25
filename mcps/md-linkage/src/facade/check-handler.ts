@@ -2,7 +2,7 @@ import { resolve } from "node:path";
 import { Container, injectable } from "inversify";
 import { LinkCheckComposition } from "../composition/link-check-composition";
 import {
-  isConcreteDocumentPath,
+  isLinkCheckInput,
   LinkCheckDelegation,
   LinkCheckMode,
 } from "../core/model/link-check-delegation";
@@ -35,11 +35,10 @@ export class CheckHandler {
   ): Promise<void> {
     const cwd = this.dependencies.cwd();
     const root = resolve(cwd, options.root ?? cwd);
-    if (!files.every(isConcreteDocumentPath)) {
-      throw new Error("Document paths must be non-empty concrete paths");
+    if (!files.every(isLinkCheckInput)) {
+      throw new Error("File inputs must be non-empty strings");
     }
-    const startingFiles = files.map((file) => resolve(cwd, file));
-    const delegation = new LinkCheckDelegation(root, startingFiles, options.mode);
+    const delegation = new LinkCheckDelegation(root, files, options.mode, cwd);
     const scheduler = this.composition.createLinkCheckWorkflowScheduler();
     const report = await scheduler.run(delegation);
     const formatter = this.reportFormatterFactory.create(options);

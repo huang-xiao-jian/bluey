@@ -19,5 +19,13 @@
   containing nested Markdown formatting, for anchor generation.
 - **`github-slugger`**: Generates the GitHub-compatible heading identifiers and
   duplicate-heading suffixes required by the anchor detection stories.
+- **`glob`**: Detects glob patterns and recursively lists Markdown files with
+  established cross-platform semantics instead of custom pattern parsing.
+  Directory expansion must set `dot: false` and `follow: false`, and reject
+  symbolic-link children through `ignore.childrenIgnored`.
+- **`minimatch`**: Matches user glob patterns against paths produced by the
+  repository's symbolic-link-safe walker. Keeping traversal separate from
+  matching prevents explicit, character-class, and brace-expanded path
+  segments from descending through directory symbolic links.
 - **`@types/mdast`**: Provides TypeScript types for Markdown document roots,
   links, and headings. This is a development dependency.

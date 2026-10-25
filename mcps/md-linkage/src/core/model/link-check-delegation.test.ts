@@ -7,8 +7,25 @@ describe("LinkCheckDelegation", () => {
 
     expect(delegation).toEqual({
       root: "/workspace/project",
+      base: "/workspace/project",
       files: ["spec.md"],
       mode: LinkCheckMode.Shallow,
+    });
+  });
+
+  it("preserves file, directory, escaped path, and glob inputs", () => {
+    const delegation = new LinkCheckDelegation(
+      "/workspace/project",
+      ["spec.md", "guides", String.raw`notes\[1\].md`, "reference/**/*.md"],
+      LinkCheckMode.Recursive,
+      "/workspace/input",
+    );
+
+    expect(delegation).toEqual({
+      root: "/workspace/project",
+      base: "/workspace/input",
+      files: ["spec.md", "guides", String.raw`notes\[1\].md`, "reference/**/*.md"],
+      mode: LinkCheckMode.Recursive,
     });
   });
 
@@ -17,7 +34,6 @@ describe("LinkCheckDelegation", () => {
     ["relative root", "workspace/project", ["spec.md"], LinkCheckMode.Shallow],
     ["empty files", "/workspace/project", [], LinkCheckMode.Shallow],
     ["empty file", "/workspace/project", [""], LinkCheckMode.Shallow],
-    ["glob file", "/workspace/project", ["specs/**/*.md"], LinkCheckMode.Shallow],
     ["unsupported mode", "/workspace/project", ["spec.md"], "deep"],
   ])("rejects %s", (_name, root, files, mode) => {
     expect(
@@ -28,5 +44,17 @@ describe("LinkCheckDelegation", () => {
           mode as LinkCheckMode,
         ),
     ).toThrow();
+  });
+
+  it("rejects an invalid input base", () => {
+    expect(
+      () =>
+        new LinkCheckDelegation(
+          "/workspace/project",
+          ["spec.md"],
+          LinkCheckMode.Shallow,
+          "relative/base",
+        ),
+    ).toThrow("Input base must be a non-empty absolute path");
   });
 });

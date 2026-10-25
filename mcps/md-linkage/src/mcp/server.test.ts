@@ -38,7 +38,7 @@ describe("setupMcpServer", () => {
       annotations: { readOnlyHint: true },
     });
     expect(result.structuredContent).toMatchObject({
-      delegation: { root: projectRoot, mode: "shallow" },
+      delegation: { root: projectRoot, base: projectRoot, mode: "shallow" },
       scope: { files: ["clean.md"] },
     });
   });

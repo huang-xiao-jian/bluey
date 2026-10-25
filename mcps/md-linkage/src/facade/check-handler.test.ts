@@ -21,7 +21,8 @@ describe("CheckHandler", () => {
 
     expect(JSON.parse(output.stdout.join("")).delegation).toEqual({
       root: projectRoot,
-      files: [join(projectRoot, "clean.md")],
+      base: projectRoot,
+      files: ["clean.md"],
       mode: LinkCheckMode.Shallow,
     });
   });
@@ -39,9 +40,21 @@ describe("CheckHandler", () => {
 
     expect(JSON.parse(output.stdout.join("")).delegation).toMatchObject({
       root: projectRoot,
-      files: [join(cwd, "next.md")],
+      base: cwd,
+      files: ["next.md"],
       mode: LinkCheckMode.Recursive,
     });
+  });
+
+  it("preserves a glob input and expands it from cwd", async () => {
+    const output = captureOutput();
+    const handler = createCheckHandler(dependenciesFor(output));
+
+    await handler.run(["*.md"], { json: true });
+
+    const report = JSON.parse(output.stdout.join(""));
+    expect(report.delegation.files).toEqual(["*.md"]);
+    expect(report.scope.files).toEqual(["broken.md", "clean.md", "guide.md"]);
   });
 
   it("writes human output for a completed report with findings", async () => {
@@ -66,19 +79,11 @@ describe("CheckHandler", () => {
     expect(output.stdout).toEqual([]);
   });
 
-  it("propagates invalid input before invoking the workflow", async () => {
-    const output = captureOutput();
-    const handler = createCheckHandler(dependenciesFor(output));
-
-    await expect(handler.run(["**/*.md"], {})).rejects.toThrow("concrete paths");
-    expect(output.stdout).toEqual([]);
-  });
-
   it("rejects an empty starting file before resolving it", async () => {
     const output = captureOutput();
     const handler = createCheckHandler(dependenciesFor(output));
 
-    await expect(handler.run([""], {})).rejects.toThrow("concrete paths");
+    await expect(handler.run([""], {})).rejects.toThrow("non-empty strings");
     expect(output.stdout).toEqual([]);
   });
 });

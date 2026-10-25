@@ -22,7 +22,8 @@ describe("md-linkage check", () => {
     expect(JSON.parse(result.stdout)).toMatchObject({
       delegation: {
         root: projectRoot,
-        files: [join(projectRoot, "clean.md")],
+        base: projectRoot,
+        files: ["clean.md"],
         mode: "shallow",
       },
       scope: { files: ["clean.md"], issues: [] },
@@ -54,7 +55,8 @@ describe("md-linkage check", () => {
     expect(report).toMatchObject({
       delegation: {
         root: projectRoot,
-        files: [join(cwd, "next.md")],
+        base: cwd,
+        files: ["next.md"],
         mode: "recursive",
       },
       scope: { files: ["nested/next.md"], issues: [] },
@@ -75,6 +77,24 @@ describe("md-linkage check", () => {
         }),
       ]),
     );
+  });
+
+  it("expands a quoted glob from cwd", () => {
+    const result = runFrom(projectRoot, "check", "*.md", "--json");
+
+    expect(result.status).toBe(0);
+    expect(result.stderr).toBe("");
+    expect(JSON.parse(result.stdout)).toMatchObject({
+      delegation: {
+        root: projectRoot,
+        base: projectRoot,
+        files: ["*.md"],
+      },
+      scope: {
+        files: ["broken.md", "clean.md", "guide.md"],
+        issues: [],
+      },
+    });
   });
 
   it("returns status zero and recursively includes reached-document findings", () => {

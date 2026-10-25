@@ -6,6 +6,7 @@ import { LinkCheckDelegation } from "../../core/model/link-check-delegation";
 import { LinkCheckReport } from "../../core/model/link-check-report";
 import {
   LinkCheckScope,
+  LinkCheckScopeIssueSubjectType,
   LinkCheckScopeIssueType,
 } from "../../core/model/link-check-scope";
 import {
@@ -33,9 +34,10 @@ describe("ReportFormatterFactory", () => {
     delegation,
     new LinkCheckScope(["spec.md"], [
       {
+        subjectType: LinkCheckScopeIssueSubjectType.Path,
         path: "missing.md",
         resolvedPath: "/workspace/project/missing.md",
-        issueType: LinkCheckScopeIssueType.DocumentNotFound,
+        issueType: LinkCheckScopeIssueType.PathNotFound,
       },
     ]),
     [
@@ -68,7 +70,7 @@ describe("ReportFormatterFactory", () => {
         "Links      1 dead",
         "",
         "SCOPE ISSUES (1)",
-        "  DOCUMENT NOT FOUND",
+        "  PATH NOT FOUND",
         "  missing.md",
         "  Resolved to: /workspace/project/missing.md",
         "",
@@ -130,9 +132,10 @@ describe("ReportFormatterFactory", () => {
         [
           ...report.scope.issues,
           {
+            subjectType: LinkCheckScopeIssueSubjectType.Path,
             path: "notes.txt",
             resolvedPath: "/workspace/project/notes.txt",
-            issueType: LinkCheckScopeIssueType.DocumentNotMarkdown,
+            issueType: LinkCheckScopeIssueType.FileNotMarkdown,
           },
         ],
       ),
@@ -165,7 +168,7 @@ describe("ReportFormatterFactory", () => {
       [
         "  Resolved to: /workspace/project/missing.md",
         "",
-        "  DOCUMENT NOT MARKDOWN",
+        "  FILE NOT MARKDOWN",
         "  notes.txt",
         "  Resolved to: /workspace/project/notes.txt",
         "",
@@ -180,6 +183,45 @@ describe("ReportFormatterFactory", () => {
         "  Source: spec.md",
         "  Link:   [Intro](guide.md#intro)",
         "  Target: /workspace/project/guide.md#intro",
+      ].join("\n"),
+    );
+  });
+
+  it("formats glob pattern and glob match issue details", () => {
+    const reportWithGlobIssues = new LinkCheckReport(
+      delegation,
+      new LinkCheckScope([], [
+        {
+          subjectType: LinkCheckScopeIssueSubjectType.GlobPattern,
+          base: "/workspace/project",
+          pattern: "missing/**/*.md",
+          issueType: LinkCheckScopeIssueType.GlobPatternNotMatched,
+        },
+        {
+          subjectType: LinkCheckScopeIssueSubjectType.GlobMatch,
+          base: "/workspace/project",
+          pattern: "../outside/**/*.md",
+          matchedPath: "/workspace/outside/spec.md",
+          issueType: LinkCheckScopeIssueType.PathOutsideProjectRoot,
+        },
+      ]),
+      [],
+    );
+
+    const output = stripVTControlCharacters(
+      formatterFactory.create({}).format(reportWithGlobIssues),
+    );
+
+    expect(output).toContain(
+      [
+        "  GLOB PATTERN NOT MATCHED",
+        "  Pattern: missing/**/*.md",
+        "  Base:    /workspace/project",
+        "",
+        "  PATH OUTSIDE PROJECT ROOT",
+        "  Pattern: ../outside/**/*.md",
+        "  Matched: /workspace/outside/spec.md",
+        "  Base:    /workspace/project",
       ].join("\n"),
     );
   });

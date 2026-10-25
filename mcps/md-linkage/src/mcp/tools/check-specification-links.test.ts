@@ -31,10 +31,18 @@ describe("CheckSpecificationLinksInputSchema", () => {
     { root: "", files: ["spec.md"] },
     { root: "/workspace", files: [] },
     { root: "/workspace", files: [""] },
-    { root: "/workspace", files: ["**/*.md"] },
     { root: "/workspace", files: ["spec.md"], mode: "deep" },
   ])("rejects invalid input %#", (input) => {
     expect(CheckSpecificationLinksInputSchema.safeParse(input).success).toBe(false);
+  });
+
+  it("accepts file, directory, and glob input strings", () => {
+    expect(
+      CheckSpecificationLinksInputSchema.safeParse({
+        root: "/workspace",
+        files: ["spec.md", "guides", "**/*.md"],
+      }).success,
+    ).toBe(true);
   });
 });
 
@@ -52,9 +60,31 @@ describe("check_specification_links callback", () => {
 
     expect(result.report.delegation).toEqual({
       root: projectRoot,
+      base: projectRoot,
       files: ["clean.md"],
       mode: LinkCheckMode.Recursive,
     });
     expect(result.summary).toBe("Documents: 1; scope issues: 0; dead links: 0");
+  });
+
+  it("returns discriminated glob scope issues", async () => {
+    const tool = createCheckSpecificationLinksTool(
+      createLinkCheckWorkflowScheduler(),
+    );
+
+    const result = await tool.callback({
+      root: projectRoot,
+      files: ["missing/**/*.md"],
+      mode: LinkCheckMode.Shallow,
+    });
+
+    expect(result.report.scope.issues).toEqual([
+      {
+        subjectType: "glob-pattern",
+        base: projectRoot,
+        pattern: "missing/**/*.md",
+        issueType: "glob-pattern-not-matched",
+      },
+    ]);
   });
 });

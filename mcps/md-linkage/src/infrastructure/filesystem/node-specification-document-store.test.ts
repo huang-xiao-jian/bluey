@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, realpath, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { Container } from "inversify";
@@ -21,8 +21,8 @@ describe("NodeSpecificationDocumentStore", () => {
     await rm(root, { recursive: true, force: true });
   });
 
-  it("establishes an existing directory as the stable root", async () => {
-    await expect(store.establishRoot(root)).resolves.toBe(root);
+  it("establishes an existing directory as the canonical root", async () => {
+    await expect(store.establishRoot(root)).resolves.toBe(await realpath(root));
   });
 
   it("rejects a missing project root", async () => {
@@ -46,5 +46,14 @@ describe("NodeSpecificationDocumentStore", () => {
 
   it("recognizes a target outside the project root", () => {
     expect(store.isWithinRoot(root, join(root, "..", "outside.md"))).toBe(false);
+  });
+
+  it("unescapes glob metacharacters without removing path separators", () => {
+    expect(store.unescapePath(String.raw`directory\file.md`)).toBe(
+      String.raw`directory\file.md`,
+    );
+    expect(store.unescapePath(String.raw`directory\notes\[1\].md`)).toBe(
+      String.raw`directory\notes[1].md`,
+    );
   });
 });

@@ -49,8 +49,12 @@ export class CrossFileAnchorLinkCheckStrategy
       context.link.path,
     );
     const baseTarget = { filePath: targetPath, anchorId };
+    const [canonicalRoot, canonicalTarget] = await Promise.all([
+      this.store.canonicalize(context.root),
+      this.store.canonicalize(targetPath),
+    ]);
 
-    if (!this.store.isWithinRoot(context.root, targetPath)) {
+    if (!this.store.isWithinRoot(canonicalRoot, canonicalTarget)) {
       return dead(context, baseTarget, DeadReason.TargetOutsideProjectRoot);
     }
     if (
@@ -60,7 +64,10 @@ export class CrossFileAnchorLinkCheckStrategy
       return dead(context, baseTarget, DeadReason.FileNotFound);
     }
 
-    const targetIdentity = this.store.toProjectRelative(context.root, targetPath);
+    const targetIdentity = this.store.toProjectRelative(
+      canonicalRoot,
+      canonicalTarget,
+    );
     const targetDocument = await this.store.readDocument(
       context.root,
       targetIdentity,

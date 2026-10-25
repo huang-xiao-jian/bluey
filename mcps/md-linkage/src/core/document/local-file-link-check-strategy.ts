@@ -36,8 +36,12 @@ export class LocalFileLinkCheckStrategy extends SpecificationLinkCheckStrategy {
     const target = {
       filePath: this.store.resolvePath(dirname(sourcePath), context.link.path),
     };
+    const [canonicalRoot, canonicalTarget] = await Promise.all([
+      this.store.canonicalize(context.root),
+      this.store.canonicalize(target.filePath),
+    ]);
 
-    if (!this.store.isWithinRoot(context.root, target.filePath)) {
+    if (!this.store.isWithinRoot(canonicalRoot, canonicalTarget)) {
       return dead(context, target, DeadReason.TargetOutsideProjectRoot);
     }
     if (

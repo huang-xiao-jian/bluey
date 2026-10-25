@@ -1,6 +1,10 @@
 import chalk from "chalk";
 import { injectable } from "inversify";
 import type { LinkCheckReport } from "../../core/model/link-check-report";
+import {
+  LinkCheckScopeIssueSubjectType,
+  type LinkCheckScopeIssue,
+} from "../../core/model/link-check-scope";
 import { ReportFormatter } from "./report-formatter";
 
 @injectable()
@@ -42,8 +46,7 @@ export class HumanReportFormatter extends ReportFormatter {
         }
         lines.push(
           `  ${chalk.yellow.bold(this.title(issue.issueType))}`,
-          `  ${issue.path}`,
-          `  ${chalk.dim("Resolved to:")} ${chalk.dim(issue.resolvedPath)}`,
+          ...this.scopeIssueDetails(issue),
         );
       }
     }
@@ -78,6 +81,27 @@ export class HumanReportFormatter extends ReportFormatter {
 
   private summary(label: string, value: string): string {
     return `${chalk.bold(label.padEnd(11))}${value}`;
+  }
+
+  private scopeIssueDetails(issue: LinkCheckScopeIssue): string[] {
+    switch (issue.subjectType) {
+      case LinkCheckScopeIssueSubjectType.Path:
+        return [
+          `  ${issue.path}`,
+          `  ${chalk.dim("Resolved to:")} ${chalk.dim(issue.resolvedPath)}`,
+        ];
+      case LinkCheckScopeIssueSubjectType.GlobPattern:
+        return [
+          `  ${chalk.dim("Pattern:")} ${issue.pattern}`,
+          `  ${chalk.dim("Base:   ")} ${chalk.dim(issue.base)}`,
+        ];
+      case LinkCheckScopeIssueSubjectType.GlobMatch:
+        return [
+          `  ${chalk.dim("Pattern:")} ${issue.pattern}`,
+          `  ${chalk.dim("Matched:")} ${chalk.dim(issue.matchedPath)}`,
+          `  ${chalk.dim("Base:   ")} ${chalk.dim(issue.base)}`,
+        ];
+    }
   }
 
   private title(value: string): string {

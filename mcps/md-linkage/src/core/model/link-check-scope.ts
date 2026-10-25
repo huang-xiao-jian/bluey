@@ -1,14 +1,52 @@
-export enum LinkCheckScopeIssueType {
-  DocumentOutsideProjectRoot = "document-outside-project-root",
-  DocumentNotFound = "document-not-found",
-  DocumentNotMarkdown = "document-not-markdown",
+export enum LinkCheckScopeIssueSubjectType {
+  Path = "path",
+  GlobPattern = "glob-pattern",
+  GlobMatch = "glob-match",
 }
 
-export interface LinkCheckScopeIssue {
+export enum LinkCheckScopeIssueType {
+  PathOutsideProjectRoot = "path-outside-project-root",
+  PathNotFound = "path-not-found",
+  FileNotMarkdown = "file-not-markdown",
+  DirectoryContainsNoMarkdown = "directory-contains-no-markdown",
+  GlobPatternInvalid = "glob-pattern-invalid",
+  GlobPatternNotMatched = "glob-pattern-not-matched",
+  GlobPatternMatchedNoMarkdown = "glob-pattern-matched-no-markdown",
+}
+
+export interface LinkCheckScopePathIssue {
+  readonly subjectType: LinkCheckScopeIssueSubjectType.Path;
   readonly path: string;
   readonly resolvedPath: string;
-  readonly issueType: LinkCheckScopeIssueType;
+  readonly issueType:
+    | LinkCheckScopeIssueType.PathOutsideProjectRoot
+    | LinkCheckScopeIssueType.PathNotFound
+    | LinkCheckScopeIssueType.FileNotMarkdown
+    | LinkCheckScopeIssueType.DirectoryContainsNoMarkdown;
 }
+
+export interface LinkCheckScopeGlobPatternIssue {
+  readonly subjectType: LinkCheckScopeIssueSubjectType.GlobPattern;
+  readonly base: string;
+  readonly pattern: string;
+  readonly issueType:
+    | LinkCheckScopeIssueType.GlobPatternInvalid
+    | LinkCheckScopeIssueType.GlobPatternNotMatched
+    | LinkCheckScopeIssueType.GlobPatternMatchedNoMarkdown;
+}
+
+export interface LinkCheckScopeGlobMatchIssue {
+  readonly subjectType: LinkCheckScopeIssueSubjectType.GlobMatch;
+  readonly base: string;
+  readonly pattern: string;
+  readonly matchedPath: string;
+  readonly issueType: LinkCheckScopeIssueType.PathOutsideProjectRoot;
+}
+
+export type LinkCheckScopeIssue =
+  | LinkCheckScopePathIssue
+  | LinkCheckScopeGlobPatternIssue
+  | LinkCheckScopeGlobMatchIssue;
 
 export class LinkCheckScope {
   public readonly files: readonly string[];

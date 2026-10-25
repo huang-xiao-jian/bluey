@@ -15,7 +15,10 @@ const program = new Command()
 program
   .command("check")
   .description("Check one or more Markdown specification documents.")
-  .argument("<files...>", "Concrete Markdown document paths to check")
+  .argument(
+    "<files...>",
+    "File paths, directory paths, or glob patterns to check",
+  )
   .option("--root <path>", "Project boundary", process.cwd())
   .addOption(
     new Option("--mode <mode>", "Traversal mode")
