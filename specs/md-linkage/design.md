@@ -3,7 +3,7 @@
 ## 参考资料
 
 - [Link Check Scope Builder](roles/LinkCheckScopeBuilder.md)
-- [用例规约 -> 检查失效链接](../use-case/check-specification-documents-for-dead-links.md)
+- [用例规约 -> 检查失效链接](use-case/check-specification-documents-for-dead-links.md)
 - [单文档检查](use-case/workflows/single-document-check-workflow.md)
 - [多文档检查](use-case/workflows/multiple-document-check-workflow.md)
 
