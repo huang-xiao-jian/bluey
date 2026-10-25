@@ -1,7 +1,8 @@
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setupMcpServer } from "./server";
+import { EchoTool } from "./tools/echo";
 
 describe("Echo MCP server", () => {
   let client: Client;
@@ -21,6 +22,7 @@ describe("Echo MCP server", () => {
   afterEach(async () => {
     await client.close();
     await server.close();
+    vi.restoreAllMocks();
   });
 
   it("advertises the echo tool and its text schemas", async () => {
@@ -37,6 +39,9 @@ describe("Echo MCP server", () => {
         outputSchema: expect.objectContaining({
           required: ["text"],
         }),
+        annotations: expect.objectContaining({
+          readOnlyHint: true,
+        }),
       }),
     ]);
   });
@@ -49,6 +54,22 @@ describe("Echo MCP server", () => {
     expect(result).toMatchObject({
       content: [{ type: "text", text }],
       structuredContent: { text },
+    });
+  });
+
+  it("maps callback failures to an MCP error response", async () => {
+    vi.spyOn(EchoTool, "callback").mockRejectedValueOnce(
+      new Error("Unable to echo text."),
+    );
+
+    const result = await client.callTool({
+      name: "echo",
+      arguments: { text: "Hello" },
+    });
+
+    expect(result).toEqual({
+      isError: true,
+      content: [{ type: "text", text: "Unable to echo text." }],
     });
   });
 });

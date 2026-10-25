@@ -21,6 +21,11 @@ export const EchoTool = {
   // it can be used to isolate parameters when mcp input differs from core functionality parameters
   // it can be used to post-process the output from the core functionality for better mcp compatibility
   async callback({ text }: EchoInput) {
-    return echo(text);
+    const result = EchoOutputSchema.parse({ text: echo(text) });
+
+    return {
+      result,
+      summary: result.text,
+    };
   },
 };

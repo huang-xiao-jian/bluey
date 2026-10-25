@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
-import { EchoTool, EchoInput } from "./tools/echo";
+import { EchoTool } from "./tools/echo";
 
 export function setupMcpServer(): McpServer {
   const server = new McpServer({ name: "bluey-echo", version: "0.1.0" });
@@ -11,14 +11,27 @@ export function setupMcpServer(): McpServer {
       description: EchoTool.description,
       inputSchema: EchoTool.inputSchema,
       outputSchema: EchoTool.outputSchema,
+      annotations: { readOnlyHint: true },
     },
     async (input) => {
-      const result = await EchoTool.callback(input);
+      try {
+        const result = await EchoTool.callback(input);
 
-      return {
-        content: [{ type: "text", text: result }],
-        structuredContent: { text: result },
-      };
+        return {
+          content: [{ type: "text" as const, text: result.summary }],
+          structuredContent: result.result,
+        };
+      } catch (error) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: "text" as const,
+              text: error instanceof Error ? error.message : String(error),
+            },
+          ],
+        };
+      }
     },
   );
 
