@@ -33,6 +33,15 @@ md-linkage check <files...> [--root <path>] [--mode <shallow|recursive>] [--json
 - `DeadResolvedSpecificationLink` 问题总数
 - `DeadResolvedSpecificationLink` 问题详情
 
+人类可读报告中的来源文件使用项目相对路径显示。
+
+当 stdout 连接到支持终端超链接的交互式终端时，CLI 使用 `OSC 8` 转义序列将
+来源路径渲染为可点击链接。链接的可见文本保持上述项目相对路径格式，目标使用
+来源文件的绝对 `file://` URI，使目标应用能够打开来源文件。
+
+当 stdout 未连接到交互式终端，或终端超链接不可用时，CLI 不输出 `OSC 8` 转义
+序列，仅保留相同的纯文本来源文件路径。
+
 指定 `--json` 时，stdout 仅包含序列化后的 **Link Check Report**。不属于报告的诊断信息写入 stderr。
 
 ## 退出状态
@@ -47,5 +56,8 @@ CLI 未抛出执行异常即看做执行成功，即使报告中包含检测问�
 - 验证文件、目录和 glob 字符串不经解析或展开即可映射为 **Link Check Delegation** 的 `files` 输入，且引用的 glob 不会由 CLI 适配器提前展开。
 - 验证 `base` 不改变递归链接相对于来源文档的解析方式。
 - 验证人类可读输出和 JSON 输出。
+- 验证交互式终端中的来源文件使用项目相对路径作为可见文本，并链接到来源文件的绝对 `file://` URI。
+- 验证 stdout 非交互或终端超链接不可用时，来源文件降级为不包含 `OSC 8` 转义序列的相同纯文本路径。
+- 验证 `--json` 输出不包含终端超链接转义序列，且 **Link Check Report** 的序列化结构不变。
 - 验证无问题报告和包含检查发现的报告都能成功完成。
 - 验证阻止报告构造的失败会继续传播。

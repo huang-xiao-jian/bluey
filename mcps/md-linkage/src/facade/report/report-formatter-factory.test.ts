@@ -98,6 +98,16 @@ describe("ReportFormatterFactory", () => {
     expect(output).toContain("\u001B[33m");
   });
 
+  it("links source files when terminal hyperlinks are enabled", () => {
+    const options = { hyperlinks: true };
+
+    const output = formatterFactory.create(options).format(report);
+
+    expect(output).toContain(
+      "Source: \u001B]8;;file:///workspace/project/spec.md\u001B\\spec.md\u001B]8;;\u001B\\",
+    );
+  });
+
   it("highlights a clean report at a glance", () => {
     chalk.level = 1;
     const cleanReport = new LinkCheckReport(

@@ -1,3 +1,5 @@
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import chalk from "chalk";
 import { injectable } from "inversify";
 import type { LinkCheckReport } from "../../core/model/link-check-report";
@@ -5,11 +7,17 @@ import {
   LinkCheckScopeIssueSubjectType,
   type LinkCheckScopeIssue,
 } from "../../core/model/link-check-scope";
-import { ReportFormatter } from "./report-formatter";
+import {
+  ReportFormatter,
+  type ReportFormatterOptions,
+} from "./report-formatter";
 
 @injectable()
 export class HumanReportFormatter extends ReportFormatter {
-  public format(report: LinkCheckReport): string {
+  public format(
+    report: LinkCheckReport,
+    options: ReportFormatterOptions = {},
+  ): string {
     const hasFailures =
       report.scope.issues.length > 0 || report.deadLinks.length > 0;
     const status = hasFailures
@@ -60,7 +68,7 @@ export class HumanReportFormatter extends ReportFormatter {
         const anchor = result.target.anchorId ? `#${result.target.anchorId}` : "";
         lines.push(
           `  ${chalk.red.bold(this.title(result.reason))}`,
-          `  ${chalk.dim("Source:")} ${result.location.filePath}`,
+          `  ${chalk.dim("Source:")} ${this.sourceFile(result.location, options)}`,
           `  ${chalk.dim("Link:  ")} ${result.link.text}`,
           `  ${chalk.dim("Target:")} ${result.target.filePath}${anchor}`,
         );
@@ -106,5 +114,15 @@ export class HumanReportFormatter extends ReportFormatter {
 
   private title(value: string): string {
     return value.replaceAll("-", " ").toUpperCase();
+  }
+
+  private sourceFile(
+    location: { readonly root: string; readonly filePath: string },
+    options: ReportFormatterOptions,
+  ): string {
+    if (!options.hyperlinks) return location.filePath;
+
+    const target = pathToFileURL(resolve(location.root, location.filePath)).href;
+    return `\u001B]8;;${target}\u001B\\${location.filePath}\u001B]8;;\u001B\\`;
   }
 }

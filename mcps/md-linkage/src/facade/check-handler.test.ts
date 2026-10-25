@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { stripVTControlCharacters } from "node:util";
 import { describe, expect, it } from "vitest";
 import { LinkCheckMode } from "../core/model/link-check-delegation";
@@ -68,6 +69,38 @@ describe("CheckHandler", () => {
     );
   });
 
+  it("links source files when stdout supports terminal hyperlinks", async () => {
+    const output = captureOutput();
+    const handler = createCheckHandler(dependenciesFor(output, projectRoot, true));
+
+    await handler.run(["broken.md"], {});
+
+    const target = pathToFileURL(join(projectRoot, "broken.md")).href;
+    expect(output.stdout.join("")).toContain(
+      `Source: \u001B]8;;${target}\u001B\\broken.md\u001B]8;;\u001B\\`,
+    );
+  });
+
+  it("keeps source files as plain text without terminal hyperlink support", async () => {
+    const output = captureOutput();
+    const handler = createCheckHandler(dependenciesFor(output));
+
+    await handler.run(["broken.md"], {});
+
+    expect(output.stdout.join("")).toContain("Source: broken.md");
+    expect(output.stdout.join("")).not.toContain("\u001B]8;;");
+  });
+
+  it("keeps JSON output free of terminal hyperlinks", async () => {
+    const output = captureOutput();
+    const handler = createCheckHandler(dependenciesFor(output, projectRoot, true));
+
+    await handler.run(["broken.md"], { json: true });
+
+    expect(() => JSON.parse(output.stdout.join(""))).not.toThrow();
+    expect(output.stdout.join("")).not.toContain("\u001B]8;;");
+  });
+
   it("propagates a workflow failure when no report is produced", async () => {
     const output = captureOutput();
     const missingRoot = join(projectRoot, "missing");
@@ -95,9 +128,11 @@ function captureOutput(): { stdout: string[] } {
 function dependenciesFor(
   output: { stdout: string[] },
   cwd = projectRoot,
-): CheckHandlerDependencies {
+  hyperlinks = false,
+): CheckHandlerDependencies & { supportsHyperlinks(): boolean } {
   return {
     cwd: () => cwd,
+    supportsHyperlinks: () => hyperlinks,
     stdout: (text) => output.stdout.push(text),
   };
 }

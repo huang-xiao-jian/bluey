@@ -6,9 +6,13 @@ export enum ReportFormat {
 }
 
 export abstract class ReportFormatter {
-  public abstract format(report: LinkCheckReport): string;
+  public abstract format(
+    report: LinkCheckReport,
+    options?: ReportFormatterOptions,
+  ): string;
 }
 
 export interface ReportFormatterOptions {
   readonly json?: boolean;
+  readonly hyperlinks?: boolean;
 }

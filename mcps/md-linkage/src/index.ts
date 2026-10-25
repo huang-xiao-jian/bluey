@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import "reflect-metadata";
 import { Command, Option } from "commander";
+import supportsHyperlinks from "supports-hyperlinks";
 import { LinkCheckMode } from "./core/model/link-check-delegation";
 import {
   createCheckHandler,
@@ -29,6 +30,7 @@ program
   .action(async (files: string[], options: CheckOptions) => {
     const checker = createCheckHandler({
       cwd: () => process.cwd(),
+      supportsHyperlinks: () => supportsHyperlinks.stdout,
       stdout: (text) => process.stdout.write(text),
     });
 

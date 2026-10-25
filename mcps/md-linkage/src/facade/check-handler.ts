@@ -18,6 +18,7 @@ export interface CheckOptions {
 
 export abstract class CheckHandlerDependencies {
   public abstract cwd(): string;
+  public abstract supportsHyperlinks(): boolean;
   public abstract stdout(text: string): void;
 }
 
@@ -41,7 +42,10 @@ export class CheckHandler {
     const delegation = new LinkCheckDelegation(root, files, options.mode, cwd);
     const scheduler = this.composition.createLinkCheckWorkflowScheduler();
     const report = await scheduler.run(delegation);
-    const formatter = this.reportFormatterFactory.create(options);
+    const formatter = this.reportFormatterFactory.create({
+      ...options,
+      hyperlinks: this.dependencies.supportsHyperlinks(),
+    });
     const output = formatter.format(report);
 
     this.dependencies.stdout(`${output}\n`);

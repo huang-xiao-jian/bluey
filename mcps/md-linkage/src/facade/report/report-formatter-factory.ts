@@ -11,6 +11,9 @@ export class ReportFormatterFactory {
   ) {}
 
   public create(options: ReportFormatterOptions): ReportFormatter {
-    return options.json ? this.jsonFormatter : this.humanFormatter;
+    const formatter = options.json ? this.jsonFormatter : this.humanFormatter;
+    return {
+      format: (report) => formatter.format(report, options),
+    };
   }
 }

@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { describe, expect, it } from "vitest";
 
 const packageRoot = process.cwd();
@@ -115,6 +116,22 @@ describe("md-linkage check", () => {
     expect(report.deadLinks).toHaveLength(4);
   });
 
+  it("links source files when terminal hyperlinks are forced on", () => {
+    const result = runFromWithEnvironment(
+      projectRoot,
+      { FORCE_HYPERLINK: "1" },
+      "check",
+      "broken.md",
+    );
+    const target = pathToFileURL(join(projectRoot, "broken.md")).href;
+
+    expect(result.status).toBe(0);
+    expect(result.stderr).toBe("");
+    expect(result.stdout).toContain(
+      `Source: \u001B]8;;${target}\u001B\\broken.md\u001B]8;;\u001B\\`,
+    );
+  });
+
   it("returns a nonzero status and stderr diagnostics for an invalid root", () => {
     const result = run(
       "check",
@@ -151,8 +168,17 @@ function run(...args: string[]) {
 }
 
 function runFrom(cwd: string, ...args: string[]) {
+  return runFromWithEnvironment(cwd, {}, ...args);
+}
+
+function runFromWithEnvironment(
+  cwd: string,
+  environment: NodeJS.ProcessEnv,
+  ...args: string[]
+) {
   return spawnSync(process.execPath, [executable, ...args], {
     cwd,
     encoding: "utf8",
+    env: { ...process.env, ...environment },
   });
 }

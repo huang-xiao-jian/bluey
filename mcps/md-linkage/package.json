@@ -32,6 +32,7 @@
     "mdast-util-to-string": "^4.0.0",
     "minimatch": "^10.2.6",
     "reflect-metadata": "^0.2.2",
+    "supports-hyperlinks": "^4.6.0",
     "unist-util-visit": "^5.1.0",
     "zod": "^3.24.1"
   },
