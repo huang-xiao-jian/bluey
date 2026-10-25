@@ -1,133 +1,198 @@
-# {Use Case Name}
+# {用例名称}
 
-## Actors
+## 参与者
 
-> Identify the people, roles, or external parties that initiate or support this use case.
+> 说明发起或支持此用例的人员、角色、外部参与方或外部系统。
 
 <!--
-Format:
+格式：
 
-- **Primary Actor:** **{Actor}**
-- **Supporting Actor:** **{Actor}**
+- **主要参与者：** **{参与者}**
+- **协作参与者：** **{参与者}**
 
-Example:
+示例：
 
-- **Primary Actor:** **Workspace Administrator**
-- **Supporting Actor:** **Rule Service**
+- **主要参与者：** **Workspace 管理员**
+- **协作参与者：** **规则服务**
 -->
 
-## Brief Description
+## 简要说明
 
-> Summarize the use case's business goal and value in one or two sentences.
+> 使用一至两句话概述用例的业务目标和价值。
 
 <!--
-Format:
+格式：
 
-Concise prose describing the goal and value.
+简洁描述目标和价值的正文。
 
-Example:
+示例：
 
-An administrator creates a Workspace so a team can organize its rule configuration in one place.
+管理员创建 Workspace，使团队可以在同一位置组织规则配置。
 -->
 
-## Preconditions
+## 前置条件
 
-> List the verifiable conditions that must be satisfied before the use case can begin.
+> 列出用例开始前必须满足且可验证的条件。
 
 <!--
-Format:
+格式：
 
-1. {Condition}
+1. {条件}
 
-Example:
+示例：
 
-1. The Workspace Administrator is authorized to create Workspaces.
+1. Workspace 管理员拥有创建 Workspace 的权限。
 -->
 
-## Business Workflow
+## 事件流
 
-> Describe the normal business flow as ordered, observable steps. Assign stable identifiers to workflow nodes when later rules or extensions reference them.
+> 使用文本完整描述事件流。事件应是可观察的参与者行为或系统响应。有序列表的序号只表示阅读顺序，不是稳定标识。
+
+### 基本事件流
 
 <!--
-Format:
+格式：
 
-1. **{Node ID}**: {Actor} {Business action}.
+1. {参与者执行的行为或系统响应}
+2. {参与者执行的行为或系统响应}
 
-Example:
+示例：
 
-1. **Create Workspace**: Workspace Administrator submits the Workspace name.
-2. **Validate Name**: The system confirms that the name is available.
-3. **Record Workspace**: The system creates the Workspace.
+1. Workspace 管理员提交 Workspace 名称。
+2. 系统确认名称可用。
+3. 系统创建 Workspace。
 -->
 
-## Postconditions
-
-> State the conditions the system guarantees when the use case finishes, for both success and failure.
+### 备选事件流
 
 <!--
-Format:
+按照触发条件分别描述仍可继续或以其他有效结果结束的路径。没有已知备选事件流时写“无”。
 
-**Success scenario:**
+格式：
 
-1. {Postcondition}
+#### {备选场景名称}
 
-**Failure scenario:**
+1. 当{触发条件}时，{参与者行为或系统响应}。
+2. {后续行为或结果}。
 
-1. {Postcondition}
+示例：
 
-Example:
+#### 修改 Workspace 名称
 
-**Success scenario:**
-
-1. A new Workspace is available to the team.
-
-**Failure scenario:**
-
-1. No Workspace is created.
+1. 当系统确认名称已被占用时，系统提示 Workspace 管理员修改名称。
+2. Workspace 管理员提交新名称。
+3. 系统重新确认名称是否可用。
 -->
 
-## Business Rules
-
-> State business rules and constraints, referencing the workflow node where each rule applies.
+### 异常事件流
 
 <!--
-Format:
+按照触发条件分别描述失败、终止或需要恢复的路径。没有已知异常事件流时写“无”。
 
-- **{Rule Name}**: {Referenced Node}, {Rule Description}
+格式：
 
-Example:
+#### {异常场景名称}
 
-- **Unique Workspace Name**: Validate Name, The Workspace name must be unique within the organization.
+1. 当{异常条件}发生时，{系统响应}。
+2. {恢复操作或最终状态}。
+
+示例：
+
+#### 创建失败
+
+1. 当系统无法保存 Workspace 时，系统提示创建失败。
+2. 系统不创建 Workspace。
 -->
 
-## Special Requirements
+## 流程图（可选）
 
-> Record non-functional requirements that are material to this use case.
+> 仅当多个分支、循环、回退、恢复路径或跨事件流转换使文本关系难以快速理解时，使用 Mermaid flowchart 补充说明。图不得取代事件流或引入新业务语义；内部节点名不要求稳定，也不得被正文引用。
 
 <!--
-Format:
+复杂流程示例：
 
-- **Performance:** {Requirement}
-- **Security:** {Requirement}
-- **Availability:** {Requirement}
+```mermaid
+flowchart TD
+    submit[Workspace 管理员提交名称] --> available{名称是否可用？}
+    available -- 是 --> create[系统创建 Workspace]
+    available -- 否 --> revise[Workspace 管理员修改名称]
+    revise --> submit
+    create --> result{创建是否成功？}
+    result -- 是 --> success[用例成功]
+    result -- 否 --> failure[系统提示创建失败]
+```
 
-Example:
-
-- **Performance:** Workspace creation completes within two seconds under normal load.
-- **Security:** Only Workspace Administrators may create a Workspace.
-- **Availability:** Workspace creation is available whenever the administration service is available.
+流程简单时，删除整个“流程图（可选）”章节。
 -->
 
-## Extension Points (Optional)
+## 后置条件
 
-> Identify workflow nodes that may support future business extensions.
+> 分别说明用例成功和失败时系统保证成立的状态。
 
 <!--
-Format:
+格式：
 
-- {Referenced Node}: {Extension Description}
+**成功场景：**
 
-Example:
+1. {后置条件}
 
-- Validate Name: Support organization-specific naming policies.
+**失败场景：**
+
+1. {后置条件}
+
+示例：
+
+**成功场景：**
+
+1. 新 Workspace 可供团队使用。
+
+**失败场景：**
+
+1. 没有创建 Workspace。
+-->
+
+## 业务规则
+
+> 使用自包含的语句说明业务规则和约束，不引用事件序号或 Mermaid 节点名。
+
+<!--
+格式：
+
+- **{规则名称}**：{适用条件、约束和结果}
+
+示例：
+
+- **Workspace 名称唯一**：Workspace 名称在组织内必须唯一；名称已被占用时不得创建 Workspace。
+-->
+
+## 特殊需求
+
+> 记录与此用例直接相关的重要非功能需求。没有已知特殊需求时写“无”。
+
+<!--
+格式：
+
+- **性能：** {需求}
+- **安全：** {需求}
+- **可用性：** {需求}
+
+示例：
+
+- **性能：** 正常负载下，Workspace 创建操作在两秒内完成。
+- **安全：** 仅 Workspace 管理员可以创建 Workspace。
+- **可用性：** 管理服务可用时，Workspace 创建功能必须可用。
+-->
+
+## 扩展点（可选）
+
+> 仅在需求材料提供充分依据时，说明未来可支持的业务扩展。
+
+<!--
+格式：
+
+- **{扩展点名称}**：{扩展说明}
+
+示例：
+
+- **组织命名策略**：支持组织自定义 Workspace 命名规则。
 -->

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Draft Use-Case Specification"
+  short_description: "将明确的业务需求整理为结构完整且流程可追踪的用例规约"
+  default_prompt: "使用 $draft-use-case-specification 将明确的业务需求起草为用例规约。"
+
+policy:
+  allow_implicit_invocation: false

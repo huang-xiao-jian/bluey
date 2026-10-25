@@ -1,57 +1,80 @@
 ---
 name: draft-use-case-specification
-description: Draft a structured use-case specification from business requirements. Use when users request a use-case specification, requirements specification, or system use-case document.
+description: 仅在用户显式调用 $draft-use-case-specification 时使用。
 ---
 
-# Draft Use-Case Specification
+# 起草用例规约
 
-## When to Use
+## 参考资料
 
-- The user explicitly asks to write a use-case specification for a feature.
-- The user provides a business-requirements description that must be converted into a structured use-case specification.
+- [使用 Mermaid 补充说明复杂业务流程](adr/mermaid.md)
+- [用例规约模板](assets/template.md)
+- [用例规约示例](references/example.md)
 
-## Input
+## 使用范围
 
-The user must provide a clear requirements document. Its format is unrestricted and may be a use-case analysis, user story, workflow definition, or similar material.
+- 用户明确要求为某项功能编写用例规约。
+- 用户提供了需要转换为结构化用例规约的业务需求说明。
 
-| Condition | Handling strategy |
-| :-- | :-- |
-| The input document contains no business description | Decline the task and ask the user for material related to business rules. |
-| The input document is ambiguous | Decline the task and ask the user to provide a clearer requirements description. Do not infer missing details. |
+不要将本 Skill 用于补写缺失的业务规则、推断不明确的需求或擅自优化用例规约模板。
 
-## Workflow
+## 输入
 
-### 1. Understand the Requirements
+用户必须提供清晰的需求文档。文档格式不限，可以是用例分析、用户故事、工作流定义或类似材料。
 
-Extract the following information from the requirements description:
+- 输入文档没有业务说明时，拒绝执行并要求用户提供与业务规则相关的材料。
+- 输入文档存在歧义时，拒绝执行并要求用户提供更清晰的需求说明，不得推断缺失信息。
 
-1. **Use-case name**
-2. **Actors**
-3. **Business goal**
+## 语言
 
-| Condition | Handling strategy |
-| :-- | :-- |
-| The input document is too ambiguous to extract key information | Decline the task and require a clearer requirements description. Do not invent missing details. |
+默认使用简体中文编写用例规约。产品名、协议名、技术名、代码标识符、文件路径和命令保留英语；用户在当前请求中明确指定其他语言时，以用户要求为准。
 
-### 2. Read the Key ADR
+## 工作流
 
-- [Using Mermaid for workflows](./adr/mermaid.md)
+### 1. 理解需求
 
-### 3. Draft the Use-Case Specification
+从需求说明中提取以下信息：
 
-Follow use-case analysis best practices. Complete each section using the structure in [the use-case template](assets/template.md).
+1. **用例名称**
+2. **参与者**
+3. **业务目标**
+4. **可验证的前置条件**
+5. **基本事件流、备选事件流和异常事件流**
+6. **成功与失败时的系统状态**
+7. **业务规则和约束**
+8. **与当前用例直接相关的特殊需求**
 
-### 4. Verify Against the Checklist
+需求材料提供扩展依据时，同时提取对应的扩展点。没有已知特殊需求时，在“特殊需求”章节写“无”，不得自行编造非功能需求。
 
-Before returning the result, check every item below and correct any nonconformance:
+如果输入文档过于模糊，无法确定任一必填章节所需的业务事实，拒绝执行并要求用户提供更清晰的需求说明，不得虚构缺失信息。
 
-- [ ] Are the preconditions verifiable?
-- [ ] Does the workflow cover the main success scenario, alternative scenarios, and exception scenarios?
-- [ ] Does every workflow node have an identifier?
-- [ ] Do business rules reference workflow nodes by identifier?
-- [ ] Do the postconditions state the resulting system state clearly?
-- [ ] Is terminology consistent throughout?
+### 2. 阅读关键 ADR
 
-## Output Convention
+阅读**使用 Mermaid 补充说明复杂业务流程**，并遵循其中的流程表达决策。
 
-Generate every use-case specification from the template. Do not alter or optimize the template without authorization.
+### 3. 起草用例规约
+
+阅读**用例规约模板**，按照模板结构和用例分析最佳实践完成每个必填章节。需要判断内容详略或呈现方式时，查阅**用例规约示例**。
+
+模板中的说明、格式指导、示例和占位符只用于起草，不得出现在最终产物中。
+
+### 4. 按清单审查
+
+返回结果前逐项检查，并修正所有不符合项：
+
+- [ ] 产物包含参与者、简要说明、前置条件、事件流、后置条件、业务规则和特殊需求全部必填章节。
+- [ ] 前置条件可验证。
+- [ ] 事件流使用文本分别完整描述基本事件流、备选事件流和异常事件流。
+- [ ] 每个事件都是可观察的参与者行为或系统响应。
+- [ ] 事件序号只表示阅读顺序，业务规则不引用事件序号或 Mermaid 节点名。
+- [ ] 仅当流程包含较多相互影响的分支、循环、回退、恢复路径或跨事件流转换时，才使用 Mermaid 图作为补充说明。
+- [ ] Mermaid 图存在时，只呈现事件流中已有的业务语义，并与事件流一致。
+- [ ] 后置条件分别清楚说明成功与失败时的系统状态。
+- [ ] 特殊需求仅包含与当前用例直接相关的非功能需求；没有已知内容时明确写“无”。
+- [ ] 可选的扩展点仅在需求材料提供充分依据时出现。
+- [ ] 全文术语一致。
+- [ ] 最终产物不包含模板说明、格式指导、示例或占位符。
+
+## 输出约定
+
+每份用例规约都必须使用**用例规约模板**。未经用户授权，不得更改或优化模板结构。
