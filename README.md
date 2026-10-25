@@ -36,9 +36,6 @@ docs/               Conventions and operating notes
 
 - [analyze-business-concepts](skills/analyze-business-concepts/SKILL.md):
   Extract and document business concepts from business-source material.
-- [analyze-business-concept-relationship](skills/analyze-business-concept-relationship/SKILL.md):
-  Extract and document relationships among business concepts and use-case
-  specifications.
 - [draft-formal-adr](skills/draft-formal-adr/SKILL.md): Draft a formal
   architecture decision record or migrate a legacy ADR into the formal format.
 - [draft-use-case-specification](skills/draft-use-case-specification/SKILL.md):
