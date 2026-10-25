@@ -1,111 +1,114 @@
-# [Short Decision Title]
+# [简短的决策标题]
 
-## Context
+## 背景
 
-> Describe the business or technical background that requires a decision, including the concrete problem or pain points to address.
+> 说明需要作出决策的业务或技术背景，包括需要解决的具体问题或痛点。
 
 <!--
-Format:
+格式：
 
-Concise prose describing the context and decision drivers.
+使用简洁的段落说明背景和决策驱动因素。
 
-Example:
+示例：
 
-The current deployment process requires manual coordination across teams, which delays urgent fixes and creates inconsistent release records.
+当前部署流程需要跨团队手动协调，导致紧急修复延迟，并产生不一致的发布记录。
 -->
 
-## Decision
+## 决策
 
-> State the selected course of action unambiguously. Add a brief explanation only when the decision is complex.
+> 明确陈述选定的行动方案。仅在决策复杂时补充简短说明。
 
 <!--
-Format:
+格式：
 
-**{Core decision.}**
+**{核心决策}**
 
-Optional supporting prose for complex decisions.
+复杂决策可以补充说明。
 
-Example:
+示例：
 
-**Adopt an automated deployment pipeline for all production services.**
+**所有生产服务采用自动化部署流水线。**
 
-The pipeline will create an auditable release record for every deployment.
+流水线将为每次部署创建可审计的发布记录。
 -->
 
-## Consequences
+## 后果
 
-### Positive
+### 正面影响
 
-> Describe the positive impact of the decision.
+> 说明该决策带来的正面影响。
 
 <!--
-Format:
+格式：
 
-- {Positive impact 1}
-- {Positive impact 2}
+- {正面影响 1}
+- {正面影响 2}
 - ...
 
-Example:
+示例：
 
-- Reduces manual coordination and improves release traceability.
+- 减少手动协调，并提高发布的可追溯性。
 -->
 
-### Negative
+### 负面影响
 
-> Describe the negative impact of the decision and the risks or costs it introduces.
+> 说明该决策带来的负面影响，以及引入的风险或成本。
 
 <!--
-Format:
+格式：
 
-- {Negaitve impact or Risk or cost 1}
-- {Negaitve impact or Risk or cost 2}
+- {负面影响、风险或成本 1}
+- {负面影响、风险或成本 2}
 - ...
 
-Example:
+示例：
 
-- Requires teams to maintain pipeline configuration.
+- 要求各团队维护流水线配置。
 -->
 
-### Example Comparison (Optional)
+### 示例对比（可选）
 
-> Illustrate the practical effect of the decision when a brief comparison would improve understanding.
+> 当简短对比有助于理解时，展示该决策的实际效果。
 
 <!--
-Format:
+格式：
 
-Use a short explanation or code block to compare the relevant behavior before and after the decision.
+使用简短说明或代码块，对比决策前后的相关行为。
 
-Example:
+示例：
 
-Before: a release coordinator manually records deployment details.
+决策前：发布协调人员手动记录部署详情。
 
-After: the deployment pipeline records the details automatically.
+决策后：部署流水线自动记录详情。
 -->
 
-## Alternatives
+## 备选方案
 
-> List the viable alternatives considered and briefly explain why each was rejected.
+> 列出考虑过的替代方案，并简要说明否决各方案的原因。
 
 <!--
-Format:
+格式：
 
-1. {Alternative} → {Reason for rejection}
+1. {备选方案} → {否决原因}
+2. ...
 
-Example:
+示例：
 
-1. Continue manual deployments → Does not address the coordination delay or inconsistent records.
+1. 手动部署 → 无法解决记录不一致的问题。
+2. ...
 -->
 
-## Reversal Conditions (Optional)
+## 重评估条件
 
-> Define the conditions that would justify revisiting or reversing this decision.
+> 定义足以重新评估或撤销该决策的条件。
 
 <!--
-Format:
+格式：
 
-1. {Reversal condition} → {Reason for reversal}
+1. {重评估条件}：{重评估说明}
+2. ...
 
-Example:
+示例：
 
-1. The pipeline cannot meet required deployment reliability → Restore the previous process while selecting a replacement approach.
+1. 部署系统无法自动识别依赖关系，从而无法构造自动化部署流水线
 -->

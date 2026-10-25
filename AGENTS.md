@@ -32,6 +32,7 @@ mise exec -- pnpm --version
 
 - [文档规范](docs/conventions/document.md)定义了仓库文档的默认风格和呈现规则。
 - [能力规范](docs/conventions/capability.md) 定义了 `Skill` 和 `MCP server` 的结构指导。
+- [Skill 中文化迁移规范](docs/conventions/skill-localization.md)定义了 `Skill` 中文化迁移、验证与清理流程。
 - [MCP 开发规范](docs/conventions/mcp-development.md)定义了 `MCP server` 的开发流程和实现指南。
 - [TypeScript规范](docs/conventions/typescript.md) 定义 `TypeScript` 代码默认的编写风格
 - [测试规范](docs/conventions/testing.md)：定义自动化测试的默认组织方式、实现方式和执行指南。

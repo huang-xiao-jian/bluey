@@ -1,0 +1,7 @@
+interface:
+  display_name: "Draft Formal ADR"
+  short_description: "将已确定的架构决策起草或迁移为结构完整的正式 ADR"
+  default_prompt: "使用 $draft-formal-adr 将已确定的架构决策起草为正式 ADR。"
+
+policy:
+  allow_implicit_invocation: false

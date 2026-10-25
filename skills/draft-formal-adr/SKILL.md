@@ -1,53 +1,51 @@
 ---
 name: draft-formal-adr
-description: Draft a formal architecture decision record or migrate a legacy ADR into the formal ADR format. Use only when the user explicitly requests one of those outcomes.
+description: 仅在用户显式调用 $draft-formal-adr 时使用。
 ---
 
-# Draft Formal ADR
+# 起草正式 ADR
 
-## When to Use
+## 参考资料
 
-- The user explicitly asks to document a decision as a formal ADR.
-- The user explicitly asks to migrate, convert, or rewrite a legacy ADR into the formal ADR format.
+- [正式 ADR 模板](references/adr-flavor-template.md)
+- [正式 ADR 示例](references/adr-flavor-example.md)
 
-Do not use this skill for general technical documentation, brainstorming a decision, or evaluating whether a decision is correct.
+## 输入
 
-Annotations:
+> “旧版 ADR”是指语义上属于 ADR，但不符合本 Skill 所定义正式结构的现有决策记录。
 
-- **Negative**: "We decide to use Mongodb instead of Mysql", because it doesn't mention keyword "ADR" at all
-- **Positive**: "We decide to use Mongodb instead of Mysql, now draft a decision document", it mentions keyword similar to ADR
+使用用户请求、引用材料和当前对话中的决策依据。迁移旧版 ADR 时，以旧版 ADR 记载的现有决策和事实为准。
 
-## Inputs
+输入不必覆盖 ADR 的每个章节。选定的决策明确时，可以运用可靠的技术判断补全由该决策自然推导出的常规背景、可能后果、可行替代方案和合理的重评估条件。不得把未经确认的历史事实、利益相关者意图、度量数据或既往讨论写成事实。
 
-> A "legacy ADR" is any existing decision record that does not follow the formal structure defined in this skill but is still semantically an ADR.
+仅在无法识别选定决策、现有依据存在实质冲突，或未解决的信息缺口会改变所记录的决策时，才向用户澄清。
 
-Use the decision evidence available in the user's request, referenced material, and the current conversation. For a migration, treat the legacy ADR as the source of truth for its existing decision and facts.
+## 语言
 
-The input does not need to provide every ADR section. When the selected decision is clear, use sound technical judgment to complete routine context, likely consequences, and viable alternatives that follow from it. Do not present unconfirmed historical facts, stakeholder intent, measurements, or prior deliberations as facts.
+默认使用简体中文编写 ADR。产品名、协议名、技术名、代码标识符、文件路径和命令保留英语；引用既有材料时，遵循其必要的原文保留要求。用户在当前请求中明确指定其他语言时，以用户要求为准。
 
-Ask for clarification only when the selected decision cannot be identified, available evidence materially conflicts, or an unresolved gap would change the decision being recorded.
+## 工作流
 
-## Workflow
+1. 阅读**正式 ADR 模板**。当需要判断内容详略或措辞方式时，查阅**正式 ADR 示例**。
+2. 按照模板和示例的约定起草完整 ADR。
+3. 迁移旧版 ADR 时，保留原决策和所有重要事实；将内容重新组织到正式章节中，移除模板说明。仅在不会改变决策或虚构历史的前提下进行谨慎的分析性补充。标记会实质影响决策记录的矛盾。
+4. 按照**审查清单**检查草稿，并在输出前修正全部问题。
+5. 当用户或仓库上下文已指定 ADR 目标位置时，将完成的 ADR 保存到该位置；否则直接返回完整 Markdown ADR，不创建文件，由用户决定后续操作。
 
-1. Read the [formal ADR template](references/adr-flavor-template.md). Consult the [formal ADR example](references/adr-flavor-example.md) when its level of detail or wording helps resolve presentation choices.
-2. Draft a complete ADR using the template and the example's conventions.
-3. For a legacy migration, preserve the original decision and all material facts. Reorganize content into the formal sections, remove template guidance, and use careful analytical additions only when they do not alter the decision or claim unsupported history. Flag contradictions that would materially affect the record.
-4. Review the draft against the **Review Checklist** section and correct every issue before producing the result.
-5. When the user or repository context establishes an ADR destination, save the completed ADR there. Otherwise, return the complete Markdown ADR without creating a file so the user can decide what to do next.
+补充约定：
 
-Annotations:
+- ADR 目标位置必须来自当前对话上下文；直接使用该位置。
+- 根据核心决策的语义标题命名 ADR 文件，例如 `cli-first-mcp-architecture.md`。
 
-- If an ADR destination exists, it must be available in the current conversation context; use it directly.
-- Base the ADR filename on the core decision's semantic title (for example, `cli-first-mcp-architecture.md`).
+## 审查清单
 
-## Review Checklist
+ADR **必须通过全部检查项**：
 
-The ADR **MUST** pass **ALL CHECKPOINTS**:
-
-- [ ] The title is a short decision statement.
-- [ ] Context identifies the concrete decision drivers.
-- [ ] Decision states one selected course of action unambiguously.
-- [ ] Consequences distinguish positive impacts from negative risks or costs.
-- [ ] Alternatives are viable options with clear rejection reasons.
-- [ ] Optional sections appear only when supported by the source material.
-- [ ] The document has no template instructions, placeholders, or unsupported factual claims.
+- [ ] 标题是简短的决策陈述。
+- [ ] 背景说明了具体的决策驱动因素。
+- [ ] 决策明确陈述了唯一选定的行动方案。
+- [ ] 后果区分了正面影响与负面风险或成本。
+- [ ] 备选方案均为可行选项，并说明了明确的否决理由。
+- [ ] 重评估条件说明了何时需要重新审视或撤销决策。
+- [ ] 可选章节仅在有来源材料支持时出现。
+- [ ] 文档中没有模板说明、占位符或缺乏依据的事实陈述。

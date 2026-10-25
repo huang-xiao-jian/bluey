@@ -1,27 +1,37 @@
-# Use Mermaid to Express the Business Workflow in Use-Case Specifications
+# 在用例规约中使用 Mermaid 表达业务流程
 
-## Context
+## 背景
 
-Traditional use-case specifications describe the Business Workflow in separate textual sections. This causes information duplication and makes branching logic difficult to understand. Introducing Mermaid requires a revised approach to representing the Business Workflow.
+传统用例规约使用独立的文本章节描述业务流程。这会造成信息重复，也使分支逻辑难以理解。引入 Mermaid 后，需要重新定义业务流程的表达方式。
 
-## Decision
+## 决策
 
-**Adopt Mermaid as the sole standard for expressing the Business Workflow in use-case specifications.**
+**采用 Mermaid 作为用例规约中表达业务流程的唯一标准。**
 
-Core conventions:
+核心约定：
 
-1. **Use Mermaid diagrams as the primary workflow representation**
-   - Every use-case specification must use a Mermaid flowchart to describe its Business Workflow.
-   - Workflow nodes must retain identifiers for direct references in business rules.
-2. **Remove standalone textual flow sections**
-   - Do not separately write sections such as "basic flow" and "alternative flow."
+1. **使用 Mermaid 图作为唯一的流程表达方式**
+   - 每份用例规约都必须使用 Mermaid flowchart 描述业务流程。
+   - 流程节点必须保留标识符，以便业务规则直接引用。
+2. **移除独立的文本流程章节**
+   - 不再单独编写“基本流程”“备选流程”等章节。
 
-## Consequences
+## 后果
 
-- **Positive**: Documentation is more concise, maintenance costs decrease, and readability improves.
-- **Negative**: Team members must become familiar with Mermaid syntax.
+### 正面影响
 
-## Alternatives
+- 文档更加简洁，维护成本降低，可读性提高。
 
-1. Retain textual flow sections and add a Mermaid diagram → duplicate information and double the maintenance effort.
-2. Retain only textual flow sections → branching logic is difficult to read.
+### 负面影响
+
+- 团队成员必须熟悉 Mermaid 语法。
+
+## 备选方案
+
+1. 保留文本流程章节并增加 Mermaid 图 → 造成信息重复，并使维护工作量翻倍。
+2. 仅保留文本流程章节 → 分支逻辑仍然难以阅读。
+
+## 重评估条件
+
+1. Mermaid 无法清晰表达用例规约所需的业务流程：唯一表达方式不再满足可读性目标。
+2. 文档平台无法稳定渲染 Mermaid：读者无法可靠查看业务流程。
