@@ -79,6 +79,24 @@ interface LinkCheckScope {
 
 ### 数据模型案例
 
+**路径问题：**
+
+```json
+{
+  "files": [],
+  "issues": [
+    {
+      "subjectType": "path",
+      "path": "missing.md",
+      "resolvedPath": "/var/specs/missing.md",
+      "issueType": "path-not-found"
+    }
+  ]
+}
+```
+
+**Glob pattern 问题：**
+
 ```json
 {
   "files": ["guide.md"],
@@ -88,6 +106,23 @@ interface LinkCheckScope {
       "base": "/var/specs",
       "pattern": "drafts/**/*.md",
       "issueType": "glob-pattern-not-matched"
+    }
+  ]
+}
+```
+
+**Glob 匹配项问题：**
+
+```json
+{
+  "files": [],
+  "issues": [
+    {
+      "subjectType": "glob-match",
+      "base": "/var/specs",
+      "pattern": "../shared/*.md",
+      "matchedPath": "/var/shared/reference.md",
+      "issueType": "path-outside-project-root"
     }
   ]
 }

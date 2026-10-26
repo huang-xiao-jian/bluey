@@ -1,15 +1,15 @@
 # 航班报价
 
-## 前置依赖（可选）
+## 参考资料
 
-- **航段**：`./virtual-path/FLT-SEG-01.md`
-- **可售产品**：`./virtual-path/PROD-SALE-01.md`
+- [航段](./virtual-path/FLT-SEG-01.md)
+- [可售产品](./virtual-path/PROD-SALE-01.md)
 
-## 1. 定义
+## 定义
 
 在特定时间点，**航班报价**是销售系统向旅客展示的**可售组合**。它包含具体的航班信息、舱等、实时报价和附加权益，是旅客下单的直接依据。
 
-## 2. 关键属性
+## 关键属性
 
 - **ID：** 报价的唯一标识，旅客下单时用于锁定价格。
 - **航班号：** 承运航司的航班标识，例如 `CA6532`。
@@ -17,7 +17,49 @@
 - **销售总价：** 包含基础票价、旅客服务费、燃油附加费和税费的最终应付金额。
 - **有效期：** 报价被锁定的时长，例如 15 分钟。
 
-## 3. 规则与约束
+### 数据模型
+
+```ts
+interface FlightOffer {
+  id: string;
+  flightNumber: string;
+  cabinClassCode: string;
+  bookingClassCode: string;
+  baseFare: number;
+  passengerServiceFee: number;
+  fuelSurcharge: number;
+  tax: number;
+  /** 等于基础票价、旅客服务费、燃油附加费和税费之和。 */
+  totalPrice: number;
+  /** 报价可用的分钟数。 */
+  validityMinutes: number;
+  segments: FlightSegment[];
+}
+```
+
+### 数据模型案例
+
+```json
+{
+  "id": "offer-20261026-001",
+  "flightNumber": "CA6532",
+  "cabinClassCode": "economy",
+  "bookingClassCode": "V",
+  "baseFare": 1000,
+  "passengerServiceFee": 50,
+  "fuelSurcharge": 100,
+  "tax": 130,
+  "totalPrice": 1280,
+  "validityMinutes": 15,
+  "segments": [
+    {
+      "id": "segment-001"
+    }
+  ]
+}
+```
+
+## 规则与约束
 
 1. **业务标识约束：** `ID` 唯一标识一份**航班报价**，并在旅客下单时用于锁定价格。
 2. **聚合约束：** 销售总价等于基础票价、旅客服务费、燃油附加费和税费之和。
@@ -26,8 +68,3 @@
 5. **条件取值约束：** 生成的**航班报价**中的每个选项都必须符合旅客资格（例如学生票或军人优先）和组织的差旅政策（例如舱等超标限制）。
 6. **统计约束：** 一份**航班报价**聚合 `[1,5]` 个**航段**。
 7. **值域约束：** 一份**航班报价**可以包含直飞航班或同一航司承运的中转行程，不能包含跨航司联程组合。
-
-## 4. 关系
-
-- **聚合：** 本概念聚合 `[1,5]` 个**航段**。
-- **泛化：** 本概念是**可售产品**的特化。

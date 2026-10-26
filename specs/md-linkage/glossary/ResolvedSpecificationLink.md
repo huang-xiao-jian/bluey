@@ -73,29 +73,54 @@ type ResolvedSpecificationLink =
 
 ### 数据模型案例
 
-以下失效变体表示一个跨文件链接：目标文件存在，但请求的标题不存在。
+**有效链接：**
 
-```ts
-const example: DeadResolvedSpecificationLink = {
-  status: ResolvedSpecificationLinkStatus.Dead,
-  location: {
-    root: "/workspace/bluey",
-    filePath: "specs/md-linkage/spec.md",
+```json
+{
+  "status": "live",
+  "location": {
+    "root": "/workspace/bluey",
+    "filePath": "specs/md-linkage/spec.md"
   },
-  link: {
-    type: SpecificationLinkType.CrossFileAnchor,
-    text: "[Resolved link](glossary/ResolvedSpecificationLink.md#missing-section)",
-    name: "Resolved link",
-    path: "glossary/ResolvedSpecificationLink.md",
-    anchor: "missing-section",
+  "link": {
+    "type": "cross-file-anchor",
+    "text": "[Resolved link](glossary/ResolvedSpecificationLink.md#data-model)",
+    "name": "Resolved link",
+    "path": "glossary/ResolvedSpecificationLink.md",
+    "anchor": "data-model"
   },
-  target: {
-    filePath:
-      "/workspace/bluey/specs/md-linkage/glossary/ResolvedSpecificationLink.md",
-    anchorId: "missing-section",
+  "target": {
+    "filePath": "/workspace/bluey/specs/md-linkage/glossary/ResolvedSpecificationLink.md",
+    "anchorId": "data-model",
+    "anchorName": "数据模型"
+  }
+}
+```
+
+该变种表示一个跨文件链接：目标文件存在，但请求的标题不存在。
+
+**失效链接：**
+
+```json
+{
+  "status": "dead",
+  "location": {
+    "root": "/workspace/bluey",
+    "filePath": "specs/md-linkage/spec.md"
   },
-  reason: DeadReason.AnchorNotFound,
-};
+  "link": {
+    "type": "cross-file-anchor",
+    "text": "[Resolved link](glossary/ResolvedSpecificationLink.md#missing-section)",
+    "name": "Resolved link",
+    "path": "glossary/ResolvedSpecificationLink.md",
+    "anchor": "missing-section"
+  },
+  "target": {
+    "filePath": "/workspace/bluey/specs/md-linkage/glossary/ResolvedSpecificationLink.md",
+    "anchorId": "missing-section"
+  },
+  "reason": "anchor-not-found"
+}
 ```
 
 ## 规则与约束

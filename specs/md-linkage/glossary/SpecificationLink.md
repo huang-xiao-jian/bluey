@@ -61,28 +61,38 @@ type SpecificationLink =
 
 ### 数据模型案例
 
-```ts
-const localFileLink: LocalFileSpecificationLink = {
-  type: SpecificationLinkType.LocalFile,
-  text: "[Technical design](../design.md)",
-  name: "Technical design",
-  path: "../design.md",
-};
+**本地文件链接：**
 
-const inFileAnchorLink: InFileAnchorSpecificationLink = {
-  type: SpecificationLinkType.InFileAnchor,
-  text: "[Business rules](#business-rules)",
-  name: "Business rules",
-  anchor: "business-rules",
-};
+```json
+{
+  "type": "local-file",
+  "text": "[Technical design](../design.md)",
+  "name": "Technical design",
+  "path": "../design.md"
+}
+```
 
-const crossFileAnchorLink: CrossFileAnchorSpecificationLink = {
-  type: SpecificationLinkType.CrossFileAnchor,
-  text: "[Data model](./ResolvedSpecificationLink.md#31-data-model)",
-  name: "Data model",
-  path: "./ResolvedSpecificationLink.md",
-  anchor: "31-data-model",
-};
+**文档内锚点链接：**
+
+```json
+{
+  "type": "in-file-anchor",
+  "text": "[Business rules](#business-rules)",
+  "name": "Business rules",
+  "anchor": "business-rules"
+}
+```
+
+**跨文件锚点链接：**
+
+```json
+{
+  "type": "cross-file-anchor",
+  "text": "[Data model](./ResolvedSpecificationLink.md#data-model)",
+  "name": "Data model",
+  "path": "./ResolvedSpecificationLink.md",
+  "anchor": "data-model"
+}
 ```
 
 ## 规则与约束
