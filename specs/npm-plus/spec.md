@@ -8,7 +8,6 @@
 
 - [InspectDelegation](glossary/inspect-delegation.md)描述开发者提交的 package 检查委托。
 - [InspectTarget](glossary/inspect-target.md)描述已经确定精确版本的实际检查目标。
-- [InspectTargetBuilder](glossary/inspect-target-builder.md)描述从检查委托确定具体检查目标的业务过程。
 - [InspectTargetRawQuality](glossary/inspect-target-raw-quality.md)描述检查目标在单个质量维度上的原始质量事实。
 - [InspectTargetSecurityRawQuality](glossary/inspect-target-security-raw-quality.md)描述检查目标的安全性原始质量事实。
 - [InspectTargetMaintenanceRawQuality](glossary/inspect-target-maintenance-raw-quality.md)描述检查目标的维护状况原始质量事实。
@@ -21,6 +20,8 @@
 - [InspectTargetQualityReport](glossary/inspect-target-quality-report.md)描述系统最终交付给开发者的质量报告。
 
 ## 角色
+
+- [InspectTargetBuilder](roles/InspectTargetBuilder.md)定义从检查委托确定具体检查目标时使用的异常与算法。
 
 ## 相关文档
 

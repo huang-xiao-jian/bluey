@@ -4,7 +4,7 @@
 
 - [InspectDelegation](./inspect-delegation.md)
 - [InspectTarget](./inspect-target.md)
-- [InspectTargetBuilder](./inspect-target-builder.md)
+- [InspectTargetBuilder](../roles/InspectTargetBuilder.md)
 - [InspectTargetQuality](./inspect-target-quality.md)
 
 ## 1. 定义
