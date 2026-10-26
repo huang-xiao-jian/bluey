@@ -1,0 +1,6 @@
+interface:
+  display_name: "Discover Concepts"
+  short_description: "从清晰的用例规约中识别业务概念、关系及其可追溯依据"
+  default_prompt: "使用 $discover-concepts 从以下用例规约中识别业务概念："
+policy:
+  allow_implicit_invocation: false

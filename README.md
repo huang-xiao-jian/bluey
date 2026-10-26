@@ -34,8 +34,9 @@ docs/               Conventions and operating notes
 
 ### Skills
 
-- [analyze-business-concepts](skills/analyze-business-concepts/SKILL.md):
-  Extract and document business concepts from business-source material.
+- [discover-concepts](skills/discover-concepts/SKILL.md)：从清晰的用例规约中识别业务概念及其关系。
+- [draft-concept-specification](skills/draft-concept-specification/SKILL.md)：
+  根据当前会话上下文撰写业务概念规约。
 - [draft-formal-adr](skills/draft-formal-adr/SKILL.md): Draft a formal
   architecture decision record or migrate a legacy ADR into the formal format.
 - [draft-use-case-specification](skills/draft-use-case-specification/SKILL.md):

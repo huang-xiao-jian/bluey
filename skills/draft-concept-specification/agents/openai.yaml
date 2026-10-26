@@ -1,0 +1,6 @@
+interface:
+  display_name: "Draft Concept Specification"
+  short_description: "从当前会话上下文推断写作对象并起草完整业务概念规约"
+  default_prompt: "使用 $draft-concept-specification 根据当前上下文起草业务概念规约。"
+policy:
+  allow_implicit_invocation: false
