@@ -1,0 +1,6 @@
+interface:
+  display_name: "Discover Workers"
+  short_description: "从业务用例规约中识别职责抽象及人工与自动化实现方式"
+  default_prompt: "使用 $discover-workers 从以下业务用例规约中识别业务工人及其实现方式："
+policy:
+  allow_implicit_invocation: false
