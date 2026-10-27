@@ -4,13 +4,7 @@
 
 - [InspectTarget](./inspect-target.md)
 - [InspectTargetRawQuality](./raw-quality/inspect-target-raw-quality.md)
-- [InspectTargetSecurityRawQuality](./raw-quality/inspect-target-security-raw-quality.md)
-- [InspectTargetMaintenanceRawQuality](./raw-quality/inspect-target-maintenance-raw-quality.md)
-- [InspectTargetPopularityRawQuality](./raw-quality/inspect-target-popularity-raw-quality.md)
-- [InspectTargetDocumentationRawQuality](./raw-quality/inspect-target-documentation-raw-quality.md)
-- [InspectTargetLicenseRawQuality](./raw-quality/inspect-target-license-raw-quality.md)
-- [InspectTargetDependencyRiskRawQuality](./raw-quality/inspect-target-dependency-risk-raw-quality.md)
-- [InspectTargetSupplyChainTrustRawQuality](./raw-quality/inspect-target-supply-chain-trust-raw-quality.md)
+- [InspectTargetDependencyScaleRawQuality](./raw-quality/inspect-target-dependency-scale-raw-quality.md)
 
 ## 1. 定义
 
@@ -19,13 +13,7 @@
 ## 2. 关键属性
 
 - **检查目标：** 本质量数据聚合所描述的**InspectTarget**。
-- **安全性质量：** 可选的**InspectTargetSecurityRawQuality**。
-- **维护状况质量：** 可选的**InspectTargetMaintenanceRawQuality**。
-- **流行度质量：** 可选的**InspectTargetPopularityRawQuality**。
-- **文档质量：** 可选的**InspectTargetDocumentationRawQuality**。
-- **许可证质量：** 可选的**InspectTargetLicenseRawQuality**。
-- **依赖风险质量：** 可选的**InspectTargetDependencyRiskRawQuality**。
-- **供应链可信度质量：** 可选的**InspectTargetSupplyChainTrustRawQuality**。
+- **依赖规模质量：** 可选的**InspectTargetDependencyScaleRawQuality**。
 
 ## 3. 规则与约束
 
@@ -40,4 +28,4 @@
 ## 4. 关系
 
 - **关联：** 每个本概念实例归属于一个**InspectTarget**。
-- **聚合：** 本概念分别聚合 `[0,1]` 个**InspectTargetSecurityRawQuality**、**InspectTargetMaintenanceRawQuality**、**InspectTargetPopularityRawQuality**、**InspectTargetDocumentationRawQuality**、**InspectTargetLicenseRawQuality**、**InspectTargetDependencyRiskRawQuality**和**InspectTargetSupplyChainTrustRawQuality**。
+- **聚合：** 本概念聚合 `[0,1]` 个**InspectTargetDependencyScaleRawQuality**。

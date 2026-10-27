@@ -13,13 +13,7 @@
 
 ```ts
 enum InspectTargetRawQualityDimension {
-  Security = "security",
-  Maintenance = "maintenance",
-  Popularity = "popularity",
-  Documentation = "documentation",
-  License = "license",
-  DependencyRisk = "dependency-risk",
-  SupplyChainTrust = "supply-chain-trust",
+  DependencyScale = "dependency-scale",
 }
 
 interface InspectTargetRawQuality {
@@ -33,13 +27,13 @@ interface InspectTargetRawQuality {
 
 ```json
 {
-  "dimension": "security"
+  "dimension": "dependency-scale"
 }
 ```
 
 ## 3. 规则与约束
 
-1. **子类型完备约束：** 本概念必须属于安全性、维护状况、流行度、文档质量、许可证、依赖风险或供应链可信度中的一个维度。
+1. **子类型完备约束：** 本概念必须属于一个已经正式定义的质量维度。
 2. **子类型互斥约束：** 一个本概念实例只能属于一个质量维度，不能同时代表多个维度。
 3. **客观性约束：** 原始事实不得包含评分、评级、价值判断、综合结论或采用建议。
 4. **可获得性约束：** 只记录系统能够获得的事实，不要求每个检查目标在每个质量维度上都有数据。
@@ -48,4 +42,4 @@ interface InspectTargetRawQuality {
 
 ## 4. 关系
 
-- **泛化：** `InspectTargetSecurityRawQuality`、`InspectTargetMaintenanceRawQuality`、`InspectTargetPopularityRawQuality`、`InspectTargetDocumentationRawQuality`、`InspectTargetLicenseRawQuality`、`InspectTargetDependencyRiskRawQuality` 和 `InspectTargetSupplyChainTrustRawQuality` 是本概念的特化。
+- **泛化：** `InspectTargetDependencyScaleRawQuality` 是本概念在依赖规模维度上的特化。
