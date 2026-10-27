@@ -3,7 +3,6 @@
 ## 参考资料
 
 - [InspectTarget](./inspect-target.md)
-- [InspectTargetQualityReport](./inspect-target-quality-report.md)
 
 ## 定义
 
@@ -60,4 +59,3 @@ interface InspectDelegation {
 5. **业务边界约束：** 版本范围表达式不属于当前支持的版本标识，使用版本范围表达式的请求不会进入本业务用例。
 6. **职责约束：** 本概念只表达开发者的原始意图，不负责判断 `package`、精确版本或 `tag` 是否存在。
 7. **目标确定约束：** 系统必须依据此概念实例确定具体的**InspectTarget**。
-8. **报告响应约束：** **InspectTargetQualityReport** 必须包含此概念实例。

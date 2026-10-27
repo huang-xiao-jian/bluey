@@ -2,14 +2,13 @@
 
 ## 用例
 
-- [获取 npm package 质量信息报告](use-case/get-npm-package-quality-information-report.md)描述开发者如何获取指定 package 及版本的客观质量信息，并自行评价是否采用该 package。
+- [获取 npm package 质量支撑数据](use-case/get-npm-package-quality-support-data.md)描述开发者如何获取指定 package 及版本的客观质量支撑数据，并自行评价是否采用该 package。
 
 ## 概念
 
 - [InspectDelegation](glossary/inspect-delegation.md)描述开发者提交的 package 检查委托。
 - [InspectTarget](glossary/inspect-target.md)描述已经确定精确版本的实际检查目标。
-- [InspectTargetQuality](glossary/inspect-target-quality.md)聚合检查目标在各规定维度上的原始质量数据。
-- [InspectTargetQualityReport](glossary/inspect-target-quality-report.md)描述系统最终交付给开发者的质量报告。
+- [InspectTargetQuality](glossary/inspect-target-quality.md)描述系统为检查目标提供的核心质量支撑数据。
 
 ## 相关文档
 
