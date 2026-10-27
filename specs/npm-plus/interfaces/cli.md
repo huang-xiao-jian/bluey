@@ -4,7 +4,7 @@
 
 - [npm-plus 接入层设计](spec.md)
 - [InspectDelegation](../glossary/inspect-delegation.md)
-- [InspectResult](../glossary/inspect-result.md)
+- [InspectResult](inspect-result.md)
 
 ## 命令
 
@@ -36,9 +36,9 @@ npm-plus inspect <package-name> [version-identifier] [--json]
 
 ## 退出状态
 
-全部 **InspectResult** 变体均表示工作流成功构造业务结果，CLI 以退出状态 `0` 完成。
+全部 **InspectResult** 变体均表示接入层成功构造结构化结果，CLI 以退出状态 `0` 完成。
 
-输入不满足接口契约、Registry 访问失败、制品读取失败或其他阻止 **InspectResult** 构造的技术异常使 CLI 以非零状态结束。CLI 不得为这些失败输出伪造的 **InspectResult**。
+输入不满足接口契约、Registry 访问失败、制品读取失败或其他阻止核心工作流完成的技术异常使 CLI 以非零状态结束。CLI 不得为这些失败输出伪造的 **InspectResult**。
 
 ## 验证要求
 

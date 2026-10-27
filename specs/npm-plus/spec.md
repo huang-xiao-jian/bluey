@@ -12,4 +12,4 @@
 
 ## 相关文档
 
-- [技术异常](technical-exceptions.md)记录业务用例之外的异常条件，不涉及接入层设计。
+- [npm-plus 接入层设计](interfaces/spec.md)定义 CLI 和 MCP 使用方如何访问本规范规定的能力。

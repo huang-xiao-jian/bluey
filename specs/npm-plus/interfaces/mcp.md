@@ -4,7 +4,7 @@
 
 - [npm-plus 接入层设计](spec.md)
 - [InspectDelegation](../glossary/inspect-delegation.md)
-- [InspectResult](../glossary/inspect-result.md)
+- [InspectResult](inspect-result.md)
 
 ## 启动
 

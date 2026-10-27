@@ -4,7 +4,7 @@
 
 - [NPM 生态质量支持](../spec.md)
 - [InspectDelegation](../glossary/inspect-delegation.md)
-- [InspectResult](../glossary/inspect-result.md)
+- [InspectResult](inspect-result.md)
 - [获取 npm package 质量支撑数据](../use-case/get-npm-package-quality-support-data.md)
 
 ## 目的
@@ -20,20 +20,23 @@ flowchart LR
     CA --> W[Inspect Workflow]
     MA --> W
     R[Registry and Artifact Infrastructure] --> W
-    W --> O[InspectResult]
-    O --> CA
-    O --> MA
+    W --> Q[InspectTargetQuality or Target Resolution Failure]
+    Q --> M[InspectResult Mapper]
+    M --> CA
+    M --> MA
 ```
 
-`composition root` 负责装配核心工作流与 Registry、package 制品读取等 infrastructure port，并向两个适配器提供可直接调用的 workflow。接入层只承担协议输入校验、**InspectDelegation** 映射、工作流调用、结果序列化与协议错误封装。
+`composition root` 负责装配核心工作流与 Registry、package 制品读取等 infrastructure port，并向两个适配器提供可直接调用的 workflow。核心工作流以 **InspectTargetQuality** 作为成功时的核心质量结构，并在目标确定失败时提供对应的业务事实。
+
+接入层承担协议输入校验、**InspectDelegation** 映射、工作流调用、**InspectResult** 构造、结果序列化与协议错误封装。**InspectResult** 及其 mapper 均属于接入层，不进入核心业务模型。
 
 ## 结果与错误边界
 
 接入层区分以下三类结果：
 
 1. 输入不满足接口契约时，请求不进入核心工作流，由当前适配器通过协议错误通道报告。
-2. Package、精确版本或 tag 不存在或无法解析时，核心工作流返回对应的 **InspectResult**，适配器将其作为成功请求的业务结果呈现。
-3. Registry 访问失败、制品读取失败或其他阻止 **InspectResult** 构造的技术异常继续传播，由当前适配器映射到协议错误通道，不得伪装为目标不存在。
+2. 核心工作流成功提供 **InspectTargetQuality**，或者确认 package、精确版本或 tag 不存在或无法解析时，接入层 mapper 构造对应的 **InspectResult**，适配器将其作为成功请求呈现。
+3. Registry 访问失败、制品读取失败或其他阻止核心工作流完成的技术异常继续传播，由当前适配器映射到协议错误通道，不得伪装为目标不存在或构造 **InspectResult**。
 
 具体技术错误消息不属于稳定的跨接口契约。
 
