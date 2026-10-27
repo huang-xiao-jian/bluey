@@ -13,14 +13,42 @@
 ## 2. 关键属性
 
 - **检查目标：** 本质量数据聚合所描述的**InspectTarget**。
-- **依赖规模质量：** 可选的**InspectTargetDependencyScaleRawQuality**。
+- **依赖规模评估：** 依赖规模维度的成功原始质量数据或评估异常。
 
 ### 数据模型
 
 ```ts
+enum InspectTargetQualityEvaluationStatus {
+  Succeeded = "succeeded",
+  Failed = "failed",
+}
+
+interface InspectTargetQualityException {
+  name: string;
+  message: string;
+}
+
+interface SucceededInspectTargetQualityEvaluation<
+  T extends InspectTargetRawQuality,
+> {
+  status: InspectTargetQualityEvaluationStatus.Succeeded;
+  quality: T;
+}
+
+interface FailedInspectTargetQualityEvaluation {
+  status: InspectTargetQualityEvaluationStatus.Failed;
+  exception: InspectTargetQualityException;
+}
+
+type InspectTargetQualityEvaluation<T extends InspectTargetRawQuality> =
+  | SucceededInspectTargetQualityEvaluation<T>
+  | FailedInspectTargetQualityEvaluation;
+
 interface InspectTargetQuality {
   target: InspectTarget;
-  dependencyScale?: InspectTargetDependencyScaleRawQuality;
+  dependencyScale: InspectTargetQualityEvaluation<
+    InspectTargetDependencyScaleRawQuality
+  >;
 }
 ```
 
@@ -34,13 +62,34 @@ interface InspectTargetQuality {
     "tag": "latest"
   },
   "dependencyScale": {
-    "dimension": "dependency-scale",
-    "directDependencyDeclarations": [],
-    "directDependencyCounts": {
-      "runtimeCount": 0,
-      "optionalCount": 0,
-      "peerCount": 0,
-      "bundledCount": 0
+    "status": "succeeded",
+    "quality": {
+      "dimension": "dependency-scale",
+      "directDependencyDeclarations": [],
+      "directDependencyCounts": {
+        "runtimeCount": 0,
+        "optionalCount": 0,
+        "peerCount": 0,
+        "bundledCount": 0
+      }
+    }
+  }
+}
+```
+
+**依赖规模评估失败：**
+
+```json
+{
+  "target": {
+    "packageName": "example-package",
+    "exactVersion": "1.2.3"
+  },
+  "dependencyScale": {
+    "status": "failed",
+    "exception": {
+      "name": "PackageManifestReadError",
+      "message": "Unable to read package.json from the published package."
     }
   }
 }
@@ -49,14 +98,16 @@ interface InspectTargetQuality {
 ## 3. 规则与约束
 
 1. **归属约束：** 每个本概念实例必须且只能描述一个**InspectTarget**。
-2. **聚合归属约束：** 聚合中的所有**InspectTargetRawQuality**均由本概念统一归属于其记录的检查目标，各维度原始质量事实不重复记录检查目标。
-3. **统计约束：** 每个规定质量维度至多包含一个对应的**InspectTargetRawQuality**。
-4. **可选性约束：** 每个质量维度都可以缺失；本概念不要求所有维度均有可获得的数据。
-5. **客观性约束：** 本概念只聚合原始质量事实，不计算跨维度评分、评级或综合质量结论。
-6. **评价责任约束：** 本概念不判断检查目标是否适合采用，评价责任属于开发者。
-7. **呈现边界约束：** 本概念不规定质量支撑数据的报告格式、呈现方式或传递方式。
+2. **评估完备约束：** 每个正式定义的质量维度必须且只能包含一个评估结果，不得通过字段缺失表达评估失败。
+3. **评估排他约束：** 成功评估只包含对应的**InspectTargetRawQuality**；失败评估只包含异常，两者不得同时出现。
+4. **聚合归属约束：** 成功评估中的所有**InspectTargetRawQuality**均由本概念统一归属于其记录的检查目标，各维度原始质量事实不重复记录检查目标。
+5. **异常内建约束：** 确定 **InspectTarget** 后，评估某个质量维度时抛出的异常必须转换为该维度的失败评估，不得使其他维度的评估结果丢失。
+6. **异常序列化约束：** 失败评估只公开稳定的异常名称与消息，不包含 stack、cause 或其他不可序列化值。
+7. **客观性约束：** 本概念只聚合原始质量事实和评估异常，不计算跨维度评分、评级或综合质量结论。
+8. **评价责任约束：** 本概念不判断检查目标是否适合采用，评价责任属于开发者。
+9. **呈现边界约束：** 本概念不规定质量支撑数据的报告格式、呈现方式或传递方式。
 
 ## 4. 关系
 
 - **关联：** 每个本概念实例归属于一个**InspectTarget**。
-- **聚合：** 本概念聚合 `[0,1]` 个**InspectTargetDependencyScaleRawQuality**。
+- **聚合：** 本概念聚合一个依赖规模质量评估；成功评估聚合一个**InspectTargetDependencyScaleRawQuality**，失败评估聚合一个 `InspectTargetQualityException`。

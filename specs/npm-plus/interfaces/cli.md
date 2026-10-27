@@ -30,15 +30,15 @@ npm-plus inspect <package-name> [version-identifier] [--json]
 - 通过 tag 确定版本时使用的 tag
 - 当前可获得的质量维度及其原始事实
 
-目标确定失败结果显示对应的 package、精确版本或 tag 不存在或无法解析事实。报告不得包含评分、评级、采用建议或其他评价性结论。
+质量维度评估失败时，人类可读报告在对应维度显示异常名称与消息，并继续显示其他维度的成功数据。报告不得包含评分、评级、采用建议或其他评价性结论。
 
 指定 `--json` 时，stdout 只包含序列化后的完整 **InspectResult**。诊断信息写入 stderr，JSON 输出不得混入人类可读摘要或日志。
 
 ## 退出状态
 
-全部 **InspectResult** 变体均表示接入层成功构造结构化结果，CLI 以退出状态 `0` 完成。
+接入层成功构造 **InspectResult** 时，CLI 以退出状态 `0` 完成，即使其中包含失败的质量维度评估。
 
-输入不满足接口契约、Registry 访问失败、制品读取失败或其他阻止核心工作流完成的技术异常使 CLI 以非零状态结束。CLI 不得为这些失败输出伪造的 **InspectResult**。
+输入不满足接口契约，或者将 **InspectDelegation** 转换为 **InspectTarget** 时抛出错误，使 CLI 以非零状态结束。CLI 不得为这些错误输出 **InspectResult**。
 
 ## 验证要求
 
@@ -46,7 +46,7 @@ npm-plus inspect <package-name> [version-identifier] [--json]
 - 验证 package 名称加精确版本或 tag 分别原样映射为 **InspectDelegation**。
 - 验证限定作用域 package 名称作为一个独立位置参数映射，且不会被解释为组合式输入。
 - 验证缺失或空 package 名称、空版本标识、多余位置参数、组合式输入和版本范围表达式会在调用工作流前失败。
-- 验证默认人类可读输出覆盖成功及四种目标确定失败结果。
+- 验证默认人类可读输出覆盖全部质量维度评估成功和部分维度评估失败的结果。
 - 验证 `--json` 输出完整 **InspectResult**，且不包含摘要、日志或其他非 JSON 内容。
-- 验证五种业务结果均以退出状态 `0` 完成。
-- 验证输入错误和技术异常以非零状态结束并写入 stderr。
+- 验证质量维度评估失败仍以退出状态 `0` 完成。
+- 验证输入错误和目标确定错误以非零状态结束并写入 stderr，且不输出 **InspectResult**。

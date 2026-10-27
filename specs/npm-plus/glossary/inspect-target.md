@@ -58,8 +58,8 @@ interface InspectTarget {
 
 系统根据一项**InspectDelegation**确定本概念实例：
 
-1. 使用 package 名称从 npm Registry 获取包含 `versions` 和 `dist-tags` 的精简 metadata；仅将 `404` 解释为 `PackageNotFound`，超时、限流或服务故障等访问异常不表示 package 不存在。
+1. 使用 package 名称从 npm Registry 获取包含 `versions` 和 `dist-tags` 的精简 metadata；`404` 抛出 `PackageNotFound`，超时、限流或服务故障等访问异常按其原始语义抛出，不得解释为 package 不存在。
 2. 解释版本标识：未提供时使用 `latest` tag；能够解析为精确 SemVer 时先规范化，再作为精确版本；其他标识作为 tag。版本范围表达式不属于此流程的输入。
-3. 精确版本必须存在于 `versions` 中，否则产生 `ExactVersionNotFound`。
-4. Tag 必须存在于 `dist-tags` 中，否则产生 `TagNotFound`；其映射的精确版本还必须存在于 `versions` 中，否则产生 `TagUnresolvable`。
+3. 精确版本必须存在于 `versions` 中，否则抛出 `ExactVersionNotFound`。
+4. Tag 必须存在于 `dist-tags` 中，否则抛出 `TagNotFound`；其映射的精确版本还必须存在于 `versions` 中，否则抛出 `TagUnresolvable`。
 5. 使用 package 名称和最终确定的精确版本实例化本概念；通过 tag 确定版本时同时记录该 tag。
