@@ -15,6 +15,37 @@
 - **检查目标：** 本质量数据聚合所描述的**InspectTarget**。
 - **依赖规模质量：** 可选的**InspectTargetDependencyScaleRawQuality**。
 
+### 数据模型
+
+```ts
+interface InspectTargetQuality {
+  target: InspectTarget;
+  dependencyScale?: InspectTargetDependencyScaleRawQuality;
+}
+```
+
+### 数据模型案例
+
+```json
+{
+  "target": {
+    "packageName": "example-package",
+    "exactVersion": "1.2.3",
+    "tag": "latest"
+  },
+  "dependencyScale": {
+    "dimension": "dependency-scale",
+    "directDependencyDeclarations": [],
+    "directDependencyCounts": {
+      "runtimeCount": 0,
+      "optionalCount": 0,
+      "peerCount": 0,
+      "bundledCount": 0
+    }
+  }
+}
+```
+
 ## 3. 规则与约束
 
 1. **归属约束：** 每个本概念实例必须且只能描述一个**InspectTarget**。

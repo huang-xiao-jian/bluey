@@ -1,0 +1,55 @@
+# npm-plus 接入层设计
+
+## 参考资料
+
+- [NPM 生态质量支持](../spec.md)
+- [InspectDelegation](../glossary/inspect-delegation.md)
+- [InspectResult](../glossary/inspect-result.md)
+- [获取 npm package 质量支撑数据](../use-case/get-npm-package-quality-support-data.md)
+
+## 目的
+
+接入层通过 `CLI` 和 `MCP` 适配器，对外提供获取 npm package 质量支撑数据的能力。两个适配器共享同一核心工作流，不包含目标确定、质量数据采集或质量评价逻辑。
+
+## 架构设计
+
+```mermaid
+flowchart LR
+    C[CLI Consumer] --> CA[CLI Adapter]
+    A[AI Client] --> MA[MCP Adapter]
+    CA --> W[Inspect Workflow]
+    MA --> W
+    R[Registry and Artifact Infrastructure] --> W
+    W --> O[InspectResult]
+    O --> CA
+    O --> MA
+```
+
+`composition root` 负责装配核心工作流与 Registry、package 制品读取等 infrastructure port，并向两个适配器提供可直接调用的 workflow。接入层只承担协议输入校验、**InspectDelegation** 映射、工作流调用、结果序列化与协议错误封装。
+
+## 结果与错误边界
+
+接入层区分以下三类结果：
+
+1. 输入不满足接口契约时，请求不进入核心工作流，由当前适配器通过协议错误通道报告。
+2. Package、精确版本或 tag 不存在或无法解析时，核心工作流返回对应的 **InspectResult**，适配器将其作为成功请求的业务结果呈现。
+3. Registry 访问失败、制品读取失败或其他阻止 **InspectResult** 构造的技术异常继续传播，由当前适配器映射到协议错误通道，不得伪装为目标不存在。
+
+具体技术错误消息不属于稳定的跨接口契约。
+
+## 适配器
+
+- [CLI 接入层](cli.md)定义终端使用方如何调用该能力。
+- [MCP 接入层](mcp.md)定义 AI 客户端如何调用该能力。
+
+## 跨接口一致性
+
+通过 CLI 与 MCP 提交的等价 **InspectDelegation** 必须产生语义一致的 **InspectResult**。CLI `--json` 输出与 MCP `structuredContent` 使用相同的字段名称、枚举值、可选字段规则和嵌套结构；CLI 人类可读报告与 MCP 文本摘要不属于该一致性约束。
+
+## 验证要求
+
+- 验证两个适配器对默认版本、精确版本和 tag 委托的映射语义一致。
+- 验证两个适配器对全部 **InspectResult** 变体使用相同的结构化序列化形式。
+- 验证输入错误不会调用核心工作流。
+- 验证业务目标确定失败不会进入协议错误通道。
+- 验证等价技术异常分别进入 CLI 和 MCP 的错误通道，且不会产生 **InspectResult**。
