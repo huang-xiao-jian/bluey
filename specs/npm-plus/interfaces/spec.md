@@ -2,9 +2,8 @@
 
 ## 参考资料
 
-- [NPM 生态质量支持](../spec.md)
 - [InspectDelegation](../glossary/inspect-delegation.md)
-- [InspectResult](inspect-result.md)
+- [InspectResult](./glossary/inspect-result.md)
 - [获取 npm package 质量支撑数据](../use-case/get-npm-package-quality-support-data.md)
 
 ## 目的
@@ -14,31 +13,28 @@
 ## 架构设计
 
 ```mermaid
+---
+config:
+  layout: dagre
+---
 flowchart LR
-    C[CLI Consumer] --> CA[CLI Adapter]
-    A[AI Client] --> MA[MCP Adapter]
-    CA --> W[Inspect Workflow]
-    MA --> W
-    R[Registry and Artifact Infrastructure] --> W
-    W --> Q[InspectTargetQuality]
-    Q --> M[InspectResult Mapper]
-    M --> CA
-    M --> MA
+    Terminal["Terminal Consumer"] --> Cli["CLI Interface"]
+    Cli --> Workflow["Workflow"]
+    Workflow --> Report["Inspect Target Quality"]
+    Report --> Cli
 ```
 
-`composition root` 负责装配核心工作流与 Registry、package 制品读取等 infrastructure port，并向两个适配器提供可直接调用的 workflow。核心工作流将 **InspectDelegation** 转换为 **InspectTarget**；此过程中的任何错误直接抛出。目标确定成功后，工作流以 **InspectTargetQuality** 作为核心质量结构，将各质量维度的评估异常内建于对应维度结果。
-
-接入层承担协议输入校验、**InspectDelegation** 映射、工作流调用、**InspectResult** 构造、结果序列化与协议错误封装。**InspectResult** 及其 mapper 均属于接入层，不进入核心业务模型。
-
-## 结果与错误边界
-
-接入层区分以下三类执行情况：
-
-1. 输入不满足接口契约时，请求不进入核心工作流，由当前适配器通过协议错误通道报告。
-2. 将 **InspectDelegation** 转换为 **InspectTarget** 时抛出的 package、精确版本、tag 或 Registry 访问错误继续传播，由当前适配器映射到协议错误通道，不构造 **InspectResult**。
-3. 确定 **InspectTarget** 后，质量维度评估异常被内建于 **InspectTargetQuality**；接入层 mapper 仍构造 **InspectResult**，适配器将其作为成功请求呈现。
-
-具体技术错误消息不属于稳定的跨接口契约。
+```mermaid
+---
+config:
+  layout: dagre
+---
+flowchart LR
+    Agent[MCP Client] --> Mcp[MCP Interface]
+    Mcp --> Workflow
+    Workflow --> Report[Inspect Target Quality]
+    Report --> Mcp
+```
 
 ## 适配器
 

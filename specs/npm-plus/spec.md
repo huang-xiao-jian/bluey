@@ -2,7 +2,7 @@
 
 ## 用例
 
-- [获取 npm package 质量支撑数据](use-case/get-npm-package-quality-support-data.md)描述开发者如何获取指定 package 及版本的客观质量支撑数据，并自行评价是否采用该 package。
+- [获取 npm package 质量支撑数据](use-case/get-npm-package-quality-support-data.md)
 
 ## 概念
 

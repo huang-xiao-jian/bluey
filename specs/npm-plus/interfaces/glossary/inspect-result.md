@@ -2,9 +2,9 @@
 
 ## 参考资料
 
-- [InspectDelegation](../glossary/inspect-delegation.md)
-- [InspectTarget](../glossary/inspect-target.md)
-- [InspectTargetQuality](../glossary/inspect-target-quality.md)
+- [InspectDelegation](../../glossary/inspect-delegation.md)
+- [InspectTarget](../../glossary/inspect-target.md)
+- [InspectTargetQuality](../../glossary/inspect-target-quality.md)
 
 ## 定义
 
