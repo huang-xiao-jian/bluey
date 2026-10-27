@@ -119,10 +119,6 @@ interface InspectTargetSupplyChainTrustRawQuality
 
 ```json
 {
-  "inspectTarget": {
-    "packageName": "example-package",
-    "exactVersion": "1.2.3"
-  },
   "dimension": "supply-chain-trust",
   "publishers": [
     {

@@ -76,10 +76,6 @@ interface InspectTargetPopularityRawQuality extends InspectTargetRawQuality {
 
 ```json
 {
-  "inspectTarget": {
-    "packageName": "example-package",
-    "exactVersion": "1.2.3"
-  },
   "dimension": "popularity",
   "metrics": [
     {

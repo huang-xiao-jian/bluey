@@ -77,10 +77,6 @@ interface InspectTargetMaintenanceRawQuality extends InspectTargetRawQuality {
 
 ```json
 {
-  "inspectTarget": {
-    "packageName": "example-package",
-    "exactVersion": "1.2.3"
-  },
   "dimension": "maintenance",
   "lifecycleDeclarations": [
     {

@@ -76,10 +76,6 @@ interface InspectTargetSecurityRawQuality extends InspectTargetRawQuality {
 
 ```json
 {
-  "inspectTarget": {
-    "packageName": "example-package",
-    "exactVersion": "1.2.3"
-  },
   "dimension": "security",
   "vulnerabilities": [
     {
