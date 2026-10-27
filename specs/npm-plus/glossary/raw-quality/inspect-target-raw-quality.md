@@ -2,7 +2,7 @@
 
 ## 前置依赖（可选）
 
-- [InspectTarget](./inspect-target.md)
+- [InspectTarget](../inspect-target.md)
 
 ## 1. 定义
 
@@ -14,6 +14,39 @@
 - **质量维度：** 原始质量事实所属的规定质量类别。
 - **原始事实：** 系统在该质量维度上能够获得的客观信息。
 
+### 数据模型
+
+```ts
+enum InspectTargetRawQualityDimension {
+  Security = "security",
+  Maintenance = "maintenance",
+  Popularity = "popularity",
+  Documentation = "documentation",
+  License = "license",
+  DependencyRisk = "dependency-risk",
+  SupplyChainTrust = "supply-chain-trust",
+}
+
+interface InspectTargetRawQuality {
+  inspectTarget: InspectTarget;
+  dimension: InspectTargetRawQualityDimension;
+}
+```
+
+### 数据模型案例
+
+**具体维度原始质量事实的公共属性：**
+
+```json
+{
+  "inspectTarget": {
+    "packageName": "example-package",
+    "exactVersion": "1.2.3"
+  },
+  "dimension": "security"
+}
+```
+
 ## 3. 规则与约束
 
 1. **归属约束：** 每个本概念实例必须且只能归属于一个**InspectTarget**。
@@ -22,6 +55,7 @@
 4. **客观性约束：** 原始事实不得包含评分、评级、价值判断、综合结论或采用建议。
 5. **可获得性约束：** 只记录系统能够获得的事实，不要求每个检查目标在每个质量维度上都有数据。
 6. **评价责任约束：** 本概念不代替开发者解释质量事实或判断 package 是否适合采用。
+7. **接口特化约束：** 具体维度接口必须扩展本概念接口，将 `dimension` 收窄为对应枚举成员，并补充该维度负责提供的原始事实集合。
 
 ## 4. 关系
 

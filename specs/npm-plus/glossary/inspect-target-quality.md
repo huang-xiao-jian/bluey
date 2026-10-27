@@ -3,14 +3,14 @@
 ## 前置依赖（可选）
 
 - [InspectTarget](./inspect-target.md)
-- [InspectTargetRawQuality](./inspect-target-raw-quality.md)
-- [InspectTargetSecurityRawQuality](./inspect-target-security-raw-quality.md)
-- [InspectTargetMaintenanceRawQuality](./inspect-target-maintenance-raw-quality.md)
-- [InspectTargetPopularityRawQuality](./inspect-target-popularity-raw-quality.md)
-- [InspectTargetDocumentationRawQuality](./inspect-target-documentation-raw-quality.md)
-- [InspectTargetLicenseRawQuality](./inspect-target-license-raw-quality.md)
-- [InspectTargetDependencyRiskRawQuality](./inspect-target-dependency-risk-raw-quality.md)
-- [InspectTargetSupplyChainTrustRawQuality](./inspect-target-supply-chain-trust-raw-quality.md)
+- [InspectTargetRawQuality](./raw-quality/inspect-target-raw-quality.md)
+- [InspectTargetSecurityRawQuality](./raw-quality/inspect-target-security-raw-quality.md)
+- [InspectTargetMaintenanceRawQuality](./raw-quality/inspect-target-maintenance-raw-quality.md)
+- [InspectTargetPopularityRawQuality](./raw-quality/inspect-target-popularity-raw-quality.md)
+- [InspectTargetDocumentationRawQuality](./raw-quality/inspect-target-documentation-raw-quality.md)
+- [InspectTargetLicenseRawQuality](./raw-quality/inspect-target-license-raw-quality.md)
+- [InspectTargetDependencyRiskRawQuality](./raw-quality/inspect-target-dependency-risk-raw-quality.md)
+- [InspectTargetSupplyChainTrustRawQuality](./raw-quality/inspect-target-supply-chain-trust-raw-quality.md)
 
 ## 1. 定义
 
