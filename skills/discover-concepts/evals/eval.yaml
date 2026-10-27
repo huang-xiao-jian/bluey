@@ -1,0 +1,27 @@
+# skill-up 使用的评测配置版本。
+schema_version: v1alpha1
+
+environment:
+  # 纯文本 Skill 无需独立沙箱。
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+
+engine:
+  # 使用 Codex 执行面向 Codex 的 Skill。
+  name: codex
+
+cases:
+  # 本评测套件包含的用例文件。
+  files:
+    - evals/cases/identify-library-concepts.yaml
+    - evals/cases/reject-ambiguous-requirement.yaml
+  defaults:
+    timeout_seconds: 120
+    max_turns: 1
+
+report:
+  # 每次运行后生成的报告格式。
+  formats: [json]

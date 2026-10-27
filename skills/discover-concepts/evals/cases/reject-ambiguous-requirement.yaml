@@ -1,0 +1,32 @@
+# 报告中使用的稳定用例标识，与文件名一致。
+id: reject-ambiguous-requirement
+# 用例列表和报告中显示的摘要。
+title: 拒绝从含糊需求中推断业务概念
+description: |
+  验证输入不是清晰的用例规约时，Skill 会要求补充材料，而不是自行补造流程、
+  概念或关系。
+
+input:
+  # 发送给 Agent 的真实单轮用户请求。
+  prompt: |
+    请使用简体中文回答。使用 $discover-concepts 从下面的需求中识别业务概念：
+
+    我们准备做一个更好用的会员系统，支持注册、权益和积分等常见功能。
+    具体参与者、业务流程、异常场景和业务规则以后再定。
+
+# 在 judge 前执行的低成本输出门禁。
+expect:
+  must_contain:
+    - "用例规约"
+  must_not_contain:
+    - "## 概念清单"
+    - "## 概念关系"
+
+judge:
+  # 使用确定性规则验证拒绝执行并要求提供更清晰的输入。
+  type: rule_based
+  success:
+    - output_contains:
+        all: ["用例规约"]
+        any: ["更清晰", "补充", "提供"]
+        not: ["## 概念清单", "## 概念关系"]
