@@ -1,0 +1,33 @@
+# 用例稳定标识
+id: reject-ambiguous-requirement
+# 用例标题
+title: 拒绝从含糊需求中补造业务工人
+description: |
+  验证输入缺少业务流程、责任结果和实现依据时，Skill 会要求补充用例规约，
+  而不是自行设计现实岗位、业务职责或自动化策略。
+
+input:
+  # 用例输入提示
+  prompt: |
+    请使用简体中文回答。使用 $discover-workers 从下面的需求中识别业务工人：
+
+    我们计划支持会员注册、续费、积分和权益。
+    具体业务流程、参与者、自动化规则和异常处理以后再定。
+
+# 输出断言
+expect:
+  must_contain:
+    - "用例规约"
+  must_not_contain:
+    - "## 业务工人清单"
+    - "会员管理员"
+    - "积分管理员"
+
+judge:
+  # 断言评判类型
+  type: rule_based
+  success:
+    - output_contains:
+        all: ["用例规约"]
+        any: ["更清晰", "补充", "提供"]
+        not: ["## 业务工人清单", "会员管理员", "积分管理员"]
