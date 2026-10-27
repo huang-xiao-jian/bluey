@@ -50,9 +50,16 @@ interface InspectTarget {
 
 1. **组合标识约束：** Package 名称和精确版本共同唯一确定一个检查目标。
 2. **非空标识约束：** Package 名称和精确版本不能为空。
-3. **有效性约束：** 本概念所指向的 package 及其精确版本必须存在。
-4. **条件存在约束：** 通过 tag 确定精确版本时，Tag 必须存在；直接通过精确版本确定目标时，Tag 不存在。
-5. **默认版本约束：** **InspectDelegation**未提供版本标识时，Tag 为 `latest`。
-6. **映射约束：** Tag 存在时，它必须能够映射到本概念记录的精确版本。
-7. **来源约束：** 每个本概念实例必须关联一项作为其来源的**InspectDelegation**。
-8. **质量归属约束：** 每份**InspectTargetQuality**必须归属于一个本概念实例。
+3. **来源约束：** 每个本概念实例必须关联一项作为其来源的**InspectDelegation**。
+4. **Tag 记录约束：** 通过 tag 确定精确版本时记录该 tag；直接指定精确版本时不记录 tag。
+5. **质量归属约束：** 每份**InspectTargetQuality**必须归属于一个本概念实例。
+
+## 目标确定
+
+系统根据一项**InspectDelegation**确定本概念实例：
+
+1. 使用 package 名称从 npm Registry 获取包含 `versions` 和 `dist-tags` 的精简 metadata；仅将 `404` 解释为 `PackageNotFound`，超时、限流或服务故障等访问异常不表示 package 不存在。
+2. 解释版本标识：未提供时使用 `latest` tag；能够解析为精确 SemVer 时先规范化，再作为精确版本；其他标识作为 tag。版本范围表达式不属于此流程的输入。
+3. 精确版本必须存在于 `versions` 中，否则产生 `ExactVersionNotFound`。
+4. Tag 必须存在于 `dist-tags` 中，否则产生 `TagNotFound`；其映射的精确版本还必须存在于 `versions` 中，否则产生 `TagUnresolvable`。
+5. 使用 package 名称和最终确定的精确版本实例化本概念；通过 tag 确定版本时同时记录该 tag。

@@ -4,7 +4,6 @@
 
 - [InspectDelegation](./inspect-delegation.md)
 - [InspectTarget](./inspect-target.md)
-- [InspectTargetBuilder](../roles/InspectTargetBuilder.md)
 - [InspectTargetQuality](./inspect-target-quality.md)
 
 ## 1. 定义
@@ -33,5 +32,5 @@
 ## 4. 关系
 
 - **关联：** 每份本概念实例回应 `[1]` 项**InspectDelegation**。
-- **依赖：** 报告结果依赖**InspectTargetBuilder**的目标确定结果。
+- **依赖：** 报告结果依赖目标确定流程的结果。
 - **聚合：** 本概念聚合 `[0,1]` 个**InspectTarget**及 `[0,1]` 个对应的**InspectTargetQuality**；目标确定成功时两者的基数均为 `[1]`，目标确定失败时均为 `[0]`。

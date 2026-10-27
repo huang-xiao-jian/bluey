@@ -11,10 +11,6 @@
 - [InspectTargetQuality](glossary/inspect-target-quality.md)聚合检查目标在各规定维度上的原始质量数据。
 - [InspectTargetQualityReport](glossary/inspect-target-quality-report.md)描述系统最终交付给开发者的质量报告。
 
-## 角色
-
-- [InspectTargetBuilder](roles/InspectTargetBuilder.md)定义从检查委托确定具体检查目标时使用的异常与算法。
-
 ## 相关文档
 
 - [技术异常](technical-exceptions.md)记录业务用例之外的异常条件，不涉及接入层设计。
