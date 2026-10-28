@@ -34,13 +34,17 @@ docs/               项目规范和操作说明
 
 ### Skill
 
-- [analyze-business-rules](skills/analyze-business-rules/SKILL.md)：从用例规约中识别、推断并细化可追溯的业务规则。
 - [discover-concepts](skills/discover-concepts/SKILL.md)：从用例规约中识别业务概念及其关系。
+- [discover-workers](skills/discover-workers/SKILL.md)：从用例规约中识别承担稳定职责并对业务结果负责的业务工人。
 - [draft-concept-specification](skills/draft-concept-specification/SKILL.md)：根据当前会话上下文撰写业务概念规约。
 - [draft-formal-adr](skills/draft-formal-adr/SKILL.md)：起草正式的架构决策记录，或将旧版 `ADR` 迁移为正式格式。
 - [draft-use-case-specification](skills/draft-use-case-specification/SKILL.md)：根据业务需求起草结构化的用例规约。
 - [evaluate-logical-model](skills/evaluate-logical-model/SKILL.md)：评估业务逻辑模型的质量。
-- [oo-design](skills/oo-design/SKILL.md)：基于结构化用例规约进行面向对象分析与设计
+
+### In Consideration
+
+- [analyze-business-rules](skills/analyze-business-rules/SKILL.md)：从用例规约中识别、推断并细化可追溯的业务规则。
+- [oo-design](skills/oo-design/SKILL.md)：基于结构化用例规约进行面向对象分析与设计。
 
 ### MCP server
 
