@@ -2,7 +2,7 @@
 
 ## 用例
 
-- [获取 npm package 质量支撑数据](use-case/get-npm-package-quality-support-data.md)
+- [检查 npm package 质量](use-case/inspect-npm-package-quality.md)
 
 ## 概念
 
