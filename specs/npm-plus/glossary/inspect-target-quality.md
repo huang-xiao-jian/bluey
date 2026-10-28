@@ -2,7 +2,7 @@
 
 ## 相关文档
 
-- [InspectTargetDependencyScaleQuality](./raw-quality/inspect-target-dependency-scale-raw-quality.md)
+- [InspectTargetDependencyScaleQuality](./raw-quality/inspect-target-dependency-scale-quality.md)
 
 ## 1. 定义
 

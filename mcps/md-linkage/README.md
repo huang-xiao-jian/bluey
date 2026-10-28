@@ -25,9 +25,9 @@ the complete link-check report to stdout.
 
 Exit statuses are:
 
-- `0` when the completed report has no findings;
-- `1` when the completed report contains scope issues or dead links; and
-- `2` when invalid input or another failure prevents report construction.
+- `0` when the report is constructed successfully, regardless of whether it
+  contains scope issues or dead links; and
+- non-zero when invalid input or another failure prevents report construction.
 
 ## MCP
 
