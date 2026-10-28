@@ -14,10 +14,54 @@ function jsonResponse(body: unknown, status = 200): Response {
 }
 
 describe("NodeNpmPackageRegistry", () => {
-  it("should encode a scoped package and map the Registry document", async () => {
+  it("should read one manifest through the encoded version endpoint", async () => {
     let requestedUrl = "";
+    const manifest = {
+      name: "@scope/example",
+      version: "1.2.3",
+      dependencies: { dependency: "^4.0.0" },
+    };
     const registry = new NodeNpmPackageRegistry(async (input) => {
       requestedUrl = String(input);
+      return jsonResponse(manifest);
+    }, "https://registry.example.test/");
+
+    const resolution = await registry.readManifest("@scope/example", "stable");
+
+    expect(requestedUrl).toBe(
+      "https://registry.example.test/%40scope%2Fexample/stable",
+    );
+    expect(resolution).toEqual({ exactVersion: "1.2.3", manifest });
+  });
+
+  it("should return undefined when a manifest endpoint responds with 404", async () => {
+    const registry = new NodeNpmPackageRegistry(
+      async () => jsonResponse({ error: "not_found" }, 404),
+      "https://registry.example.test",
+    );
+
+    await expect(
+      registry.readManifest("example", "missing"),
+    ).resolves.toBeUndefined();
+  });
+
+  it("should throw RegistryResponseError for a manifest without a version", async () => {
+    const registry = new NodeNpmPackageRegistry(
+      async () => jsonResponse({ name: "example" }),
+      "https://registry.example.test",
+    );
+
+    await expect(
+      registry.readManifest("example", "latest"),
+    ).rejects.toBeInstanceOf(RegistryResponseError);
+  });
+
+  it("should encode a scoped package and map the Registry document", async () => {
+    let requestedUrl = "";
+    let requestedAccept = "";
+    const registry = new NodeNpmPackageRegistry(async (input, init) => {
+      requestedUrl = String(input);
+      requestedAccept = new Headers(init?.headers).get("accept") ?? "";
       return jsonResponse({
         name: "@scope/example",
         "dist-tags": { latest: "1.0.0" },
@@ -32,6 +76,9 @@ describe("NodeNpmPackageRegistry", () => {
 
     expect(requestedUrl).toBe(
       "https://registry.example.test/%40scope%2Fexample",
+    );
+    expect(requestedAccept).toBe(
+      "application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8",
     );
     expect(document).toEqual({
       name: "@scope/example",

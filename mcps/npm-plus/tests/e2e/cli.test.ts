@@ -17,24 +17,27 @@ describe("npm-plus CLI", () => {
     server = createServer((request, response) => {
       requestCount += 1;
       response.setHeader("content-type", "application/json");
-      if (request.url === "/missing") {
+      if (request.url?.startsWith("/missing")) {
         response.statusCode = 404;
         response.end(JSON.stringify({ error: "not_found" }));
+        return;
+      }
+      const manifest = {
+        name: "example-package",
+        version: "1.0.0",
+        dependencies: { helper: "^2.0.0" },
+        optionalDependencies: { platform: "^3.0.0" },
+        bundledDependencies: ["platform"],
+      };
+      if (request.url !== "/example-package") {
+        response.end(JSON.stringify(manifest));
         return;
       }
       response.end(
         JSON.stringify({
           name: "example-package",
           "dist-tags": { latest: "1.0.0", stable: "1.0.0" },
-          versions: {
-            "1.0.0": {
-              name: "example-package",
-              version: "1.0.0",
-              dependencies: { helper: "^2.0.0" },
-              optionalDependencies: { platform: "^3.0.0" },
-              bundledDependencies: ["platform"],
-            },
-          },
+          versions: { "1.0.0": manifest },
         }),
       );
     });
@@ -59,6 +62,7 @@ describe("npm-plus CLI", () => {
   }
 
   it("should inspect the latest version and emit JSON only", async () => {
+    const requestsBefore = requestCount;
     const { stdout, stderr } = await run(
       "inspect",
       "example-package",
@@ -66,6 +70,7 @@ describe("npm-plus CLI", () => {
     );
 
     expect(stderr).toBe("");
+    expect(requestCount).toBe(requestsBefore + 1);
     expect(stdout).toContain('\n  "delegation": {\n');
     expect(stdout.endsWith("\n")).toBe(true);
     expect(JSON.parse(stdout)).toEqual({

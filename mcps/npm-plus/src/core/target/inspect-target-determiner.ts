@@ -31,10 +31,27 @@ export class InspectTargetDeterminer implements InspectTargetDetermination {
   public async determine(
     delegation: InspectDelegation,
   ): Promise<DeterminedInspectTarget> {
-    const document = await this.registry.readPackage(delegation.packageName);
     const identifier = this.interpreter.interpret(
       delegation.versionIdentifier,
     );
+    const versionIdentifier =
+      identifier.kind === "exact" ? identifier.exactVersion : identifier.tag;
+    const resolution = await this.registry.readManifest(
+      delegation.packageName,
+      versionIdentifier,
+    );
+    if (resolution) {
+      return {
+        target: new InspectTarget(
+          delegation.packageName,
+          resolution.exactVersion,
+          identifier.kind === "tag" ? identifier.tag : undefined,
+        ),
+        manifest: resolution.manifest,
+      };
+    }
+
+    const document = await this.registry.readPackage(delegation.packageName);
 
     if (identifier.kind === "exact") {
       if (!Object.hasOwn(document.versions, identifier.exactVersion)) {
