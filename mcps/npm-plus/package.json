@@ -1,0 +1,35 @@
+{
+  "name": "@bluey/npm-plus",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.mts",
+  "bin": {
+    "npm-plus": "dist/index.mjs"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run --exclude 'tests/e2e/**' && vitest run tests/e2e",
+    "test:e2e": "vitest run tests/e2e",
+    "test:unit": "vitest run --exclude 'tests/e2e/**'",
+    "typecheck": "tsc --noEmit --project tsconfig.json"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "commander": "^15.0.0",
+    "inversify": "^8.2.3",
+    "reflect-metadata": "^0.2.2",
+    "semver": "^7.7.3",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/semver": "^7.7.1"
+  }
+}

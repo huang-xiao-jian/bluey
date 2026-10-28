@@ -50,3 +50,4 @@ docs/               项目规范和操作说明
 
 - [@bluey/echo-mcp](mcps/echo-mcp/README.md)：提供只读的 `echo` 工具，用于验证本仓库的本地 MCP 开发环境。
 - [@bluey/md-linkage](mcps/md-linkage/README.md)：通过 `md-linkage` CLI 和只读的 `check_specification_links` MCP 工具检查本地 `markdown` 文件链接连通性。
+- [@bluey/npm-plus](mcps/npm-plus/README.md)：通过 `npm-plus` CLI 和只读的 `inspect_npm_package` MCP 工具提供精确版本的 npm package 依赖规模质量事实。
