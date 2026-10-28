@@ -57,15 +57,36 @@ describe("InspectHandler", () => {
 
     await handler.run("example-package", "latest", { json: true });
 
-    expect(output).toBe(
-      `${JSON.stringify({
-        delegation: {
-          packageName: "example-package",
-          versionIdentifier: "latest",
-        },
-        ...workflowResult,
-      })}\n`,
-    );
+    expect(output).toBe(`{
+  "delegation": {
+    "packageName": "example-package",
+    "versionIdentifier": "latest"
+  },
+  "target": {
+    "packageName": "example-package",
+    "exactVersion": "1.2.3",
+    "tag": "latest"
+  },
+  "quality": {
+    "dependencyScale": {
+      "directDependencyDeclarations": [
+        {
+          "packageName": "runtime-helper",
+          "kind": "runtime",
+          "declaredRange": "^4.0.0",
+          "bundled": false
+        }
+      ],
+      "directDependencyCounts": {
+        "runtimeCount": 1,
+        "optionalCount": 0,
+        "peerCount": 0,
+        "bundledCount": 0
+      }
+    },
+    "exceptions": []
+  }
+}\n`);
   });
 
   it("should omit an absent version identifier from the delegation", async () => {

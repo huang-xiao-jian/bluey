@@ -27,6 +27,6 @@ export class InspectReportFormatter {
   }
 
   public formatJson(result: InspectResult): string {
-    return `${JSON.stringify(result)}\n`;
+    return `${JSON.stringify(result, undefined, 2)}\n`;
   }
 }

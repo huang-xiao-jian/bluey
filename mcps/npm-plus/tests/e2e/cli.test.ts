@@ -66,6 +66,8 @@ describe("npm-plus CLI", () => {
     );
 
     expect(stderr).toBe("");
+    expect(stdout).toContain('\n  "delegation": {\n');
+    expect(stdout.endsWith("\n")).toBe(true);
     expect(JSON.parse(stdout)).toEqual({
       delegation: { packageName: "example-package" },
       target: {
