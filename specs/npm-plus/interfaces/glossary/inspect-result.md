@@ -31,8 +31,7 @@ interface InspectResult {
 ```json
 {
   "delegation": {
-    "packageName": "example-package",
-    "versionIdentifier": "latest"
+    "packageName": "example-package"
   },
   "target": {
     "packageName": "example-package",

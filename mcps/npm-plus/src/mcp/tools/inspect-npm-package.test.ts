@@ -29,7 +29,7 @@ function schedulerWithResult(): InspectNpmPackageQualityWorkflow {
 }
 
 describe("InspectNpmPackageInputSchema", () => {
-  it("should accept an omitted version identifier", () => {
+  it("should accept a package name", () => {
     expect(
       InspectNpmPackageInputSchema.parse({ packageName: "example-package" }),
     ).toEqual({ packageName: "example-package" });
@@ -37,9 +37,7 @@ describe("InspectNpmPackageInputSchema", () => {
 
   it.each([
     { packageName: "" },
-    { packageName: "example-package", versionIdentifier: "" },
-    { packageName: "example-package", versionIdentifier: "^1.0.0" },
-    { packageName: "example-package", versionIdentifier: "1.x" },
+    { packageName: "example-package", versionIdentifier: "latest" },
   ])("should reject unsupported input %#", (input) => {
     expect(() => InspectNpmPackageInputSchema.parse(input)).toThrow();
   });
@@ -62,13 +60,11 @@ describe("createInspectNpmPackageTool", () => {
 
     const result = await tool.callback({
       packageName: "example-package",
-      versionIdentifier: "latest",
     });
 
     expect(result.result).toEqual({
       delegation: {
         packageName: "example-package",
-        versionIdentifier: "latest",
       },
       target: {
         packageName: "example-package",

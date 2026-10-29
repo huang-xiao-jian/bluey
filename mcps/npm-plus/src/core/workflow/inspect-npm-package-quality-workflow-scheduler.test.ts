@@ -7,7 +7,7 @@ import type { InspectTargetQualityInspection } from "../quality/inspect-target-q
 import type { InspectTargetDetermination } from "../target/inspect-target-determiner";
 import { InspectNpmPackageQualityWorkflowScheduler } from "./inspect-npm-package-quality-workflow-scheduler";
 
-const delegation = new InspectDelegation("example-package", "latest");
+const delegation = new InspectDelegation("example-package");
 const target = new InspectTarget("example-package", "1.0.0", "latest");
 const manifest: NpmPackageManifest = {
   name: "example-package",

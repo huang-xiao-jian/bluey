@@ -1,34 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { InspectDelegation } from "../core/model/inspect-delegation";
 import {
-  type NpmPackageDocument,
   type NpmPackageManifestResolution,
   NpmPackageRegistry,
 } from "../core/ports/npm-package-registry";
 import { NpmPackageQualityComposition } from "./npm-package-quality-composition";
 
 class InMemoryRegistry extends NpmPackageRegistry {
-  public async readManifest(): Promise<NpmPackageManifestResolution> {
+  public async readLatestManifest(): Promise<NpmPackageManifestResolution> {
     return {
       exactVersion: "1.0.0",
       manifest: {
         name: "example-package",
         version: "1.0.0",
         dependencies: { helper: "^2.0.0" },
-      },
-    };
-  }
-
-  public async readPackage(): Promise<NpmPackageDocument> {
-    return {
-      name: "example-package",
-      distTags: { latest: "1.0.0" },
-      versions: {
-        "1.0.0": {
-          name: "example-package",
-          version: "1.0.0",
-          dependencies: { helper: "^2.0.0" },
-        },
       },
     };
   }
@@ -59,27 +44,13 @@ describe("NpmPackageQualityComposition", () => {
 
   it("should keep a malformed selected manifest as a quality exception", async () => {
     class MalformedManifestRegistry extends NpmPackageRegistry {
-      public async readManifest(): Promise<NpmPackageManifestResolution> {
+      public async readLatestManifest(): Promise<NpmPackageManifestResolution> {
         return {
           exactVersion: "1.0.0",
           manifest: {
             name: "example-package",
             version: "1.0.0",
             dependencies: { broken: 42 },
-          },
-        };
-      }
-
-      public async readPackage(): Promise<NpmPackageDocument> {
-        return {
-          name: "example-package",
-          distTags: { latest: "1.0.0" },
-          versions: {
-            "1.0.0": {
-              name: "example-package",
-              version: "1.0.0",
-              dependencies: { broken: 42 },
-            },
           },
         };
       }

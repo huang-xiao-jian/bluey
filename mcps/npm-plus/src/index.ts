@@ -14,21 +14,19 @@ const program = new Command()
 
 program
   .command("inspect")
-  .description("Inspect an npm package at an exact version or dist-tag.")
+  .description("Inspect the latest version of an npm package.")
   .argument("<package-name>", "npm package name")
-  .argument("[version-identifier]", "exact version or dist-tag")
   .option("--json", "Write only the serialized inspection result")
   .action(
     async (
       packageName: string,
-      versionIdentifier: string | undefined,
       options: InspectOptions,
     ) => {
       const scheduler = new NpmPackageQualityComposition().createWorkflowScheduler();
       const handler = new InspectHandler(scheduler, (text) =>
         process.stdout.write(text),
       );
-      await handler.run(packageName, versionIdentifier, options);
+      await handler.run(packageName, options);
     },
   );
 

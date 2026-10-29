@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { InspectDelegation } from "../../core/model/inspect-delegation";
 import { DirectDependencyKind } from "../../core/model/inspect-target-quality";
-import { isUnsupportedVersionRange } from "../../core/target/package-version-identifier-interpreter";
 import type { InspectNpmPackageQualityWorkflow } from "../../core/workflow/inspect-npm-package-quality-workflow-scheduler";
 
 const NonBlankStringSchema = z
@@ -11,18 +10,11 @@ const NonBlankStringSchema = z
 export const InspectNpmPackageInputSchema = z
   .object({
     packageName: NonBlankStringSchema.describe("The npm package name."),
-    versionIdentifier: NonBlankStringSchema.refine(
-      (value) => !isUnsupportedVersionRange(value),
-      "Version ranges are not supported",
-    )
-      .optional()
-      .describe("An exact version or npm dist-tag. Defaults to latest."),
   })
   .strict();
 
 const InspectDelegationSchema = z.object({
   packageName: z.string(),
-  versionIdentifier: z.string().optional(),
 });
 
 const InspectTargetSchema = z.object({
@@ -82,10 +74,7 @@ export function createInspectNpmPackageTool(
     outputSchema: InspectResultOutputSchema,
     async callback(input: InspectNpmPackageInput) {
       const parsed = InspectNpmPackageInputSchema.parse(input);
-      const delegation = new InspectDelegation(
-        parsed.packageName,
-        parsed.versionIdentifier,
-      );
+      const delegation = new InspectDelegation(parsed.packageName);
       const result = InspectResultOutputSchema.parse({
         delegation,
         ...(await scheduler.run(delegation)),

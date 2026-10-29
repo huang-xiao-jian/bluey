@@ -14,13 +14,13 @@
 ### InspectDelegation
 
 - **类名：**`InspectDelegation`
-- **职责：**表示开发者提交的 package 检查委托，保留 package 名称以及可选的精确版本号或 tag；未提供版本标识时表达使用 `latest` tag 的意图。
-- **协作者：**`Developer`、`InspectNpmPackageQualityWorkflowScheduler`、`InspectTargetDeterminer`、`PackageVersionIdentifierInterpreter`、`PackageExistenceChecker`、`ExactVersionExistenceChecker`、`PackageTagResolver`
+- **职责：**表示开发者提交的 package 检查委托，只保留需要检查最新发布版本的 package 名称。
+- **协作者：**`Developer`、`InspectNpmPackageQualityWorkflowScheduler`、`InspectTargetDeterminer`
 
 ### InspectTarget
 
 - **类名：**`InspectTarget`
-- **职责：**表示已经完成版本解释和存在性确认、由 package 名称与精确版本共同确定的实际检查目标；通过 tag 确定版本时保留该 tag。
+- **职责：**表示通过官方 npm Registry 的 `latest` tag 确定、由 package 名称与精确版本共同确定的实际检查目标，并保留 `latest` tag。
 - **协作者：**`InspectTargetDeterminer`、`InspectNpmPackageQualityWorkflowScheduler`、`InspectTargetQualityInspector`、`DependencyScaleQualityInspector`
 
 ### InspectTargetQuality
@@ -50,32 +50,8 @@
 ### InspectTargetDeterminer
 
 - **类名：**`InspectTargetDeterminer`
-- **职责：**协调检查目标确定子流程，解释版本标识，确认 package 与精确版本存在，并建立无版本不确定性的检查目标；任一目标确定规则失败时终止用例并抛出对应业务错误。
-- **协作者：**`InspectNpmPackageQualityWorkflowScheduler`、`InspectDelegation`、`PackageVersionIdentifierInterpreter`、`PackageExistenceChecker`、`ExactVersionExistenceChecker`、`PackageTagResolver`、`InspectTarget`
-
-### PackageVersionIdentifierInterpreter
-
-- **类名：**`PackageVersionIdentifierInterpreter`
-- **职责：**判断检查委托中的版本标识是精确版本号、tag 还是缺省值；缺省时将 `latest` 作为用于确定目标版本的 tag。
-- **协作者：**`InspectDelegation`、`InspectTargetDeterminer`、`ExactVersionExistenceChecker`、`PackageTagResolver`
-
-### PackageExistenceChecker
-
-- **类名：**`PackageExistenceChecker`
-- **职责：**确认检查委托指定的 package 是否存在；不存在时检测并报告 `PackageNotFound`。
-- **协作者：**`InspectDelegation`、`InspectTargetDeterminer`
-
-### ExactVersionExistenceChecker
-
-- **类名：**`ExactVersionExistenceChecker`
-- **职责：**确认直接指定或由 tag 得到的精确版本是否存在；直接指定的版本不存在时检测并报告 `ExactVersionNotFound`，tag 映射出的版本不存在时向 tag 解析职责提供不可解析事实。
-- **协作者：**`InspectDelegation`、`InspectTargetDeterminer`、`PackageVersionIdentifierInterpreter`、`PackageTagResolver`
-
-### PackageTagResolver
-
-- **类名：**`PackageTagResolver`
-- **职责：**将显式 tag 或缺省的 `latest` tag 确定为存在的精确版本，并保留用于确定版本的 tag；tag 不存在时报告 `TagNotFound`，映射出的精确版本不存在时报告 `TagUnresolvable`。
-- **协作者：**`InspectDelegation`、`InspectTargetDeterminer`、`PackageVersionIdentifierInterpreter`、`ExactVersionExistenceChecker`
+- **职责：**通过官方 npm Registry 读取 package 的 `latest` manifest，建立包含实际精确版本和 `latest` tag 的检查目标；package 不存在时终止用例并抛出 `PackageNotFound`。
+- **协作者：**`InspectNpmPackageQualityWorkflowScheduler`、`InspectDelegation`、`NpmPackageRegistry`、`InspectTarget`
 
 ### InspectTargetQualityInspector
 
@@ -153,7 +129,7 @@ classDiagram
 
 ### 确定检查目标
 
-当 package 不存在时，`PackageExistenceChecker` 检测 `PackageNotFound`。当直接指定的精确版本不存在时，`ExactVersionExistenceChecker` 检测 `ExactVersionNotFound`。当 tag 不存在或其映射版本不存在时，`PackageTagResolver` 分别检测 `TagNotFound` 或 `TagUnresolvable`。`InspectTargetDeterminer` 负责终止当前用例并将对应业务错误交给调用方，不生成任何检查结果。
+`InspectTargetDeterminer` 通过 `NpmPackageRegistry` 读取官方 npm Registry 的 `latest` manifest，并以响应中的精确版本建立检查目标。当 package 不存在时，Registry 报告 `PackageNotFound`，目标确定流程终止且不生成检查结果。
 
 ```mermaid
 classDiagram
@@ -164,27 +140,14 @@ classDiagram
     class InspectDelegation
     <<Input>> InspectDelegation
     class InspectTargetDeterminer
-    class PackageVersionIdentifierInterpreter
-    class PackageExistenceChecker
-    class ExactVersionExistenceChecker
-    class PackageTagResolver
+    class NpmPackageRegistry
     class InspectTarget
     <<Output>> InspectTarget
 
     InspectNpmPackageQualityWorkflowScheduler ..> InspectTargetDeterminer
     InspectTargetDeterminer ..> InspectDelegation
-    InspectTargetDeterminer ..> PackageVersionIdentifierInterpreter
-    InspectTargetDeterminer ..> PackageExistenceChecker
-    InspectTargetDeterminer ..> ExactVersionExistenceChecker
-    InspectTargetDeterminer ..> PackageTagResolver
+    InspectTargetDeterminer ..> NpmPackageRegistry
     InspectTargetDeterminer ..> InspectTarget
-    PackageVersionIdentifierInterpreter ..> InspectDelegation
-    PackageVersionIdentifierInterpreter ..> ExactVersionExistenceChecker
-    PackageVersionIdentifierInterpreter ..> PackageTagResolver
-    PackageExistenceChecker ..> InspectDelegation
-    ExactVersionExistenceChecker ..> InspectDelegation
-    PackageTagResolver ..> InspectDelegation
-    PackageTagResolver ..> ExactVersionExistenceChecker
 ```
 
 ### 汇集检查目标质量

@@ -56,7 +56,6 @@ describe("setupMcpServer", () => {
       name: "inspect_npm_package",
       arguments: {
         packageName: "example-package",
-        versionIdentifier: "latest",
       },
     });
 
@@ -74,7 +73,6 @@ describe("setupMcpServer", () => {
     expect(result.structuredContent).toEqual({
       delegation: {
         packageName: "example-package",
-        versionIdentifier: "latest",
       },
       target: {
         packageName: "example-package",
@@ -119,7 +117,7 @@ describe("setupMcpServer", () => {
       name: "inspect_npm_package",
       arguments: {
         packageName: "example-package",
-        versionIdentifier: "^1.0.0",
+        versionIdentifier: "latest",
       },
     });
 

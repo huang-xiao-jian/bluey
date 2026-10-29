@@ -3,7 +3,6 @@ import { DependencyScaleQualityInspector } from "../core/quality/dependency-scal
 import { InspectTargetQualityInspector } from "../core/quality/inspect-target-quality-inspector";
 import { QualityDimensionFailureRecorder } from "../core/quality/quality-dimension-failure-recorder";
 import { InspectTargetDeterminer } from "../core/target/inspect-target-determiner";
-import { PackageVersionIdentifierInterpreter } from "../core/target/package-version-identifier-interpreter";
 import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
 import { NodeNpmPackageRegistry } from "../infrastructure/registry/node-npm-package-registry";
 
@@ -13,10 +12,7 @@ export class NpmPackageQualityComposition {
   ) {}
 
   public createWorkflowScheduler(): InspectNpmPackageQualityWorkflowScheduler {
-    const targetDeterminer = new InspectTargetDeterminer(
-      this.registry,
-      new PackageVersionIdentifierInterpreter(),
-    );
+    const targetDeterminer = new InspectTargetDeterminer(this.registry);
     const qualityInspector = new InspectTargetQualityInspector(
       new DependencyScaleQualityInspector(),
       new QualityDimensionFailureRecorder(),

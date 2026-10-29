@@ -7,7 +7,6 @@ import type {
 import {
   InspectHandler,
   InspectInputError,
-  UnsupportedVersionRangeError,
 } from "./inspect-handler";
 
 const workflowResult = {
@@ -55,12 +54,11 @@ describe("InspectHandler", () => {
       (text) => (output += text),
     );
 
-    await handler.run("example-package", "latest", { json: true });
+    await handler.run("example-package", { json: true });
 
     expect(output).toBe(`{
   "delegation": {
-    "packageName": "example-package",
-    "versionIdentifier": "latest"
+    "packageName": "example-package"
   },
   "target": {
     "packageName": "example-package",
@@ -89,20 +87,6 @@ describe("InspectHandler", () => {
 }\n`);
   });
 
-  it("should omit an absent version identifier from the delegation", async () => {
-    let output = "";
-    const handler = new InspectHandler(
-      schedulerReturning(),
-      (text) => (output += text),
-    );
-
-    await handler.run("example-package", undefined, { json: true });
-
-    expect(JSON.parse(output).delegation).toEqual({
-      packageName: "example-package",
-    });
-  });
-
   it("should write a concise objective human report", async () => {
     let output = "";
     const handler = new InspectHandler(
@@ -110,7 +94,7 @@ describe("InspectHandler", () => {
       (text) => (output += text),
     );
 
-    await handler.run("example-package", "latest", {});
+    await handler.run("example-package", {});
 
     expect(output).toContain("example-package@1.2.3 (tag: latest)");
     expect(output).toContain("Runtime dependencies: 1");
@@ -134,34 +118,16 @@ describe("InspectHandler", () => {
       (text) => (output += text),
     );
 
-    await handler.run("example-package", "latest", {});
+    await handler.run("example-package", {});
 
     expect(output).toContain(
       "PackageManifestReadError: manifest unavailable",
     );
   });
 
-  it("should reject a version range before invoking the workflow", async () => {
-    const scheduler = {
-      async run() {
-        throw new Error("workflow must not run");
-      },
-    } satisfies InspectNpmPackageQualityWorkflow;
-    const handler = new InspectHandler(scheduler, () => undefined);
-
-    await expect(
-      handler.run("example-package", "^1.0.0", {}),
-    ).rejects.toBeInstanceOf(UnsupportedVersionRangeError);
-  });
-
-  it.each([
-    ["", undefined],
-    ["example-package", ""],
-  ])("should reject empty input", async (packageName, versionIdentifier) => {
+  it("should reject an empty package name", async () => {
     const handler = new InspectHandler(schedulerReturning(), () => undefined);
 
-    await expect(
-      handler.run(packageName, versionIdentifier, {}),
-    ).rejects.toBeInstanceOf(InspectInputError);
+    await expect(handler.run("", {})).rejects.toBeInstanceOf(InspectInputError);
   });
 });
