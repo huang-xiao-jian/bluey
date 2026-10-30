@@ -1,4 +1,4 @@
-# TerminalInspectReport
+# TerminalInspectSummary
 
 ## 相关文档
 

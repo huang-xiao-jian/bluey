@@ -5,7 +5,7 @@
 - [npm-plus 接入层设计](spec.md)
 - [InspectDelegation](../glossary/inspect-delegation.md)
 - [InspectResult](./glossary/inspect-result.md)
-- [TerminalInspectReport](./glossary/terminal-inspect-summary.md)
+- [TerminalInspectSummary](./glossary/terminal-inspect-summary.md)
 
 ## 命令
 
@@ -22,9 +22,9 @@ npm-plus inspect <package-name> [version-identifier] [--json]
 
 ## 输出
 
-默认输出将根据原始 **InspectResult** 生成 **TerminalInspectReport**，并将其完整内容写入 `stdout`。
+默认输出将根据原始 **InspectResult** 生成 **TerminalInspectSummary**，并将其完整内容写入 `stdout`。
 
-指定 `--json` 时，`stdout` 只包含序列化后的完整原始 **InspectResult**，不生成 **TerminalInspectReport**。
+指定 `--json` 时，`stdout` 只包含序列化后的完整原始 **InspectResult**，不生成 **TerminalInspectSummary**。
 
 ## 退出状态
 

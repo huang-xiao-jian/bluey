@@ -3,7 +3,7 @@ import { InspectDelegation } from "../core/model/inspect-delegation";
 import { isUnsupportedVersionRange } from "../core/target/package-version-identifier-interpreter";
 import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
 import type { InspectResult } from "./inspect-result";
-import { InspectReportFormatter } from "./report/inspect-report-formatter";
+import { InspectResultFormatterPicker } from "./report/inspect-result-formatter-picker";
 
 export interface InspectOptions {
   readonly json?: boolean;
@@ -36,7 +36,7 @@ export class NodeInspectHandlerDependencies extends InspectHandlerDependencies {
 export class InspectHandler {
   public constructor(
     private readonly scheduler: InspectNpmPackageQualityWorkflowScheduler,
-    private readonly formatter: InspectReportFormatter,
+    private readonly formatterPicker: InspectResultFormatterPicker,
     private readonly dependencies: InspectHandlerDependencies,
   ) {}
 
@@ -59,10 +59,7 @@ export class InspectHandler {
     const delegation = new InspectDelegation(packageName, versionIdentifier);
     const workflowResult = await this.scheduler.run(delegation);
     const result: InspectResult = { delegation, ...workflowResult };
-    this.dependencies.stdout(
-      options.json
-        ? this.formatter.formatJson(result)
-        : this.formatter.formatHuman(result),
-    );
+    const formatter = this.formatterPicker.pick(options.json === true);
+    this.dependencies.stdout(formatter.format(result));
   }
 }

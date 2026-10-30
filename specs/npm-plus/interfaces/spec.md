@@ -21,8 +21,8 @@ flowchart LR
     Terminal["Terminal Consumer"] --> Cli["CLI Interface"]
     Cli --> Workflow["Workflow"]
     Workflow --> Raw["InspectResult"]
-    Raw --> Report["TerminalInspectReport"]
-    Report --> Cli
+    Raw --> Summary["TerminalInspectSummary"]
+    Summary --> Cli
 ```
 
 ```mermaid

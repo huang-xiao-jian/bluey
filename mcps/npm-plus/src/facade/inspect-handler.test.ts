@@ -16,7 +16,9 @@ import {
   InspectInputError,
   UnsupportedVersionRangeError,
 } from "./inspect-handler";
-import { InspectReportFormatter } from "./report/inspect-report-formatter";
+import { InspectResultFormatterPicker } from "./report/inspect-result-formatter-picker";
+import { JSONInspectResultFormatter } from "./report/json-inspect-result-formatter";
+import { TerminalInspectResultFormatter } from "./report/terminal-inspect-result-formatter";
 
 class CapturingDependencies extends InspectHandlerDependencies {
   public output = "";
@@ -63,12 +65,19 @@ function createScheduler(
   );
 }
 
+function createFormatterPicker(): InspectResultFormatterPicker {
+  return new InspectResultFormatterPicker(
+    new TerminalInspectResultFormatter(),
+    new JSONInspectResultFormatter(),
+  );
+}
+
 describe("InspectHandler", () => {
   it("should preserve an explicit version identifier in the result", async () => {
     const dependencies = new CapturingDependencies();
     const handler = new InspectHandler(
       createScheduler(),
-      new InspectReportFormatter(),
+      createFormatterPicker(),
       dependencies,
     );
 
@@ -82,7 +91,7 @@ describe("InspectHandler", () => {
     const dependencies = new CapturingDependencies();
     const handler = new InspectHandler(
       createScheduler(),
-      new InspectReportFormatter(),
+      createFormatterPicker(),
       dependencies,
     );
 
@@ -119,41 +128,55 @@ describe("InspectHandler", () => {
 }\n`);
   });
 
-  it("should write a concise objective human report", async () => {
+  it("should write the complete terminal inspect summary", async () => {
     const dependencies = new CapturingDependencies();
     const handler = new InspectHandler(
       createScheduler(),
-      new InspectReportFormatter(),
+      createFormatterPicker(),
       dependencies,
     );
 
     await handler.run("example-package", undefined, {});
 
-    expect(dependencies.output).toContain("example-package@1.2.3 (tag: latest)");
-    expect(dependencies.output).toContain("Runtime dependencies: 1");
-    expect(dependencies.output).toContain("Quality exceptions: 0");
+    expect(dependencies.output).toBe(`检查目标  example-package@1.2.3
+版本来源  latest tag
+
+依赖规模
+  运行时依赖  1
+  可选依赖    0
+  对等依赖    0
+  捆绑依赖    0
+
+数据获取异常  0
+`);
   });
 
   it("should render quality exceptions as a successful report", async () => {
     const dependencies = new CapturingDependencies();
     const handler = new InspectHandler(
       createScheduler(new FailingDependencyScaleInspector()),
-      new InspectReportFormatter(),
+      createFormatterPicker(),
       dependencies,
     );
 
     await handler.run("example-package", undefined, {});
 
-    expect(dependencies.output).toContain(
-      "PackageManifestReadError: manifest unavailable",
-    );
+    expect(dependencies.output).toBe(`检查目标  example-package@1.2.3
+版本来源  latest tag
+
+依赖规模  数据不可用
+
+异常详情
+  PackageManifestReadError
+  manifest unavailable
+`);
   });
 
   it("should reject an empty package name", async () => {
     const dependencies = new CapturingDependencies();
     const handler = new InspectHandler(
       createScheduler(),
-      new InspectReportFormatter(),
+      createFormatterPicker(),
       dependencies,
     );
 
@@ -166,7 +189,7 @@ describe("InspectHandler", () => {
     const dependencies = new CapturingDependencies();
     const handler = new InspectHandler(
       createScheduler(),
-      new InspectReportFormatter(),
+      createFormatterPicker(),
       dependencies,
     );
 

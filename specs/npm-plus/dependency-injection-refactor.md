@@ -38,8 +38,8 @@ flowchart TB
     CliEntry[CLI Entry] --> CliRoot[CLI Composition Root]
     McpEntry[MCP Entry] --> McpRoot[MCP Composition Root]
 
-    CliRoot --> CliAdapter[CLI Handler and Formatter]
-    McpRoot --> McpAdapter[MCP Handler, Server and Transport]
+    CliRoot --> CliAdapter[CLI Handler, Formatters and Picker]
+    McpRoot --> McpAdapter[MCP Handler, Summarizer, Server and Transport]
 
     CliRoot --> CoreModule[Core Binding Module]
     McpRoot --> CoreModule
@@ -81,8 +81,14 @@ composition root 分别将该 module 加载到自己的 Container，因此两套
 module，并绑定 CLI 专属对象：
 
 - `InspectHandler`。
-- `InspectReportFormatter`。
+- `TerminalInspectResultFormatter`。
+- `JSONInspectResultFormatter`。
+- `InspectResultFormatterPicker`。
 - `InspectHandlerDependencies` 的 Node.js runtime 实现。
+
+`TerminalInspectResultFormatter` 与 `JSONInspectResultFormatter` 实现抽象契约
+`InspectResultFormatter`；`InspectResultFormatterPicker` 根据 CLI option 选择实现，并以
+`InspectResultFormatter` 作为返回类型。
 
 `InspectHandlerDependencies` 是 CLI runtime 边界，负责写入 `stdout`。生产 binding 使用
 `process.stdout`，测试可替换为 capturing implementation。CLI composition factory 返回已经
@@ -94,11 +100,13 @@ module，并绑定 CLI 专属对象：
 module，并绑定 MCP 专属对象：
 
 - `McpHandler`。
+- `InspectResultSummarizer`。
 - MCP server factory。
 - stdio transport factory。
 
-MCP server factory 负责将核心 workflow 适配为 MCP server；transport factory 负责建立
-`StdioServerTransport`。两者都是协议或 runtime 边界，`McpHandler` 只协调 server 与
+`InspectResultSummarizer` 负责将原始 **InspectResult** 映射为 MCP 文本摘要。MCP server
+factory 负责将核心 workflow 与 summarizer 适配为 MCP server；transport factory 负责建立
+`StdioServerTransport`。这些对象都是协议或 runtime 边界，`McpHandler` 只协调 server 与
 transport，不直接构造 SDK 对象。测试可以替换这些 binding，且不会启动真实 stdio。
 
 ### 入口

@@ -3,6 +3,8 @@ import { InspectDelegation } from "../../core/model/inspect-delegation";
 import { DirectDependencyKind } from "../../core/model/inspect-target-quality";
 import { isUnsupportedVersionRange } from "../../core/target/package-version-identifier-interpreter";
 import type { InspectNpmPackageQualityWorkflow } from "../../core/workflow/inspect-npm-package-quality-workflow-scheduler";
+import type { InspectResult } from "../../facade/inspect-result";
+import { InspectResultSummarizer } from "../report/inspect-result-summarizer";
 
 const NonBlankStringSchema = z
   .string()
@@ -66,6 +68,7 @@ export type InspectNpmPackageInput = z.infer<
 
 export function createInspectNpmPackageTool(
   scheduler: InspectNpmPackageQualityWorkflow,
+  summarizer: InspectResultSummarizer,
 ) {
   return {
     name: "inspect_npm_package",
@@ -86,17 +89,14 @@ export function createInspectNpmPackageTool(
         parsed.packageName,
         parsed.versionIdentifier,
       );
-      const result = InspectResultOutputSchema.parse({
+      const inspectResult: InspectResult = {
         delegation,
         ...(await scheduler.run(delegation)),
-      });
+      };
+      const result = InspectResultOutputSchema.parse(inspectResult);
       return {
         result,
-        summary: [
-          `Target: ${result.target.packageName}@${result.target.exactVersion}`,
-          `dependency scale: ${result.quality.dependencyScale ? "available" : "unavailable"}`,
-          `quality exceptions: ${result.quality.exceptions.length}`,
-        ].join("; "),
+        summary: summarizer.summarize(inspectResult),
       };
     },
   };

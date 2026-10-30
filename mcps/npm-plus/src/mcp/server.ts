@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { injectable } from "inversify";
 import type { InspectNpmPackageQualityWorkflow } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
+import { InspectResultSummarizer } from "./report/inspect-result-summarizer";
 import { createInspectNpmPackageTool } from "./tools/inspect-npm-package";
 
 export abstract class NpmPlusMcpServerFactory {
@@ -9,16 +10,21 @@ export abstract class NpmPlusMcpServerFactory {
 
 @injectable()
 export class DefaultNpmPlusMcpServerFactory extends NpmPlusMcpServerFactory {
+  public constructor(private readonly summarizer: InspectResultSummarizer) {
+    super();
+  }
+
   public create(workflow: InspectNpmPackageQualityWorkflow): McpServer {
-    return setupMcpServer(workflow);
+    return setupMcpServer(workflow, this.summarizer);
   }
 }
 
 export function setupMcpServer(
   scheduler: InspectNpmPackageQualityWorkflow,
+  summarizer: InspectResultSummarizer,
 ): McpServer {
   const server = new McpServer({ name: "bluey-npm-plus", version: "0.1.0" });
-  const tool = createInspectNpmPackageTool(scheduler);
+  const tool = createInspectNpmPackageTool(scheduler, summarizer);
 
   server.registerTool(
     tool.name,

@@ -8,6 +8,7 @@ import {
   InspectTargetQualityException,
 } from "../core/model/inspect-target-quality";
 import type { InspectNpmPackageQualityWorkflow } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
+import { InspectResultSummarizer } from "./report/inspect-result-summarizer";
 import { DefaultNpmPlusMcpServerFactory, setupMcpServer } from "./server";
 
 function successfulScheduler(): InspectNpmPackageQualityWorkflow {
@@ -27,11 +28,17 @@ function successfulScheduler(): InspectNpmPackageQualityWorkflow {
 }
 
 describe.each([
-  { name: "setupMcpServer", create: setupMcpServer },
+  {
+    name: "setupMcpServer",
+    create: (workflow: InspectNpmPackageQualityWorkflow) =>
+      setupMcpServer(workflow, new InspectResultSummarizer()),
+  },
   {
     name: "DefaultNpmPlusMcpServerFactory",
     create: (workflow: InspectNpmPackageQualityWorkflow) =>
-      new DefaultNpmPlusMcpServerFactory().create(workflow),
+      new DefaultNpmPlusMcpServerFactory(
+        new InspectResultSummarizer(),
+      ).create(workflow),
   },
 ])("$name", ({ create }) => {
   let client: Client | undefined;
@@ -76,6 +83,19 @@ describe.each([
       },
     });
     expect(result.isError).not.toBe(true);
+    expect(result.content).toEqual([
+      {
+        type: "text",
+        text: `检查目标  example-package@1.2.3
+版本来源  latest tag
+
+依赖规模  数据不可用
+
+异常详情
+  PackageManifestReadError
+  manifest unavailable`,
+      },
+    ]);
     expect(result.structuredContent).toEqual({
       delegation: {
         packageName: "example-package",

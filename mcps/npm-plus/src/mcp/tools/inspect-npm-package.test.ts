@@ -6,6 +6,7 @@ import {
   InspectTargetQualityException,
 } from "../../core/model/inspect-target-quality";
 import type { InspectNpmPackageQualityWorkflow } from "../../core/workflow/inspect-npm-package-quality-workflow-scheduler";
+import { InspectResultSummarizer } from "../report/inspect-result-summarizer";
 import {
   createInspectNpmPackageTool,
   InspectNpmPackageInputSchema,
@@ -52,18 +53,24 @@ describe("InspectNpmPackageInputSchema", () => {
 
 describe("createInspectNpmPackageTool", () => {
   it("should define the required read-only annotations", () => {
-    expect(createInspectNpmPackageTool(schedulerWithResult()).annotations).toEqual(
-      {
+    expect(
+      createInspectNpmPackageTool(
+        schedulerWithResult(),
+        new InspectResultSummarizer(),
+      ).annotations,
+    ).toEqual({
         readOnlyHint: true,
         idempotentHint: true,
         openWorldHint: true,
         destructiveHint: false,
-      },
-    );
+      });
   });
 
   it("should preserve the delegation in a successful result", async () => {
-    const tool = createInspectNpmPackageTool(schedulerWithResult());
+    const tool = createInspectNpmPackageTool(
+      schedulerWithResult(),
+      new InspectResultSummarizer(),
+    );
 
     const result = await tool.callback({
       packageName: "example-package",
@@ -90,8 +97,14 @@ describe("createInspectNpmPackageTool", () => {
         ],
       },
     });
-    expect(result.summary).toContain("example-package@1.2.3");
-    expect(result.summary).toContain("quality exceptions: 1");
+    expect(result.summary).toBe(`检查目标  example-package@1.2.3
+版本来源  latest tag
+
+依赖规模  数据不可用
+
+异常详情
+  PackageManifestReadError
+  manifest unavailable`);
   });
 
   it("should propagate target determination errors", async () => {
@@ -102,7 +115,10 @@ describe("createInspectNpmPackageTool", () => {
     } satisfies InspectNpmPackageQualityWorkflow;
 
     await expect(
-      createInspectNpmPackageTool(scheduler).callback({ packageName: "missing" }),
+      createInspectNpmPackageTool(
+        scheduler,
+        new InspectResultSummarizer(),
+      ).callback({ packageName: "missing" }),
     ).rejects.toBeInstanceOf(PackageNotFound);
   });
 });
