@@ -3,7 +3,7 @@ import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory";
 import { afterEach, describe, expect, it } from "vitest";
 import { PackageNotFound } from "../core/errors/target-determination-errors";
 import type { InspectNpmPackageQualityWorkflow } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
-import { setupMcpServer } from "./server";
+import { DefaultNpmPlusMcpServerFactory, setupMcpServer } from "./server";
 
 function successfulScheduler(): InspectNpmPackageQualityWorkflow {
   return {
@@ -15,6 +15,7 @@ function successfulScheduler(): InspectNpmPackageQualityWorkflow {
           tag: "latest",
         },
         quality: {
+          dependencyScale: undefined,
           exceptions: [
             {
               name: "PackageManifestReadError",
@@ -27,7 +28,14 @@ function successfulScheduler(): InspectNpmPackageQualityWorkflow {
   };
 }
 
-describe("setupMcpServer", () => {
+describe.each([
+  { name: "setupMcpServer", create: setupMcpServer },
+  {
+    name: "DefaultNpmPlusMcpServerFactory",
+    create: (workflow: InspectNpmPackageQualityWorkflow) =>
+      new DefaultNpmPlusMcpServerFactory().create(workflow),
+  },
+])("$name", ({ create }) => {
   let client: Client | undefined;
 
   afterEach(async () => {
@@ -37,7 +45,7 @@ describe("setupMcpServer", () => {
   async function connect(
     scheduler: InspectNpmPackageQualityWorkflow,
   ): Promise<Client> {
-    const server = setupMcpServer(scheduler);
+    const server = create(scheduler);
     client = new Client({ name: "test-client", version: "1.0.0" });
     const [clientTransport, serverTransport] =
       InMemoryTransport.createLinkedPair();

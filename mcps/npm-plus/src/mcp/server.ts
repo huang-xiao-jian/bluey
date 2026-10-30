@@ -1,6 +1,18 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { injectable } from "inversify";
 import type { InspectNpmPackageQualityWorkflow } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
 import { createInspectNpmPackageTool } from "./tools/inspect-npm-package";
+
+export abstract class NpmPlusMcpServerFactory {
+  public abstract create(workflow: InspectNpmPackageQualityWorkflow): McpServer;
+}
+
+@injectable()
+export class DefaultNpmPlusMcpServerFactory extends NpmPlusMcpServerFactory {
+  public create(workflow: InspectNpmPackageQualityWorkflow): McpServer {
+    return setupMcpServer(workflow);
+  }
+}
 
 export function setupMcpServer(
   scheduler: InspectNpmPackageQualityWorkflow,
