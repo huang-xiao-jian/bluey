@@ -11,15 +11,17 @@ const program = new Command()
 
 program
   .command("inspect")
-  .description("Inspect the latest version of an npm package.")
+  .description("Inspect an npm package at an exact version or dist-tag.")
   .argument("<package-name>", "npm package name")
+  .argument("[version-identifier]", "exact version or dist-tag")
   .option("--json", "Write only the serialized inspection result")
   .action(
     async (
       packageName: string,
+      versionIdentifier: string | undefined,
       options: InspectOptions,
     ) => {
-      await createInspectHandler().run(packageName, options);
+      await createInspectHandler().run(packageName, versionIdentifier, options);
     },
   );
 

@@ -7,6 +7,7 @@ import { InspectTargetQualityFabricator } from "../core/quality/inspect-target-q
 import { InspectTargetQualityInspector } from "../core/quality/inspect-target-quality-inspector";
 import { QualityDimensionFailureRecorder } from "../core/quality/quality-dimension-failure-recorder";
 import { InspectTargetDeterminer } from "../core/target/inspect-target-determiner";
+import { PackageVersionIdentifierInterpreter } from "../core/target/package-version-identifier-interpreter";
 import {
   type InspectNpmPackageQualityWorkflow,
   InspectNpmPackageQualityWorkflowScheduler,
@@ -16,7 +17,11 @@ import { McpTransportFactory } from "../mcp/transport";
 import { McpHandler } from "./mcp-handler";
 
 class UnusedRegistry extends NpmPackageRegistry {
-  public async readLatestManifest(): Promise<never> {
+  public async readManifest(): Promise<never> {
+    throw new Error("The workflow must not run during connection");
+  }
+
+  public async readPackage(): Promise<never> {
     throw new Error("The workflow must not run during connection");
   }
 }
@@ -52,7 +57,10 @@ class FakeTransportFactory extends McpTransportFactory {
 
 function createScheduler(): InspectNpmPackageQualityWorkflowScheduler {
   return new InspectNpmPackageQualityWorkflowScheduler(
-    new InspectTargetDeterminer(new UnusedRegistry()),
+    new InspectTargetDeterminer(
+      new UnusedRegistry(),
+      new PackageVersionIdentifierInterpreter(),
+    ),
     new InspectTargetQualityInspector(
       new DependencyScaleQualityInspector(),
       new QualityDimensionFailureRecorder(),

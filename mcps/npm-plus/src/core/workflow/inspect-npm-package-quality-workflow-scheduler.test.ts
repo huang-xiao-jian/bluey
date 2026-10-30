@@ -14,6 +14,7 @@ import { InspectTargetQualityFabricator } from "../quality/inspect-target-qualit
 import { InspectTargetQualityInspector } from "../quality/inspect-target-quality-inspector";
 import { QualityDimensionFailureRecorder } from "../quality/quality-dimension-failure-recorder";
 import { InspectTargetDeterminer } from "../target/inspect-target-determiner";
+import { PackageVersionIdentifierInterpreter } from "../target/package-version-identifier-interpreter";
 import { InspectNpmPackageQualityWorkflowScheduler } from "./inspect-npm-package-quality-workflow-scheduler";
 
 const delegation = new InspectDelegation("example-package");
@@ -25,12 +26,16 @@ class StubRegistry extends NpmPackageRegistry {
     super();
   }
 
-  public override async readLatestManifest(
+  public override async readManifest(
     packageName: string,
   ): Promise<NpmPackageManifestResolution> {
     if (packageName !== "example-package") throw new Error("unexpected package");
     if (this.resolution instanceof Error) throw this.resolution;
     return this.resolution;
+  }
+
+  public override async readPackage(): Promise<never> {
+    throw new Error("Unexpected package metadata fallback");
   }
 }
 
@@ -46,6 +51,7 @@ describe("InspectNpmPackageQualityWorkflowScheduler", () => {
             dependencies: { helper: "^2.0.0" },
           },
         }),
+        new PackageVersionIdentifierInterpreter(),
       ),
       new InspectTargetQualityInspector(
         new DependencyScaleQualityInspector(),
@@ -96,7 +102,10 @@ describe("InspectNpmPackageQualityWorkflowScheduler", () => {
       }
     }
     const scheduler = new InspectNpmPackageQualityWorkflowScheduler(
-      new InspectTargetDeterminer(new StubRegistry(targetError)),
+      new InspectTargetDeterminer(
+        new StubRegistry(targetError),
+        new PackageVersionIdentifierInterpreter(),
+      ),
       new UnexpectedQualityInspector(
         new DependencyScaleQualityInspector(),
         new QualityDimensionFailureRecorder(),

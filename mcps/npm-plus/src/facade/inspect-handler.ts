@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 import { InspectDelegation } from "../core/model/inspect-delegation";
+import { isUnsupportedVersionRange } from "../core/target/package-version-identifier-interpreter";
 import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
 import type { InspectResult } from "./inspect-result";
 import { InspectReportFormatter } from "./report/inspect-report-formatter";
@@ -10,6 +11,14 @@ export interface InspectOptions {
 
 export class InspectInputError extends Error {
   public override name: string = "InspectInputError";
+}
+
+export class UnsupportedVersionRangeError extends InspectInputError {
+  public override name = "UnsupportedVersionRangeError";
+
+  public constructor(versionIdentifier: string) {
+    super(`Version ranges are not supported: ${versionIdentifier}`);
+  }
 }
 
 export abstract class InspectHandlerDependencies {
@@ -33,11 +42,21 @@ export class InspectHandler {
 
   public async run(
     packageName: string,
+    versionIdentifier: string | undefined,
     options: InspectOptions,
   ): Promise<void> {
     if (!packageName.trim()) throw new InspectInputError("Package name is required");
+    if (versionIdentifier !== undefined && !versionIdentifier.trim()) {
+      throw new InspectInputError("Version identifier must not be empty");
+    }
+    if (
+      versionIdentifier !== undefined &&
+      isUnsupportedVersionRange(versionIdentifier)
+    ) {
+      throw new UnsupportedVersionRangeError(versionIdentifier);
+    }
 
-    const delegation = new InspectDelegation(packageName);
+    const delegation = new InspectDelegation(packageName, versionIdentifier);
     const workflowResult = await this.scheduler.run(delegation);
     const result: InspectResult = { delegation, ...workflowResult };
     this.dependencies.stdout(

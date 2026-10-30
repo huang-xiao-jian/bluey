@@ -9,11 +9,15 @@ import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/insp
 import { npmPackageQualityModule } from "./npm-package-quality-module";
 
 class InMemoryRegistry extends NpmPackageRegistry {
-  public async readLatestManifest(): Promise<NpmPackageManifestResolution> {
+  public async readManifest(): Promise<NpmPackageManifestResolution> {
     return {
       exactVersion: "1.0.0",
       manifest: { version: "1.0.0", dependencies: { helper: "^2.0.0" } },
     };
+  }
+
+  public async readPackage(): Promise<never> {
+    throw new Error("Unexpected package metadata fallback");
   }
 }
 

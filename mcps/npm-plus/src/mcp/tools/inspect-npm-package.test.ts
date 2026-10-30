@@ -15,7 +15,7 @@ function schedulerWithResult(): InspectNpmPackageQualityWorkflow {
   return {
     async run() {
       return {
-        target: new InspectTarget("example-package", "1.2.3"),
+        target: new InspectTarget("example-package", "1.2.3", "latest"),
         quality: new InspectTargetQuality(undefined, [
           new InspectTargetQualityException(
             "PackageManifestReadError",
@@ -28,15 +28,23 @@ function schedulerWithResult(): InspectNpmPackageQualityWorkflow {
 }
 
 describe("InspectNpmPackageInputSchema", () => {
-  it("should accept a package name", () => {
+  it("should accept a package name and optional version identifier", () => {
     expect(
-      InspectNpmPackageInputSchema.parse({ packageName: "example-package" }),
-    ).toEqual({ packageName: "example-package" });
+      InspectNpmPackageInputSchema.parse({
+        packageName: "example-package",
+        versionIdentifier: "stable",
+      }),
+    ).toEqual({
+      packageName: "example-package",
+      versionIdentifier: "stable",
+    });
   });
 
   it.each([
     { packageName: "" },
-    { packageName: "example-package", versionIdentifier: "latest" },
+    { packageName: "example-package", versionIdentifier: "" },
+    { packageName: "example-package", versionIdentifier: "^1.0.0" },
+    { packageName: "example-package", versionIdentifier: "1.x" },
   ])("should reject unsupported input %#", (input) => {
     expect(() => InspectNpmPackageInputSchema.parse(input)).toThrow();
   });
@@ -59,11 +67,13 @@ describe("createInspectNpmPackageTool", () => {
 
     const result = await tool.callback({
       packageName: "example-package",
+      versionIdentifier: "stable",
     });
 
     expect(result.result).toEqual({
       delegation: {
         packageName: "example-package",
+        versionIdentifier: "stable",
       },
       target: {
         packageName: "example-package",
@@ -71,6 +81,7 @@ describe("createInspectNpmPackageTool", () => {
         tag: "latest",
       },
       quality: {
+        dependencyScale: undefined,
         exceptions: [
           {
             name: "PackageManifestReadError",

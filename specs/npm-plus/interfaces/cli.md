@@ -9,14 +9,15 @@
 ## 命令
 
 ```text
-npm-plus inspect <package-name> [--json]
+npm-plus inspect <package-name> [version-identifier] [--json]
 ```
 
 ## 输入规则
 
 1. `package-name` 是必填的非空 `npm package` 名称，包括未限定作用域名称和 `@scope/name` 形式的限定作用域名称。
-2. `CLI` 将 `package-name` 映射为 **InspectDelegation**，核心工作流始终检查官方 npm Registry 中 `latest` tag 对应的版本。
-3. CLI 不接受版本标识，也不接受 `package@version` 或 `@scope/package@version` 组合式输入。
+2. `version-identifier` 是可选的非空精确版本号或 `tag`，不支持版本范围表达式，例如：`^2.1.0`
+3. `package` 名称与版本标识必须作为两个独立位置参数传递，不支持 `package@version` 或 `@scope/package@version` 组合式输入。
+4. `CLI` 保持两个位置参数的文本值，并将其直接映射为 **InspectDelegation**。
 
 ## 输出
 

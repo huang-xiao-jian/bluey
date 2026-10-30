@@ -14,7 +14,7 @@ function successfulScheduler(): InspectNpmPackageQualityWorkflow {
   return {
     async run() {
       return {
-        target: new InspectTarget("example-package", "1.2.3"),
+        target: new InspectTarget("example-package", "1.2.3", "latest"),
         quality: new InspectTargetQuality(undefined, [
           new InspectTargetQualityException(
             "PackageManifestReadError",
@@ -79,6 +79,7 @@ describe.each([
     expect(result.structuredContent).toEqual({
       delegation: {
         packageName: "example-package",
+        versionIdentifier: undefined,
       },
       target: {
         packageName: "example-package",
@@ -86,6 +87,7 @@ describe.each([
         tag: "latest",
       },
       quality: {
+        dependencyScale: undefined,
         exceptions: [
           {
             name: "PackageManifestReadError",
@@ -123,7 +125,7 @@ describe.each([
       name: "inspect_npm_package",
       arguments: {
         packageName: "example-package",
-        versionIdentifier: "latest",
+        versionIdentifier: "^1.0.0",
       },
     });
 

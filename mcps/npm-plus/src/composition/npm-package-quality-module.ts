@@ -5,11 +5,13 @@ import { InspectTargetQualityFabricator } from "../core/quality/inspect-target-q
 import { InspectTargetQualityInspector } from "../core/quality/inspect-target-quality-inspector";
 import { QualityDimensionFailureRecorder } from "../core/quality/quality-dimension-failure-recorder";
 import { InspectTargetDeterminer } from "../core/target/inspect-target-determiner";
+import { PackageVersionIdentifierInterpreter } from "../core/target/package-version-identifier-interpreter";
 import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
 import { NodeNpmPackageRegistry } from "../infrastructure/registry/node-npm-package-registry";
 
 export const npmPackageQualityModule = new ContainerModule(({ bind }) => {
   bind(NpmPackageRegistry).to(NodeNpmPackageRegistry).inSingletonScope();
+  bind(PackageVersionIdentifierInterpreter).toSelf().inSingletonScope();
   bind(InspectTargetDeterminer).toSelf().inSingletonScope();
   bind(DependencyScaleQualityInspector).toSelf().inSingletonScope();
   bind(QualityDimensionFailureRecorder).toSelf().inSingletonScope();

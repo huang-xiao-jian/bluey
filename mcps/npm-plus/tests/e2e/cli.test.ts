@@ -29,6 +29,29 @@ describe("npm-plus CLI", () => {
         optionalDependencies: { platform: "^3.0.0" },
         bundledDependencies: ["platform"],
       };
+      if (
+        request.url === "/example-package/3.0.0" ||
+        request.url === "/example-package/next" ||
+        request.url === "/example-package/dangling"
+      ) {
+        response.statusCode = 404;
+        response.end(JSON.stringify({ error: "not_found" }));
+        return;
+      }
+      if (request.url === "/example-package") {
+        response.end(
+          JSON.stringify({
+            name: "example-package",
+            "dist-tags": {
+              latest: "1.0.0",
+              stable: "1.0.0",
+              dangling: "3.0.0",
+            },
+            versions: { "1.0.0": manifest },
+          }),
+        );
+        return;
+      }
       response.end(JSON.stringify(manifest));
     });
     server.listen(0, "127.0.0.1");
@@ -98,12 +121,47 @@ describe("npm-plus CLI", () => {
     });
   });
 
+  it.each([
+    ["v1.0.0", undefined],
+    ["stable", "stable"],
+  ])("should inspect version identifier %s", async (identifier, tag) => {
+    const { stdout } = await run(
+      "inspect",
+      "example-package",
+      identifier,
+      "--json",
+    );
+
+    expect(JSON.parse(stdout).target).toEqual({
+      packageName: "example-package",
+      exactVersion: "1.0.0",
+      ...(tag ? { tag } : {}),
+    });
+  });
+
   it("should fail without result JSON when the package is absent", async () => {
     await expect(run("inspect", "missing", "--json")).rejects.toMatchObject({
       code: 1,
       stdout: "",
       stderr: expect.stringContaining("PackageNotFound: Package not found: missing"),
     });
+  });
+
+  it.each([
+    ["3.0.0", "ExactVersionNotFound"],
+    ["next", "TagNotFound"],
+    ["dangling", "TagUnresolvable"],
+  ])("should report target determination failure for %s", async (identifier, errorName) => {
+    const requestsBefore = requestCount;
+
+    await expect(
+      run("inspect", "example-package", identifier, "--json"),
+    ).rejects.toMatchObject({
+      code: 1,
+      stdout: "",
+      stderr: expect.stringContaining(errorName),
+    });
+    expect(requestCount).toBe(requestsBefore + 2);
   });
 
   it("should inspect the latest version and emit a human-readable report", async () => {
@@ -122,15 +180,17 @@ describe("npm-plus CLI", () => {
     );
   });
 
-  it("should reject a version identifier before requesting the Registry", async () => {
+  it("should reject a version range before requesting the Registry", async () => {
     const requestsBefore = requestCount;
 
     await expect(
-      run("inspect", "example-package", "1.0.0", "--json"),
+      run("inspect", "example-package", "^1.0.0", "--json"),
     ).rejects.toMatchObject({
       code: 1,
       stdout: "",
-      stderr: expect.stringContaining("too many arguments"),
+      stderr: expect.stringContaining(
+        "UnsupportedVersionRangeError: Version ranges are not supported: ^1.0.0",
+      ),
     });
     expect(requestCount).toBe(requestsBefore);
   });

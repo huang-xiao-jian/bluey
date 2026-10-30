@@ -8,11 +8,13 @@ import { InspectTargetQualityFabricator } from "../core/quality/inspect-target-q
 import { InspectTargetQualityInspector } from "../core/quality/inspect-target-quality-inspector";
 import { QualityDimensionFailureRecorder } from "../core/quality/quality-dimension-failure-recorder";
 import { InspectTargetDeterminer } from "../core/target/inspect-target-determiner";
+import { PackageVersionIdentifierInterpreter } from "../core/target/package-version-identifier-interpreter";
 import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
 import {
   InspectHandler,
   InspectHandlerDependencies,
   InspectInputError,
+  UnsupportedVersionRangeError,
 } from "./inspect-handler";
 import { InspectReportFormatter } from "./report/inspect-report-formatter";
 
@@ -25,11 +27,15 @@ class CapturingDependencies extends InspectHandlerDependencies {
 }
 
 class InMemoryRegistry extends NpmPackageRegistry {
-  public async readLatestManifest(): Promise<NpmPackageManifestResolution> {
+  public async readManifest(): Promise<NpmPackageManifestResolution> {
     return {
       exactVersion: "1.2.3",
       manifest: { dependencies: { "runtime-helper": "^4.0.0" } },
     };
+  }
+
+  public async readPackage(): Promise<never> {
+    throw new Error("Unexpected package metadata fallback");
   }
 }
 
@@ -45,7 +51,10 @@ function createScheduler(
   dependencyScaleInspector = new DependencyScaleQualityInspector(),
 ): InspectNpmPackageQualityWorkflowScheduler {
   return new InspectNpmPackageQualityWorkflowScheduler(
-    new InspectTargetDeterminer(new InMemoryRegistry()),
+    new InspectTargetDeterminer(
+      new InMemoryRegistry(),
+      new PackageVersionIdentifierInterpreter(),
+    ),
     new InspectTargetQualityInspector(
       dependencyScaleInspector,
       new QualityDimensionFailureRecorder(),
@@ -55,6 +64,20 @@ function createScheduler(
 }
 
 describe("InspectHandler", () => {
+  it("should preserve an explicit version identifier in the result", async () => {
+    const dependencies = new CapturingDependencies();
+    const handler = new InspectHandler(
+      createScheduler(),
+      new InspectReportFormatter(),
+      dependencies,
+    );
+
+    await handler.run("example-package", "stable", { json: true });
+
+    expect(dependencies.output).toContain('"versionIdentifier": "stable"');
+    expect(dependencies.output).toContain('"tag": "stable"');
+  });
+
   it("should write only the complete serialized result as JSON", async () => {
     const dependencies = new CapturingDependencies();
     const handler = new InspectHandler(
@@ -63,7 +86,7 @@ describe("InspectHandler", () => {
       dependencies,
     );
 
-    await handler.run("example-package", { json: true });
+    await handler.run("example-package", undefined, { json: true });
 
     expect(dependencies.output).toBe(`{
   "delegation": {
@@ -104,7 +127,7 @@ describe("InspectHandler", () => {
       dependencies,
     );
 
-    await handler.run("example-package", {});
+    await handler.run("example-package", undefined, {});
 
     expect(dependencies.output).toContain("example-package@1.2.3 (tag: latest)");
     expect(dependencies.output).toContain("Runtime dependencies: 1");
@@ -119,7 +142,7 @@ describe("InspectHandler", () => {
       dependencies,
     );
 
-    await handler.run("example-package", {});
+    await handler.run("example-package", undefined, {});
 
     expect(dependencies.output).toContain(
       "PackageManifestReadError: manifest unavailable",
@@ -134,6 +157,22 @@ describe("InspectHandler", () => {
       dependencies,
     );
 
-    await expect(handler.run("", {})).rejects.toBeInstanceOf(InspectInputError);
+    await expect(handler.run("", undefined, {})).rejects.toBeInstanceOf(
+      InspectInputError,
+    );
+  });
+
+  it("should reject a version range before running the workflow", async () => {
+    const dependencies = new CapturingDependencies();
+    const handler = new InspectHandler(
+      createScheduler(),
+      new InspectReportFormatter(),
+      dependencies,
+    );
+
+    await expect(
+      handler.run("example-package", "^1.0.0", {}),
+    ).rejects.toBeInstanceOf(UnsupportedVersionRangeError);
+    expect(dependencies.output).toBe("");
   });
 });
