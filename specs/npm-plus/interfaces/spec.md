@@ -8,7 +8,7 @@
 
 ## 目的
 
-接入层通过 `CLI` 和 `MCP` 适配器，对外提供检查 `npm package` 质量的能力，适配器共享同一核心工作流。
+接入层通过 `CLI` 和 `MCP` 适配器，对外提供检查 `npm package` 质量的能力，适配器共享核心工作流与原始 **InspectResult**。
 
 ## 架构设计
 
@@ -20,7 +20,8 @@ config:
 flowchart LR
     Terminal["Terminal Consumer"] --> Cli["CLI Interface"]
     Cli --> Workflow["Workflow"]
-    Workflow --> Report["Inspect Target Quality"]
+    Workflow --> Raw["InspectResult"]
+    Raw --> Report["TerminalInspectReport"]
     Report --> Cli
 ```
 
@@ -32,8 +33,9 @@ config:
 flowchart LR
     Agent[MCP Client] --> Mcp[MCP Interface]
     Mcp --> Workflow
-    Workflow --> Report[Inspect Target Quality]
-    Report --> Mcp
+    Workflow --> Raw[InspectResult]
+    Raw --> Summary[McpInspectSummary]
+    Summary --> Mcp
 ```
 
 ## 适配器

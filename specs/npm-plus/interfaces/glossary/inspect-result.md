@@ -5,10 +5,12 @@
 - [InspectDelegation](../../glossary/inspect-delegation.md)
 - [InspectTarget](../../glossary/inspect-target.md)
 - [InspectTargetQuality](../../glossary/inspect-target-quality.md)
+- [TerminalInspectSummary](./terminal-inspect-summary.md)
+- [McpInspectSummary](./mcp-inspect-summary.md)
 
 ## 定义
 
-`InspectResult` 是接入层为 CLI JSON 输出与 MCP `structuredContent` 定义的共享成功结果契约。它组合原始 **InspectDelegation**、已经确定的 **InspectTarget** 与核心能力提供的 **InspectTargetQuality**。
+`InspectResult` 是接入层取得的共享原始成功报告。它组合原始 **InspectDelegation**、已经确定的 **InspectTarget** 与核心能力提供的 **InspectTargetQuality**，作为 CLI JSON 输出、MCP `structuredContent` 以及面向使用方的 **TerminalInspectReport** 和 **McpInspectSummary** 的数据来源；它本身不是为人类直接阅读而设计的最终内容。
 
 ## 关键属性
 
@@ -63,6 +65,7 @@ interface InspectResult {
 5. **目标确定错误约束：** 将 **InspectDelegation** 转换为 **InspectTarget** 时抛出的任何错误都不得转换为本契约，而应进入当前接口的错误通道。
 6. **质量异常约束：** **InspectTargetQuality** 中的数据获取异常属于成功结果的一部分，不得转换为接口错误。
 7. **客观性约束：** 映射过程不得增加评分、评级、价值判断或采用建议。
+8. **呈现边界约束：** 面向 terminal 使用方的人类可读内容必须映射为 **TerminalInspectReport**；MCP tool result 的非 structured 文本内容必须映射为 **McpInspectSummary**，不得将本原始报告等同于二者。
 
 ## 关系
 
