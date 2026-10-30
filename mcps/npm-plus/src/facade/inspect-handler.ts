@@ -1,5 +1,6 @@
+import { injectable } from "inversify";
 import { InspectDelegation } from "../core/model/inspect-delegation";
-import type { InspectNpmPackageQualityWorkflow } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
+import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
 import type { InspectResult } from "./inspect-result";
 import { InspectReportFormatter } from "./report/inspect-report-formatter";
 
@@ -11,11 +12,23 @@ export class InspectInputError extends Error {
   public override name: string = "InspectInputError";
 }
 
+export abstract class InspectHandlerDependencies {
+  public abstract stdout(text: string): void;
+}
+
+@injectable()
+export class NodeInspectHandlerDependencies extends InspectHandlerDependencies {
+  public stdout(text: string): void {
+    process.stdout.write(text);
+  }
+}
+
+@injectable()
 export class InspectHandler {
   public constructor(
-    private readonly scheduler: InspectNpmPackageQualityWorkflow,
-    private readonly stdout: (text: string) => void,
-    private readonly formatter = new InspectReportFormatter(),
+    private readonly scheduler: InspectNpmPackageQualityWorkflowScheduler,
+    private readonly formatter: InspectReportFormatter,
+    private readonly dependencies: InspectHandlerDependencies,
   ) {}
 
   public async run(
@@ -27,7 +40,7 @@ export class InspectHandler {
     const delegation = new InspectDelegation(packageName);
     const workflowResult = await this.scheduler.run(delegation);
     const result: InspectResult = { delegation, ...workflowResult };
-    this.stdout(
+    this.dependencies.stdout(
       options.json
         ? this.formatter.formatJson(result)
         : this.formatter.formatHuman(result),

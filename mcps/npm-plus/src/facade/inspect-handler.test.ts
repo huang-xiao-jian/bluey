@@ -1,62 +1,71 @@
 import { describe, expect, it } from "vitest";
-import { DirectDependencyKind } from "../core/model/inspect-target-quality";
-import type {
-  InspectNpmPackageQualityWorkflow,
-  InspectNpmPackageQualityWorkflowResult,
-} from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
+import {
+  type NpmPackageManifestResolution,
+  NpmPackageRegistry,
+} from "../core/ports/npm-package-registry";
+import { DependencyScaleQualityInspector } from "../core/quality/dependency-scale-quality-inspector";
+import { InspectTargetQualityFabricator } from "../core/quality/inspect-target-quality-fabricator";
+import { InspectTargetQualityInspector } from "../core/quality/inspect-target-quality-inspector";
+import { QualityDimensionFailureRecorder } from "../core/quality/quality-dimension-failure-recorder";
+import { InspectTargetDeterminer } from "../core/target/inspect-target-determiner";
+import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
 import {
   InspectHandler,
+  InspectHandlerDependencies,
   InspectInputError,
 } from "./inspect-handler";
+import { InspectReportFormatter } from "./report/inspect-report-formatter";
 
-const workflowResult = {
-  target: {
-    packageName: "example-package",
-    exactVersion: "1.2.3",
-    tag: "latest",
-  },
-  quality: {
-    dependencyScale: {
-      directDependencyDeclarations: [
-        {
-          packageName: "runtime-helper",
-          kind: DirectDependencyKind.Runtime,
-          declaredRange: "^4.0.0",
-          bundled: false,
-        },
-      ],
-      directDependencyCounts: {
-        runtimeCount: 1,
-        optionalCount: 0,
-        peerCount: 0,
-        bundledCount: 0,
-      },
-    },
-    exceptions: [],
-  },
-};
+class CapturingDependencies extends InspectHandlerDependencies {
+  public output = "";
 
-function schedulerReturning(
-  result: InspectNpmPackageQualityWorkflowResult = workflowResult,
-): InspectNpmPackageQualityWorkflow {
-  return {
-    async run() {
-      return result;
-    },
-  };
+  public stdout(text: string): void {
+    this.output += text;
+  }
+}
+
+class InMemoryRegistry extends NpmPackageRegistry {
+  public async readLatestManifest(): Promise<NpmPackageManifestResolution> {
+    return {
+      exactVersion: "1.2.3",
+      manifest: { dependencies: { "runtime-helper": "^4.0.0" } },
+    };
+  }
+}
+
+class FailingDependencyScaleInspector extends DependencyScaleQualityInspector {
+  public override inspect(): never {
+    const error = new Error("manifest unavailable");
+    error.name = "PackageManifestReadError";
+    throw error;
+  }
+}
+
+function createScheduler(
+  dependencyScaleInspector = new DependencyScaleQualityInspector(),
+): InspectNpmPackageQualityWorkflowScheduler {
+  return new InspectNpmPackageQualityWorkflowScheduler(
+    new InspectTargetDeterminer(new InMemoryRegistry()),
+    new InspectTargetQualityInspector(
+      dependencyScaleInspector,
+      new QualityDimensionFailureRecorder(),
+      new InspectTargetQualityFabricator(),
+    ),
+  );
 }
 
 describe("InspectHandler", () => {
   it("should write only the complete serialized result as JSON", async () => {
-    let output = "";
+    const dependencies = new CapturingDependencies();
     const handler = new InspectHandler(
-      schedulerReturning(),
-      (text) => (output += text),
+      createScheduler(),
+      new InspectReportFormatter(),
+      dependencies,
     );
 
     await handler.run("example-package", { json: true });
 
-    expect(output).toBe(`{
+    expect(dependencies.output).toBe(`{
   "delegation": {
     "packageName": "example-package"
   },
@@ -88,45 +97,42 @@ describe("InspectHandler", () => {
   });
 
   it("should write a concise objective human report", async () => {
-    let output = "";
+    const dependencies = new CapturingDependencies();
     const handler = new InspectHandler(
-      schedulerReturning(),
-      (text) => (output += text),
+      createScheduler(),
+      new InspectReportFormatter(),
+      dependencies,
     );
 
     await handler.run("example-package", {});
 
-    expect(output).toContain("example-package@1.2.3 (tag: latest)");
-    expect(output).toContain("Runtime dependencies: 1");
-    expect(output).toContain("Quality exceptions: 0");
+    expect(dependencies.output).toContain("example-package@1.2.3 (tag: latest)");
+    expect(dependencies.output).toContain("Runtime dependencies: 1");
+    expect(dependencies.output).toContain("Quality exceptions: 0");
   });
 
   it("should render quality exceptions as a successful report", async () => {
-    let output = "";
+    const dependencies = new CapturingDependencies();
     const handler = new InspectHandler(
-      schedulerReturning({
-        target: workflowResult.target,
-        quality: {
-          exceptions: [
-            {
-              name: "PackageManifestReadError",
-              message: "manifest unavailable",
-            },
-          ],
-        },
-      }),
-      (text) => (output += text),
+      createScheduler(new FailingDependencyScaleInspector()),
+      new InspectReportFormatter(),
+      dependencies,
     );
 
     await handler.run("example-package", {});
 
-    expect(output).toContain(
+    expect(dependencies.output).toContain(
       "PackageManifestReadError: manifest unavailable",
     );
   });
 
   it("should reject an empty package name", async () => {
-    const handler = new InspectHandler(schedulerReturning(), () => undefined);
+    const dependencies = new CapturingDependencies();
+    const handler = new InspectHandler(
+      createScheduler(),
+      new InspectReportFormatter(),
+      dependencies,
+    );
 
     await expect(handler.run("", {})).rejects.toBeInstanceOf(InspectInputError);
   });

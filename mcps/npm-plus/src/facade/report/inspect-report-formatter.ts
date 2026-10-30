@@ -1,5 +1,7 @@
+import { injectable } from "inversify";
 import type { InspectResult } from "../inspect-result";
 
+@injectable()
 export class InspectReportFormatter {
   public formatHuman(result: InspectResult): string {
     const tag = result.target.tag ? ` (tag: ${result.target.tag})` : "";
