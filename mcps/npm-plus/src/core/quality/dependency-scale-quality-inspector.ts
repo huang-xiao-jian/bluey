@@ -1,9 +1,10 @@
 import { injectable } from "inversify";
 import { z } from "zod";
+import type { InspectTarget } from "../model/inspect-target";
 import {
   DirectDependencyKind,
   type DirectDependencyDeclarationFact,
-  type InspectTargetDependencyScaleQuality,
+  InspectTargetDependencyScaleQuality,
 } from "../model/inspect-target-quality";
 import type { NpmPackageManifest } from "../ports/npm-package-registry";
 
@@ -28,15 +29,10 @@ export class PackageManifestReadError extends Error {
   }
 }
 
-export interface DependencyScaleQualityInspection {
-  inspect(manifest: NpmPackageManifest): InspectTargetDependencyScaleQuality;
-}
-
 @injectable()
-export class DependencyScaleQualityInspector
-  implements DependencyScaleQualityInspection
-{
+export class DependencyScaleQualityInspector {
   public inspect(
+    _target: InspectTarget,
     manifest: NpmPackageManifest,
   ): InspectTargetDependencyScaleQuality {
     const parsed = DependencyFieldsSchema.safeParse(manifest);
@@ -76,16 +72,13 @@ export class DependencyScaleQualityInspector
         })),
     ];
 
-    return {
-      directDependencyDeclarations: declarations,
-      directDependencyCounts: {
-        runtimeCount: Object.keys(runtime).length,
-        optionalCount: Object.keys(optional).length,
-        peerCount: Object.keys(peer).length,
-        bundledCount: declarations.filter((declaration) => declaration.bundled)
-          .length,
-      },
-    };
+    return new InspectTargetDependencyScaleQuality(declarations, {
+      runtimeCount: Object.keys(runtime).length,
+      optionalCount: Object.keys(optional).length,
+      peerCount: Object.keys(peer).length,
+      bundledCount: declarations.filter((declaration) => declaration.bundled)
+        .length,
+    });
   }
 
   private declarations(

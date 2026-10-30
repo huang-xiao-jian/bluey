@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { PackageNotFound } from "../errors/target-determination-errors";
 import { InspectDelegation } from "../model/inspect-delegation";
+import { InspectTarget } from "../model/inspect-target";
 import type {
   NpmPackageManifestResolution,
   NpmPackageRegistry,
@@ -33,6 +34,7 @@ describe("InspectTargetDeterminer", () => {
       new InspectDelegation("example-package"),
     );
 
+    expect(result.target).toBeInstanceOf(InspectTarget);
     expect(result).toEqual({
       target: {
         packageName: "example-package",

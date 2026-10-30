@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { InspectTarget } from "../model/inspect-target";
-import type { NpmPackageManifest } from "../ports/npm-package-registry";
 import {
-  type DependencyScaleQualityInspection,
-  DependencyScaleQualityInspector,
-} from "./dependency-scale-quality-inspector";
+  InspectTargetDependencyScaleQuality,
+  InspectTargetQuality,
+  InspectTargetQualityException,
+} from "../model/inspect-target-quality";
+import type { NpmPackageManifest } from "../ports/npm-package-registry";
+import { DependencyScaleQualityInspector } from "./dependency-scale-quality-inspector";
+import { InspectTargetQualityFabricator } from "./inspect-target-quality-fabricator";
 import { InspectTargetQualityInspector } from "./inspect-target-quality-inspector";
 import { QualityDimensionFailureRecorder } from "./quality-dimension-failure-recorder";
 
@@ -19,9 +22,16 @@ describe("InspectTargetQualityInspector", () => {
     const inspector = new InspectTargetQualityInspector(
       new DependencyScaleQualityInspector(),
       new QualityDimensionFailureRecorder(),
+      new InspectTargetQualityFabricator(),
     );
 
-    await expect(inspector.inspect(target, manifest)).resolves.toEqual({
+    const result = await inspector.inspect(target, manifest);
+
+    expect(result).toBeInstanceOf(InspectTargetQuality);
+    expect(result.dependencyScale).toBeInstanceOf(
+      InspectTargetDependencyScaleQuality,
+    );
+    expect(result).toEqual({
       dependencyScale: {
         directDependencyDeclarations: [],
         directDependencyCounts: {
@@ -36,19 +46,26 @@ describe("InspectTargetQualityInspector", () => {
   });
 
   it("should convert a dimension failure into stable exception data", async () => {
-    const failingDimension = {
-      inspect() {
+    class FailingDependencyScaleQualityInspector extends DependencyScaleQualityInspector {
+      public override inspect(): never {
         const error = new Error("manifest unavailable");
         error.name = "PackageManifestReadError";
         throw error;
-      },
-    } satisfies DependencyScaleQualityInspection;
+      }
+    }
     const inspector = new InspectTargetQualityInspector(
-      failingDimension,
+      new FailingDependencyScaleQualityInspector(),
       new QualityDimensionFailureRecorder(),
+      new InspectTargetQualityFabricator(),
     );
 
-    await expect(inspector.inspect(target, manifest)).resolves.toEqual({
+    const result = await inspector.inspect(target, manifest);
+
+    expect(result).toBeInstanceOf(InspectTargetQuality);
+    expect(result.exceptions[0]).toBeInstanceOf(InspectTargetQualityException);
+    expect(result.dependencyScale).toBeUndefined();
+    expect(result).toEqual({
+      dependencyScale: undefined,
       exceptions: [
         {
           name: "PackageManifestReadError",
@@ -59,17 +76,24 @@ describe("InspectTargetQualityInspector", () => {
   });
 
   it("should serialize an unknown thrown value", async () => {
-    const failingDimension = {
-      inspect() {
+    class FailingDependencyScaleQualityInspector extends DependencyScaleQualityInspector {
+      public override inspect(): never {
         throw "manifest unavailable";
-      },
-    } satisfies DependencyScaleQualityInspection;
+      }
+    }
     const inspector = new InspectTargetQualityInspector(
-      failingDimension,
+      new FailingDependencyScaleQualityInspector(),
       new QualityDimensionFailureRecorder(),
+      new InspectTargetQualityFabricator(),
     );
 
-    await expect(inspector.inspect(target, manifest)).resolves.toEqual({
+    const result = await inspector.inspect(target, manifest);
+
+    expect(result).toBeInstanceOf(InspectTargetQuality);
+    expect(result.exceptions[0]).toBeInstanceOf(InspectTargetQualityException);
+    expect(result.dependencyScale).toBeUndefined();
+    expect(result).toEqual({
+      dependencyScale: undefined,
       exceptions: [{ name: "Error", message: "manifest unavailable" }],
     });
   });

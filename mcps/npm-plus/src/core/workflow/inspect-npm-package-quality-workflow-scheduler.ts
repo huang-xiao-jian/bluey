@@ -2,8 +2,8 @@ import { injectable } from "inversify";
 import type { InspectDelegation } from "../model/inspect-delegation";
 import type { InspectTarget } from "../model/inspect-target";
 import type { InspectTargetQuality } from "../model/inspect-target-quality";
-import type { InspectTargetQualityInspection } from "../quality/inspect-target-quality-inspector";
-import type { InspectTargetDetermination } from "../target/inspect-target-determiner";
+import { InspectTargetQualityInspector } from "../quality/inspect-target-quality-inspector";
+import { InspectTargetDeterminer } from "../target/inspect-target-determiner";
 
 export interface InspectNpmPackageQualityWorkflowResult {
   readonly target: InspectTarget;
@@ -21,8 +21,8 @@ export class InspectNpmPackageQualityWorkflowScheduler
   implements InspectNpmPackageQualityWorkflow
 {
   public constructor(
-    private readonly targetDeterminer: InspectTargetDetermination,
-    private readonly qualityInspector: InspectTargetQualityInspection,
+    private readonly targetDeterminer: InspectTargetDeterminer,
+    private readonly qualityInspector: InspectTargetQualityInspector,
   ) {}
 
   public async run(

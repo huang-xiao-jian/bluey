@@ -1,12 +1,17 @@
 import { describe, expect, it } from "vitest";
+import { InspectTarget } from "../model/inspect-target";
+import {
+  DirectDependencyKind,
+  InspectTargetDependencyScaleQuality,
+} from "../model/inspect-target-quality";
 import type { NpmPackageManifest } from "../ports/npm-package-registry";
-import { DirectDependencyKind } from "../model/inspect-target-quality";
 import {
   DependencyScaleQualityInspector,
   PackageManifestReadError,
 } from "./dependency-scale-quality-inspector";
 
 describe("DependencyScaleQualityInspector", () => {
+  const target = new InspectTarget("example-package", "1.0.0");
   const inspector = new DependencyScaleQualityInspector();
 
   it("should normalize direct dependency declarations and counts", () => {
@@ -33,7 +38,10 @@ describe("DependencyScaleQualityInspector", () => {
       devDependencies: { "test-library": "^1.0.0" },
     };
 
-    expect(inspector.inspect(manifest)).toEqual({
+    const result = inspector.inspect(target, manifest);
+
+    expect(result).toBeInstanceOf(InspectTargetDependencyScaleQuality);
+    expect(result).toEqual({
       directDependencyDeclarations: [
         {
           packageName: "runtime-helper",
@@ -87,7 +95,7 @@ describe("DependencyScaleQualityInspector", () => {
         [field]: ["second", "third"],
       };
 
-      expect(inspector.inspect(manifest).directDependencyCounts).toEqual({
+      expect(inspector.inspect(target, manifest).directDependencyCounts).toEqual({
         runtimeCount: 2,
         optionalCount: 1,
         peerCount: 0,
@@ -106,14 +114,14 @@ describe("DependencyScaleQualityInspector", () => {
       bundleDependencies: true,
     };
 
-    expect(inspector.inspect(manifest).directDependencyCounts.bundledCount).toBe(
-      2,
-    );
+    expect(
+      inspector.inspect(target, manifest).directDependencyCounts.bundledCount,
+    ).toBe(2);
   });
 
   it("should return zero counts for a manifest without dependencies", () => {
     expect(
-      inspector.inspect({ name: "example-package", version: "1.0.0" }),
+      inspector.inspect(target, { name: "example-package", version: "1.0.0" }),
     ).toEqual({
       directDependencyDeclarations: [],
       directDependencyCounts: {
@@ -132,6 +140,8 @@ describe("DependencyScaleQualityInspector", () => {
       dependencies: { broken: 42 },
     } as unknown as NpmPackageManifest;
 
-    expect(() => inspector.inspect(manifest)).toThrow(PackageManifestReadError);
+    expect(() => inspector.inspect(target, manifest)).toThrow(
+      PackageManifestReadError,
+    );
   });
 });

@@ -11,12 +11,8 @@ export interface DeterminedInspectTarget {
   readonly manifest: NpmPackageManifest;
 }
 
-export interface InspectTargetDetermination {
-  determine(delegation: InspectDelegation): Promise<DeterminedInspectTarget>;
-}
-
 @injectable()
-export class InspectTargetDeterminer implements InspectTargetDetermination {
+export class InspectTargetDeterminer {
   public constructor(private readonly registry: NpmPackageRegistry) {}
 
   public async determine(
@@ -29,7 +25,6 @@ export class InspectTargetDeterminer implements InspectTargetDetermination {
       target: new InspectTarget(
         delegation.packageName,
         resolution.exactVersion,
-        "latest",
       ),
       manifest: resolution.manifest,
     };
