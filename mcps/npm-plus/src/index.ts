@@ -1,12 +1,9 @@
 #!/usr/bin/env node
 import "reflect-metadata";
 import { Command } from "commander";
-import { NpmPackageQualityComposition } from "./composition/npm-package-quality-composition";
-import {
-  InspectHandler,
-  type InspectOptions,
-} from "./facade/inspect-handler";
-import { createMcpHandler } from "./facade/mcp-handler";
+import { createInspectHandler } from "./composition/cli-composition";
+import { createMcpHandler } from "./composition/mcp-composition";
+import type { InspectOptions } from "./facade/inspect-handler";
 
 const program = new Command()
   .name("npm-plus")
@@ -22,11 +19,7 @@ program
       packageName: string,
       options: InspectOptions,
     ) => {
-      const scheduler = new NpmPackageQualityComposition().createWorkflowScheduler();
-      const handler = new InspectHandler(scheduler, (text) =>
-        process.stdout.write(text),
-      );
-      await handler.run(packageName, options);
+      await createInspectHandler().run(packageName, options);
     },
   );
 

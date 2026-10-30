@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { PackageNotFound } from "../../core/errors/target-determination-errors";
+import { InspectTarget } from "../../core/model/inspect-target";
+import {
+  InspectTargetQuality,
+  InspectTargetQualityException,
+} from "../../core/model/inspect-target-quality";
 import type { InspectNpmPackageQualityWorkflow } from "../../core/workflow/inspect-npm-package-quality-workflow-scheduler";
 import {
   createInspectNpmPackageTool,
@@ -10,19 +15,13 @@ function schedulerWithResult(): InspectNpmPackageQualityWorkflow {
   return {
     async run() {
       return {
-        target: {
-          packageName: "example-package",
-          exactVersion: "1.2.3",
-          tag: "latest",
-        },
-        quality: {
-          exceptions: [
-            {
-              name: "PackageManifestReadError",
-              message: "manifest unavailable",
-            },
-          ],
-        },
+        target: new InspectTarget("example-package", "1.2.3"),
+        quality: new InspectTargetQuality(undefined, [
+          new InspectTargetQualityException(
+            "PackageManifestReadError",
+            "manifest unavailable",
+          ),
+        ]),
       };
     },
   };

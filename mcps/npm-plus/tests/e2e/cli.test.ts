@@ -106,6 +106,22 @@ describe("npm-plus CLI", () => {
     });
   });
 
+  it("should inspect the latest version and emit a human-readable report", async () => {
+    const requestsBefore = requestCount;
+    const { stdout, stderr } = await run("inspect", "example-package");
+
+    expect(stderr).toBe("");
+    expect(requestCount).toBe(requestsBefore + 1);
+    expect(stdout).toBe(
+      "Target: example-package@1.0.0 (tag: latest)\n" +
+        "Runtime dependencies: 1\n" +
+        "Optional dependencies: 1\n" +
+        "Peer dependencies: 0\n" +
+        "Bundled dependencies: 1\n" +
+        "Quality exceptions: 0\n",
+    );
+  });
+
   it("should reject a version identifier before requesting the Registry", async () => {
     const requestsBefore = requestCount;
 
