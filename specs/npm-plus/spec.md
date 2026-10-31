@@ -12,6 +12,6 @@
 
 ## 相关文档
 
-- [业务层 Worker 异常契约](worker-exceptions.md)定义目标确定 Worker 的职责边界及其稳定异常语义。
+- [InspectTargetDeterminer](inspect-target-determiner.md)定义业务层目标确定 Worker 的职责与运行机制。
 - [npm-plus 接入层设计](interfaces/spec.md)定义 CLI 和 MCP 使用方如何访问本规范规定的能力。
 - [面向对象设计](design.md)将本规范转换为候选类、职责及协作关系。
