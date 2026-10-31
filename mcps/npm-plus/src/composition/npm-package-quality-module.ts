@@ -11,7 +11,7 @@ import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/insp
 import { InspectDelegationInterpreter } from "../facade/inspect-delegation-interpreter";
 import { NodeNpmPackageRegistry } from "../infrastructure/registry/node-npm-package-registry";
 
-export const npmPackageQualityModule = new ContainerModule(({ bind }) => {
+export const NPM_PACKAGE_QUALITY_MODULE = new ContainerModule(({ bind }) => {
   bind(NpmPackageRegistry)
     .toDynamicValue(
       () =>

@@ -9,11 +9,11 @@ import { InspectResultFormatterPicker } from "../facade/report/inspect-result-fo
 import { JSONInspectResultFormatter } from "../facade/report/json-inspect-result-formatter";
 import { TerminalInspectExceptionFormatter } from "../facade/report/terminal-inspect-exception-formatter";
 import { TerminalInspectResultFormatter } from "../facade/report/terminal-inspect-result-formatter";
-import { npmPackageQualityModule } from "./npm-package-quality-module";
+import { NPM_PACKAGE_QUALITY_MODULE } from "./npm-package-quality-module";
 
 export function createInspectHandler(): InspectHandler {
   const container = new Container({ defaultScope: "Singleton" });
-  container.load(npmPackageQualityModule);
+  container.load(NPM_PACKAGE_QUALITY_MODULE);
   container.bind(InspectHandlerDependencies).to(NodeInspectHandlerDependencies);
   container
     .bind(InspectExceptionFormatter)

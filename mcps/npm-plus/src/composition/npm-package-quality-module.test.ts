@@ -6,7 +6,7 @@ import {
   NpmPackageRegistry,
 } from "../core/ports/npm-package-registry";
 import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
-import { npmPackageQualityModule } from "./npm-package-quality-module";
+import { NPM_PACKAGE_QUALITY_MODULE } from "./npm-package-quality-module";
 
 class InMemoryRegistry extends NpmPackageRegistry {
   public async readManifest(): Promise<NpmPackageManifestResolution> {
@@ -21,20 +21,27 @@ class InMemoryRegistry extends NpmPackageRegistry {
   }
 }
 
-describe("npmPackageQualityModule", () => {
+describe("NPM_PACKAGE_QUALITY_MODULE", () => {
   it("should resolve the complete workflow with a replaceable Registry port", async () => {
     const container = new Container({ defaultScope: "Singleton" });
-    container.load(npmPackageQualityModule);
-    container.rebind(NpmPackageRegistry).to(InMemoryRegistry).inSingletonScope();
+    container.load(NPM_PACKAGE_QUALITY_MODULE);
+    container
+      .rebind(NpmPackageRegistry)
+      .to(InMemoryRegistry)
+      .inSingletonScope();
 
     const scheduler = container.get(InspectNpmPackageQualityWorkflowScheduler);
-    const result = await scheduler.run(new InspectDelegation("example-package"));
+    const result = await scheduler.run(
+      new InspectDelegation("example-package"),
+    );
 
     expect(result.target).toEqual({
       packageName: "example-package",
       exactVersion: "1.0.0",
       tag: "latest",
     });
-    expect(result.quality.dependencyScale?.directDependencyCounts.runtimeCount).toBe(1);
+    expect(
+      result.quality.dependencyScale?.directDependencyCounts.runtimeCount,
+    ).toBe(1);
   });
 });
