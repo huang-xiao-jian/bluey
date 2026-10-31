@@ -15,7 +15,7 @@ import { InspectDelegationInterpreter } from "../facade/inspect-delegation-inter
 import type { InspectExceptionFormatter } from "../facade/report/inspect-exception-formatter";
 import { PlainInspectExceptionFormatter } from "../facade/report/plain-inspect-exception-formatter";
 import { InspectResultSummarizer } from "./report/inspect-result-summarizer";
-import { DefaultNpmPlusMcpServerFactory, setupMcpServer } from "./server";
+import { setupMcpServer } from "./server";
 
 function successfulScheduler(): InspectNpmPackageQualityWorkflow {
   return {
@@ -37,27 +37,7 @@ function createPlainExceptionFormatter(): InspectExceptionFormatter {
   return new PlainInspectExceptionFormatter();
 }
 
-describe.each([
-  {
-    name: "setupMcpServer",
-    create: (workflow: InspectNpmPackageQualityWorkflow) =>
-      setupMcpServer(
-        workflow,
-        new InspectResultSummarizer(),
-        new InspectDelegationInterpreter(),
-        createPlainExceptionFormatter(),
-      ),
-  },
-  {
-    name: "DefaultNpmPlusMcpServerFactory",
-    create: (workflow: InspectNpmPackageQualityWorkflow) =>
-      new DefaultNpmPlusMcpServerFactory(
-        new InspectResultSummarizer(),
-        new InspectDelegationInterpreter(),
-        createPlainExceptionFormatter(),
-      ).create(workflow),
-  },
-])("$name", ({ create }) => {
+describe("setupMcpServer", () => {
   let client: Client | undefined;
 
   afterEach(async () => {
@@ -67,7 +47,12 @@ describe.each([
   async function connect(
     scheduler: InspectNpmPackageQualityWorkflow,
   ): Promise<Client> {
-    const server = create(scheduler);
+    const server = setupMcpServer(
+      scheduler,
+      new InspectResultSummarizer(),
+      new InspectDelegationInterpreter(),
+      createPlainExceptionFormatter(),
+    );
     client = new Client({ name: "test-client", version: "1.0.0" });
     const [clientTransport, serverTransport] =
       InMemoryTransport.createLinkedPair();

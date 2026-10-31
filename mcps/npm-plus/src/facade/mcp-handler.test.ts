@@ -1,4 +1,3 @@
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import { describe, expect, it } from "vitest";
 import { NpmPackageRegistry } from "../core/ports/npm-package-registry";
@@ -10,12 +9,13 @@ import { InspectTargetDeterminer } from "../core/target/inspect-target-determine
 import { InspectTargetFailureExplainer } from "../core/target/inspect-target-failure-explainer";
 import { PackageVersionIdentifierInterpreter } from "../core/target/package-version-identifier-interpreter";
 import {
-  type InspectNpmPackageQualityWorkflow,
   InspectNpmPackageQualityWorkflowScheduler,
 } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
-import { NpmPlusMcpServerFactory } from "../mcp/server";
+import { InspectResultSummarizer } from "../mcp/report/inspect-result-summarizer";
 import { McpTransportFactory } from "../mcp/transport";
+import { InspectDelegationInterpreter } from "./inspect-delegation-interpreter";
 import { McpHandler } from "./mcp-handler";
+import { PlainInspectExceptionFormatter } from "./report/plain-inspect-exception-formatter";
 
 class UnusedRegistry extends NpmPackageRegistry {
   public async readManifest(): Promise<never> {
@@ -27,23 +27,23 @@ class UnusedRegistry extends NpmPackageRegistry {
   }
 }
 
-class FakeServerFactory extends NpmPlusMcpServerFactory {
-  public connectedTransport: Transport | undefined;
-  public workflow: InspectNpmPackageQualityWorkflow | undefined;
+class RecordingTransport implements Transport {
+  public started = false;
 
-  public constructor(private readonly connectionError?: Error) {
-    super();
+  public constructor(private readonly connectionError?: Error) {}
+
+  public async start(): Promise<void> {
+    if (this.connectionError) throw this.connectionError;
+    this.started = true;
   }
 
-  public create(workflow: InspectNpmPackageQualityWorkflow): McpServer {
-    this.workflow = workflow;
-    return {
-      connect: async (transport: Transport) => {
-        if (this.connectionError) throw this.connectionError;
-        this.connectedTransport = transport;
-      },
-    } as McpServer;
+  public async send(): Promise<void> {}
+
+  public async close(): Promise<void> {
+    this.onclose?.();
   }
+
+  public onclose: (() => void) | undefined;
 }
 
 class FakeTransportFactory extends McpTransportFactory {
@@ -71,30 +71,29 @@ function createScheduler(): InspectNpmPackageQualityWorkflowScheduler {
   );
 }
 
+function createHandler(transport: Transport): McpHandler {
+  return new McpHandler(
+    createScheduler(),
+    new InspectResultSummarizer(),
+    new InspectDelegationInterpreter(),
+    new PlainInspectExceptionFormatter(),
+    new FakeTransportFactory(transport),
+  );
+}
+
 describe("McpHandler", () => {
-  it("should connect the injected server to the injected transport", async () => {
-    const scheduler = createScheduler();
-    const serverFactory = new FakeServerFactory();
-    const transport = {} as Transport;
-    const handler = new McpHandler(
-      scheduler,
-      serverFactory,
-      new FakeTransportFactory(transport),
-    );
+  it("should connect the MCP server to the injected transport", async () => {
+    const transport = new RecordingTransport();
+    const handler = createHandler(transport);
 
     await handler.run();
 
-    expect(serverFactory.workflow).toBe(scheduler);
-    expect(serverFactory.connectedTransport).toBe(transport);
+    expect(transport.started).toBe(true);
   });
 
   it("should propagate a server connection failure", async () => {
     const error = new Error("transport unavailable");
-    const handler = new McpHandler(
-      createScheduler(),
-      new FakeServerFactory(error),
-      new FakeTransportFactory({} as Transport),
-    );
+    const handler = createHandler(new RecordingTransport(error));
 
     await expect(handler.run()).rejects.toBe(error);
   });

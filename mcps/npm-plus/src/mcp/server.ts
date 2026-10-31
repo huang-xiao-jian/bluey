@@ -1,5 +1,4 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { injectable } from "inversify";
 import {
   InspectTargetException,
   InspectTargetExceptionCode,
@@ -12,30 +11,6 @@ import {
 import { InspectExceptionFormatter } from "../facade/report/inspect-exception-formatter";
 import { InspectResultSummarizer } from "./report/inspect-result-summarizer";
 import { createInspectNpmPackageTool } from "./tools/inspect-npm-package";
-
-export abstract class NpmPlusMcpServerFactory {
-  public abstract create(workflow: InspectNpmPackageQualityWorkflow): McpServer;
-}
-
-@injectable()
-export class DefaultNpmPlusMcpServerFactory extends NpmPlusMcpServerFactory {
-  public constructor(
-    private readonly summarizer: InspectResultSummarizer,
-    private readonly delegationInterpreter: InspectDelegationInterpreter,
-    private readonly exceptionFormatter: InspectExceptionFormatter,
-  ) {
-    super();
-  }
-
-  public create(workflow: InspectNpmPackageQualityWorkflow): McpServer {
-    return setupMcpServer(
-      workflow,
-      this.summarizer,
-      this.delegationInterpreter,
-      this.exceptionFormatter,
-    );
-  }
-}
 
 export function setupMcpServer(
   scheduler: InspectNpmPackageQualityWorkflow,
