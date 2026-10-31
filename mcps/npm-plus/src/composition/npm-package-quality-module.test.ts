@@ -6,7 +6,7 @@ import {
   NpmPackageRegistry,
 } from "../core/ports/npm-package-registry";
 import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
-import { NPM_PACKAGE_QUALITY_MODULE } from "./npm-package-quality-module";
+import { provideNpmPackageQualityModule } from "./npm-package-quality-module";
 
 class InMemoryRegistry extends NpmPackageRegistry {
   public async readManifest(): Promise<NpmPackageManifestResolution> {
@@ -21,14 +21,10 @@ class InMemoryRegistry extends NpmPackageRegistry {
   }
 }
 
-describe("NPM_PACKAGE_QUALITY_MODULE", () => {
-  it("should resolve the complete workflow with a replaceable Registry port", async () => {
+describe("provideNpmPackageQualityModule", () => {
+  it("should resolve the complete workflow with the provided registry", async () => {
     const container = new Container({ defaultScope: "Singleton" });
-    container.load(NPM_PACKAGE_QUALITY_MODULE);
-    container
-      .rebind(NpmPackageRegistry)
-      .to(InMemoryRegistry)
-      .inSingletonScope();
+    container.load(provideNpmPackageQualityModule(new InMemoryRegistry()));
 
     const scheduler = container.get(InspectNpmPackageQualityWorkflowScheduler);
     const result = await scheduler.run(
