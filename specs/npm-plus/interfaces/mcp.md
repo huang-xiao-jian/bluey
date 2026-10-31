@@ -36,7 +36,10 @@ interface InspectNpmPackageInput {
 - `content`：根据原始 **InspectResult** 生成的 **McpInspectSummary**，以中文文本完整呈现检查目标、可用的质量事实以及质量数据获取异常，信息内容与 terminal 报告对齐。
 - `structuredContent`：完整的原始 **InspectResult**，不属于 **McpInspectSummary**。
 
-包含质量维度评估异常的 **InspectResult** 仍作为成功 `tool result` 返回。输入 schema 错误，或者将 **InspectDelegation** 转换为 **InspectTarget** 时抛出的错误映射为 `MCP error response`，不得产生 `structuredContent`。
+包含质量维度评估异常的 **InspectResult** 仍作为成功 `tool result` 返回。输入不满足委托约束，
+或者无法将 **InspectDelegation** 转换为 **InspectTarget** 时，接入层必须捕获内部异常并映射为
+包含自然语言失败摘要的 `MCP error response`，不得直接输出异常对象或产生
+`structuredContent`。
 
 ## 特殊说明
 

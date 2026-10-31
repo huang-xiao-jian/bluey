@@ -92,9 +92,11 @@ describe("NodeNpmPackageRegistry", () => {
       "https://registry.example.test",
     );
 
-    await expect(registry.readPackage("example")).rejects.toBeInstanceOf(
-      RegistryResponseError,
-    );
+    await expect(registry.readPackage("example")).rejects.toMatchObject({
+      name: "RegistryResponseError",
+      message:
+        "npm Registry 返回的 package“example”数据无效，无法确定检查版本。",
+    });
   });
 
   it("should throw RegistryRequestError for another unsuccessful response", async () => {
@@ -105,7 +107,11 @@ describe("NodeNpmPackageRegistry", () => {
 
     await expect(
       registry.readManifest("example", "latest"),
-    ).rejects.toBeInstanceOf(RegistryRequestError);
+    ).rejects.toMatchObject({
+      name: "RegistryRequestError",
+      message:
+        "npm Registry 返回 HTTP 503，当前无法获取 package“example”的信息。",
+    });
   });
 
   it("should throw RegistryRequestError when fetch fails", async () => {
@@ -118,7 +124,8 @@ describe("NodeNpmPackageRegistry", () => {
 
     await expect(registry.readManifest("example", "latest")).rejects.toMatchObject({
       name: "RegistryRequestError",
-      message: "Unable to request npm Registry package example: network unavailable",
+      message:
+        "无法连接 npm Registry，未能获取 package“example”的信息，请检查网络连接或稍后重试。",
     });
   });
 
@@ -130,6 +137,10 @@ describe("NodeNpmPackageRegistry", () => {
 
     await expect(
       registry.readManifest("example", "latest"),
-    ).rejects.toBeInstanceOf(RegistryResponseError);
+    ).rejects.toMatchObject({
+      name: "RegistryResponseError",
+      message:
+        "npm Registry 返回的 package“example”数据无效，无法确定检查版本。",
+    });
   });
 });

@@ -62,8 +62,13 @@ enum InspectTargetExceptionCode {
 - `REGISTRY_ERROR`：Registry 请求失败或响应无效，无法提供确定检查目标所需的数据。
 - `INSPECT_TARGET_DETERMINATION_FAILED`：未知内部异常，使 `Worker` 无法安全确定检查目标。
 
-错误码是稳定契约，调用方不得根据 `message` 判断错误类型，且异常不得包含 `stack`、`cause`、
-原始网络错误、JSON 解析错误、`schema` 校验详情或其他底层实现信息。
+错误码是稳定契约，调用方不得根据 `message` 判断错误类型。`message` 必须是已经脱敏且具备完整
+语义的自然语言说明，使接入层可以直接聚合，不得要求接入层重新解释错误码。异常不得包含
+`stack`、`cause`、原始网络错误、JSON 解析错误、`schema` 校验详情或其他底层实现信息。
 
 Registry 请求或响应异常必须转换为 `REGISTRY_ERROR`。其他未识别内部异常必须转换为
 `INSPECT_TARGET_DETERMINATION_FAILED`。能够识别具体语义的失败不得转换为该兜底错误码。
+
+该异常只在系统内部中断目标确定流程。CLI 和 MCP 接入层必须捕获异常，直接聚合已经具备完整
+语义的 `message` 生成自然语言失败摘要，不得将异常对象直接抛给开发者或 agent。目标确定失败
+仍属于失败通道，不得构造部分 **InspectTarget** 或 **InspectResult**。

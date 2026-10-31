@@ -21,7 +21,12 @@ program
       versionIdentifier: string | undefined,
       options: InspectOptions,
     ) => {
-      await createInspectHandler().run(packageName, versionIdentifier, options);
+      const succeeded = await createInspectHandler().run(
+        packageName,
+        versionIdentifier,
+        options,
+      );
+      if (!succeeded) process.exitCode = 1;
     },
   );
 

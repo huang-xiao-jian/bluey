@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { PackageNotFound } from "../errors/target-determination-errors";
+import {
+  PackageNotFound,
+  RegistryRequestError,
+  RegistryResponseError,
+} from "../errors/target-determination-errors";
+import {
+  InspectTargetException,
+  InspectTargetExceptionCode,
+} from "../errors/inspect-target-exception";
 import { InspectDelegation } from "../model/inspect-delegation";
 import { InspectTarget } from "../model/inspect-target";
 import {
@@ -99,7 +107,7 @@ describe("InspectTargetDeterminer", () => {
     });
   });
 
-  it("should report an absent exact version", async () => {
+  it("should explain an absent exact version without exposing the internal error", async () => {
     const determiner = createDeterminer(
       new MissingManifestRegistry(),
     );
@@ -108,20 +116,30 @@ describe("InspectTargetDeterminer", () => {
       determiner.determine(
         new InspectDelegation("example-package", "3.0.0"),
       ),
-    ).rejects.toMatchObject({ name: "ExactVersionNotFound" });
+    ).rejects.toEqual(
+      new InspectTargetException(
+        InspectTargetExceptionCode.ExactVersionNotFound,
+        "npm package“example-package”没有发布版本“3.0.0”，请确认精确版本号是否正确。",
+      ),
+    );
   });
 
-  it("should report an absent tag", async () => {
+  it("should explain an absent tag without exposing the internal error", async () => {
     const determiner = createDeterminer(
       new MissingManifestRegistry(),
     );
 
     await expect(
       determiner.determine(new InspectDelegation("example-package", "next")),
-    ).rejects.toMatchObject({ name: "TagNotFound" });
+    ).rejects.toEqual(
+      new InspectTargetException(
+        InspectTargetExceptionCode.TagNotFound,
+        "npm package“example-package”没有“next”tag，请确认 tag 是否正确。",
+      ),
+    );
   });
 
-  it("should report a tag that points to an absent version", async () => {
+  it("should explain a tag that points to an absent version", async () => {
     const determiner = createDeterminer(
       new MissingManifestRegistry({
         name: "example-package",
@@ -134,7 +152,12 @@ describe("InspectTargetDeterminer", () => {
       determiner.determine(
         new InspectDelegation("example-package", "dangling"),
       ),
-    ).rejects.toMatchObject({ name: "TagUnresolvable" });
+    ).rejects.toEqual(
+      new InspectTargetException(
+        InspectTargetExceptionCode.TagUnresolvable,
+        "npm package“example-package”的“dangling”tag 未指向已发布版本，请尝试其他 tag 或精确版本号。",
+      ),
+    );
   });
 
   it("should determine the latest published version", async () => {
@@ -162,13 +185,53 @@ describe("InspectTargetDeterminer", () => {
     });
   });
 
-  it("should propagate PackageNotFound", async () => {
+  it("should explain an absent package without exposing the internal error", async () => {
     const determiner = createDeterminer(
       new StubRegistry(new PackageNotFound("missing-package")),
     );
 
     await expect(
       determiner.determine(new InspectDelegation("missing-package")),
-    ).rejects.toBeInstanceOf(PackageNotFound);
+    ).rejects.toEqual(
+      new InspectTargetException(
+        InspectTargetExceptionCode.PackageNotFound,
+        "npm Registry 中未找到 package“missing-package”，请确认名称是否正确以及该 package 是否已发布。",
+      ),
+    );
+  });
+
+  it.each([
+    new RegistryRequestError(
+      "无法连接 npm Registry，未能获取 package“example-package”的信息，请检查网络连接或稍后重试。",
+    ),
+    new RegistryResponseError(
+      "npm Registry 返回的 package“example-package”数据无效，无法确定检查版本。",
+    ),
+  ])("should preserve semantic Registry exception messages", async (registryError) => {
+    const determiner = createDeterminer(new StubRegistry(registryError));
+
+    await expect(
+      determiner.determine(new InspectDelegation("example-package")),
+    ).rejects.toEqual(
+      new InspectTargetException(
+        InspectTargetExceptionCode.RegistryError,
+        registryError.message,
+      ),
+    );
+  });
+
+  it("should add target context to an unexpected semantic message", async () => {
+    const determiner = createDeterminer(
+      new StubRegistry(new Error("版本解释器无法识别委托中的版本标识。")),
+    );
+
+    await expect(
+      determiner.determine(new InspectDelegation("example-package")),
+    ).rejects.toEqual(
+      new InspectTargetException(
+        InspectTargetExceptionCode.InspectTargetDeterminationFailed,
+        "确定 npm package“example-package”的检查版本时发生异常：版本解释器无法识别委托中的版本标识。",
+      ),
+    );
   });
 });

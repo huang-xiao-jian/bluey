@@ -44,27 +44,25 @@ export class NodeNpmPackageRegistry extends NpmPackageRegistry {
       response = await this.fetcher(url, {
         headers: { accept: "application/json" },
       });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+    } catch {
       throw new RegistryRequestError(
-        `Unable to request npm Registry package ${packageName}: ${message}`,
+        `无法连接 npm Registry，未能获取 package“${packageName}”的信息，请检查网络连接或稍后重试。`,
       );
     }
 
     if (response.status === 404) return undefined;
     if (!response.ok) {
       throw new RegistryRequestError(
-        `npm Registry request failed for ${packageName}: HTTP ${response.status}`,
+        `npm Registry 返回 HTTP ${response.status}，当前无法获取 package“${packageName}”的信息。`,
       );
     }
 
     try {
       const manifest = RegistryManifestSchema.parse(await response.json());
       return { exactVersion: manifest.version, manifest };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+    } catch {
       throw new RegistryResponseError(
-        `Invalid npm Registry response for ${packageName}: ${message}`,
+        `npm Registry 返回的 package“${packageName}”数据无效，无法确定检查版本。`,
       );
     }
   }
@@ -76,17 +74,16 @@ export class NodeNpmPackageRegistry extends NpmPackageRegistry {
       response = await this.fetcher(url, {
         headers: { accept: AbbreviatedMetadataAccept },
       });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+    } catch {
       throw new RegistryRequestError(
-        `Unable to request npm Registry package ${packageName}: ${message}`,
+        `无法连接 npm Registry，未能获取 package“${packageName}”的信息，请检查网络连接或稍后重试。`,
       );
     }
 
     if (response.status === 404) throw new PackageNotFound(packageName);
     if (!response.ok) {
       throw new RegistryRequestError(
-        `npm Registry request failed for ${packageName}: HTTP ${response.status}`,
+        `npm Registry 返回 HTTP ${response.status}，当前无法获取 package“${packageName}”的信息。`,
       );
     }
 
@@ -97,10 +94,9 @@ export class NodeNpmPackageRegistry extends NpmPackageRegistry {
         distTags: document["dist-tags"],
         versions: document.versions,
       };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+    } catch {
       throw new RegistryResponseError(
-        `Invalid npm Registry response for ${packageName}: ${message}`,
+        `npm Registry 返回的 package“${packageName}”数据无效，无法确定检查版本。`,
       );
     }
   }

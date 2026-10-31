@@ -143,15 +143,28 @@ describe("npm-plus CLI", () => {
     await expect(run("inspect", "missing", "--json")).rejects.toMatchObject({
       code: 1,
       stdout: "",
-      stderr: expect.stringContaining("PackageNotFound: Package not found: missing"),
+      stderr: `无法检查 npm package
+
+原因
+  npm Registry 中未找到 package“missing”，请确认名称是否正确以及该 package 是否已发布。
+`,
     });
   });
 
   it.each([
-    ["3.0.0", "ExactVersionNotFound"],
-    ["next", "TagNotFound"],
-    ["dangling", "TagUnresolvable"],
-  ])("should report target determination failure for %s", async (identifier, errorName) => {
+    [
+      "3.0.0",
+      "npm package“example-package”没有发布版本“3.0.0”，请确认精确版本号是否正确。",
+    ],
+    [
+      "next",
+      "npm package“example-package”没有“next”tag，请确认 tag 是否正确。",
+    ],
+    [
+      "dangling",
+      "npm package“example-package”的“dangling”tag 未指向已发布版本，请尝试其他 tag 或精确版本号。",
+    ],
+  ])("should explain target determination failure for %s", async (identifier, explanation) => {
     const requestsBefore = requestCount;
 
     await expect(
@@ -159,7 +172,7 @@ describe("npm-plus CLI", () => {
     ).rejects.toMatchObject({
       code: 1,
       stdout: "",
-      stderr: expect.stringContaining(errorName),
+      stderr: expect.stringContaining(explanation),
     });
     expect(requestCount).toBe(requestsBefore + 2);
   });
@@ -171,12 +184,16 @@ describe("npm-plus CLI", () => {
     expect(stderr).toBe("");
     expect(requestCount).toBe(requestsBefore + 1);
     expect(stdout).toBe(
-      "Target: example-package@1.0.0 (tag: latest)\n" +
-        "Runtime dependencies: 1\n" +
-        "Optional dependencies: 1\n" +
-        "Peer dependencies: 0\n" +
-        "Bundled dependencies: 1\n" +
-        "Quality exceptions: 0\n",
+      "检查目标  example-package@1.0.0\n" +
+        "版本来源  latest tag\n" +
+        "\n" +
+        "依赖规模\n" +
+        "  运行时依赖  1\n" +
+        "  可选依赖    1\n" +
+        "  对等依赖    0\n" +
+        "  捆绑依赖    1\n" +
+        "\n" +
+        "数据获取异常  0\n",
     );
   });
 
@@ -189,7 +206,7 @@ describe("npm-plus CLI", () => {
       code: 1,
       stdout: "",
       stderr: expect.stringContaining(
-        "UnsupportedVersionRangeError: Version ranges are not supported: ^1.0.0",
+        "暂不支持版本范围“^1.0.0”，请提供精确版本号或 tag。",
       ),
     });
     expect(requestCount).toBe(requestsBefore);

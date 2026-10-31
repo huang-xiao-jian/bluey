@@ -37,7 +37,10 @@ npm-plus inspect typescript next
 npm-plus inspect typescript latest --json
 ```
 
-版本范围不属于支持的输入。目标 package、精确版本或 tag 无法确定时，命令以非零状态结束且不输出 `InspectResult`。单个质量维度获取失败时，命令仍成功，并将稳定的异常名称与消息记录在 `quality.exceptions` 中。
+版本范围不属于支持的输入。目标 package、精确版本或 tag 无法确定时，命令在 `stderr` 中输出
+自然语言失败摘要，以非零状态结束且不输出 `InspectResult`。失败摘要不会暴露异常对象或底层
+实现详情。单个质量维度获取失败时，命令仍成功，并将稳定的异常名称与消息记录在
+`quality.exceptions` 中。
 
 ## MCP
 
@@ -47,7 +50,9 @@ npm-plus inspect typescript latest --json
 npm-plus mcp
 ```
 
-Server 注册只读工具 `inspect_npm_package`，输入包含必填的 `packageName` 和可选的 `versionIdentifier`。成功响应的 `structuredContent` 是完整 `InspectResult`；目标确定错误使用 MCP error response。
+Server 注册只读工具 `inspect_npm_package`，输入包含必填的 `packageName` 和可选的
+`versionIdentifier`。成功响应的 `structuredContent` 是完整 `InspectResult`；输入解释或目标确定
+失败时返回包含自然语言说明的 MCP error response，不暴露内部异常详情。
 
 本地构建后的客户端配置示例：
 

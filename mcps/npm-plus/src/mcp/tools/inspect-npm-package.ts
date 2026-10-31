@@ -1,22 +1,19 @@
 import { z } from "zod";
-import { InspectDelegation } from "../../core/model/inspect-delegation";
+import {
+  InspectTargetException,
+  InspectTargetExceptionCode,
+} from "../../core/errors/inspect-target-exception";
 import { DirectDependencyKind } from "../../core/model/inspect-target-quality";
-import { isUnsupportedVersionRange } from "../../core/target/package-version-identifier-interpreter";
 import type { InspectNpmPackageQualityWorkflow } from "../../core/workflow/inspect-npm-package-quality-workflow-scheduler";
+import { InspectDelegationInterpreter } from "../../facade/inspect-delegation-interpreter";
 import type { InspectResult } from "../../facade/inspect-result";
 import { InspectResultSummarizer } from "../report/inspect-result-summarizer";
 
-const NonBlankStringSchema = z
-  .string()
-  .refine((value) => value.trim().length > 0, "Value must not be blank");
-
 export const InspectNpmPackageInputSchema = z
   .object({
-    packageName: NonBlankStringSchema.describe("The npm package name."),
-    versionIdentifier: NonBlankStringSchema.refine(
-      (value) => !isUnsupportedVersionRange(value),
-      "Version ranges are not supported",
-    )
+    packageName: z.string().describe("The npm package name."),
+    versionIdentifier: z
+      .string()
       .optional()
       .describe("An exact version or npm dist-tag. Defaults to latest."),
   })
@@ -69,6 +66,7 @@ export type InspectNpmPackageInput = z.infer<
 export function createInspectNpmPackageTool(
   scheduler: InspectNpmPackageQualityWorkflow,
   summarizer: InspectResultSummarizer,
+  delegationInterpreter = new InspectDelegationInterpreter(),
 ) {
   return {
     name: "inspect_npm_package",
@@ -85,7 +83,7 @@ export function createInspectNpmPackageTool(
     outputSchema: InspectResultOutputSchema,
     async callback(input: InspectNpmPackageInput) {
       const parsed = InspectNpmPackageInputSchema.parse(input);
-      const delegation = new InspectDelegation(
+      const delegation = delegationInterpreter.interpret(
         parsed.packageName,
         parsed.versionIdentifier,
       );
@@ -93,7 +91,15 @@ export function createInspectNpmPackageTool(
         delegation,
         ...(await scheduler.run(delegation)),
       };
-      const result = InspectResultOutputSchema.parse(inspectResult);
+      let result: z.infer<typeof InspectResultOutputSchema>;
+      try {
+        result = InspectResultOutputSchema.parse(inspectResult);
+      } catch {
+        throw new InspectTargetException(
+          InspectTargetExceptionCode.InspectTargetDeterminationFailed,
+          "无法生成 MCP 检查结果：工作流返回的数据不符合输出契约。",
+        );
+      }
       return {
         result,
         summary: summarizer.summarize(inspectResult),

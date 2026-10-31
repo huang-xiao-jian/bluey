@@ -1,7 +1,10 @@
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory";
 import { afterEach, describe, expect, it } from "vitest";
-import { PackageNotFound } from "../core/errors/target-determination-errors";
+import {
+  InspectTargetException,
+  InspectTargetExceptionCode,
+} from "../core/errors/inspect-target-exception";
 import { InspectTarget } from "../core/model/inspect-target";
 import {
   InspectTargetQuality,
@@ -121,7 +124,10 @@ describe.each([
   it("should map target determination failures to an MCP error", async () => {
     const scheduler = {
       async run() {
-        throw new PackageNotFound("missing");
+        throw new InspectTargetException(
+          InspectTargetExceptionCode.PackageNotFound,
+          "npm Registry 中未找到 package“missing”，请确认名称是否正确以及该 package 是否已发布。",
+        );
       },
     } satisfies InspectNpmPackageQualityWorkflow;
     const connectedClient = await connect(scheduler);
@@ -134,7 +140,13 @@ describe.each([
     expect(result.isError).toBe(true);
     expect(result.structuredContent).toBeUndefined();
     expect(result.content).toEqual([
-      { type: "text", text: "Package not found: missing" },
+      {
+        type: "text",
+        text: `无法检查 npm package
+
+原因
+  npm Registry 中未找到 package“missing”，请确认名称是否正确以及该 package 是否已发布。`,
+      },
     ]);
   });
 
@@ -151,5 +163,74 @@ describe.each([
 
     expect(result.isError).toBe(true);
     expect(result.structuredContent).toBeUndefined();
+    expect(result.content).toEqual([
+      {
+        type: "text",
+        text: `无法检查 npm package
+
+原因
+  暂不支持版本范围“^1.0.0”，请提供精确版本号或 tag。`,
+      },
+    ]);
+  });
+
+  it("should preserve an unexpected semantic exception message", async () => {
+    const scheduler = {
+      async run() {
+        throw new Error("工作流调度器无法生成检查结果。");
+      },
+    } satisfies InspectNpmPackageQualityWorkflow;
+    const connectedClient = await connect(scheduler);
+
+    const result = await connectedClient.callTool({
+      name: "inspect_npm_package",
+      arguments: { packageName: "example-package" },
+    });
+
+    expect(result).toMatchObject({
+      isError: true,
+      content: [
+        {
+          type: "text",
+          text: `无法检查 npm package
+
+原因
+  执行 npm package 检查时发生异常：工作流调度器无法生成检查结果。`,
+        },
+      ],
+    });
+  });
+
+  it("should explain an invalid workflow result without exposing schema details", async () => {
+    const scheduler = {
+      async run() {
+        return {
+          target: { packageName: "example-package", exactVersion: 123 },
+          quality: { exceptions: [] },
+        } as unknown as Awaited<
+          ReturnType<InspectNpmPackageQualityWorkflow["run"]>
+        >;
+      },
+    } satisfies InspectNpmPackageQualityWorkflow;
+    const connectedClient = await connect(scheduler);
+
+    const result = await connectedClient.callTool({
+      name: "inspect_npm_package",
+      arguments: { packageName: "example-package" },
+    });
+
+    expect(result).toMatchObject({
+      isError: true,
+      content: [
+        {
+          type: "text",
+          text: `无法检查 npm package
+
+原因
+  无法生成 MCP 检查结果：工作流返回的数据不符合输出契约。`,
+        },
+      ],
+    });
+    expect(JSON.stringify(result)).not.toContain("expected string");
   });
 });

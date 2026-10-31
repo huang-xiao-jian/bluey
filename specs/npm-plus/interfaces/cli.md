@@ -28,6 +28,7 @@ npm-plus inspect <package-name> [version-identifier] [--json]
 
 ## 退出状态
 
-接入层成功构造 **InspectResult** 时，CLI 以退出状态 `0` 完成，即使其中包含质量数据获取异常。
+成功构造 **InspectResult** 时，CLI 以退出状态 `0` 完成，即使其中包含质量数据获取异常。
 
-输入不满足接口契约，或者将 **InspectDelegation** 转换为 **InspectTarget** 时抛出错误，使 CLI 以非零状态结束。CLI 不得为这些错误输出 **InspectResult**。
+CLI 必须捕获内部异常、输出自然语言失败摘要，并以非零状态结束。CLI 不得直接输出异常对象，也不得为这些
+错误输出 **InspectResult**。

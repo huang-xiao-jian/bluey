@@ -1,4 +1,8 @@
 import { describe, expect, it } from "vitest";
+import {
+  InspectTargetException,
+  InspectTargetExceptionCode,
+} from "../errors/inspect-target-exception";
 import { InspectDelegation } from "../model/inspect-delegation";
 import { InspectTarget } from "../model/inspect-target";
 import {
@@ -93,7 +97,7 @@ describe("InspectNpmPackageQualityWorkflowScheduler", () => {
   });
 
   it("should propagate target errors without inspecting quality", async () => {
-    const targetError = new Error("target unavailable");
+    const targetError = new Error("目标版本解析服务当前不可用。");
     let inspectionStarted = false;
     class UnexpectedQualityInspector extends InspectTargetQualityInspector {
       public override async inspect(): Promise<never> {
@@ -113,7 +117,12 @@ describe("InspectNpmPackageQualityWorkflowScheduler", () => {
       ),
     );
 
-    await expect(scheduler.run(delegation)).rejects.toBe(targetError);
+    await expect(scheduler.run(delegation)).rejects.toEqual(
+      new InspectTargetException(
+        InspectTargetExceptionCode.InspectTargetDeterminationFailed,
+        "确定 npm package“example-package”的检查版本时发生异常：目标版本解析服务当前不可用。",
+      ),
+    );
     expect(inspectionStarted).toBe(false);
   });
 });

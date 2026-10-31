@@ -1,11 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { PackageNotFound } from "../../core/errors/target-determination-errors";
+import {
+  InspectTargetException,
+  InspectTargetExceptionCode,
+} from "../../core/errors/inspect-target-exception";
 import { InspectTarget } from "../../core/model/inspect-target";
 import {
   InspectTargetQuality,
   InspectTargetQualityException,
 } from "../../core/model/inspect-target-quality";
 import type { InspectNpmPackageQualityWorkflow } from "../../core/workflow/inspect-npm-package-quality-workflow-scheduler";
+import {
+  InspectDelegateException,
+  InspectDelegateExceptionCode,
+} from "../../facade/inspect-delegation-interpreter";
 import { InspectResultSummarizer } from "../report/inspect-result-summarizer";
 import {
   createInspectNpmPackageTool,
@@ -42,12 +49,23 @@ describe("InspectNpmPackageInputSchema", () => {
   });
 
   it.each([
-    { packageName: "" },
-    { packageName: "example-package", versionIdentifier: "" },
-    { packageName: "example-package", versionIdentifier: "^1.0.0" },
-    { packageName: "example-package", versionIdentifier: "1.x" },
-  ])("should reject unsupported input %#", (input) => {
+    {},
+    { packageName: 42 },
+    { packageName: "example-package", versionIdentifier: 42 },
+  ])("should reject a structurally invalid input %#", (input) => {
     expect(() => InspectNpmPackageInputSchema.parse(input)).toThrow();
+  });
+
+  it("should leave semantic validation to the delegation interpreter", () => {
+    expect(
+      InspectNpmPackageInputSchema.parse({
+        packageName: "example-package",
+        versionIdentifier: "^1.0.0",
+      }),
+    ).toEqual({
+      packageName: "example-package",
+      versionIdentifier: "^1.0.0",
+    });
   });
 });
 
@@ -107,10 +125,32 @@ describe("createInspectNpmPackageTool", () => {
   manifest unavailable`);
   });
 
+  it("should convert unsupported input through the delegation interpreter", async () => {
+    const tool = createInspectNpmPackageTool(
+      schedulerWithResult(),
+      new InspectResultSummarizer(),
+    );
+
+    await expect(
+      tool.callback({
+        packageName: "example-package",
+        versionIdentifier: "^1.0.0",
+      }),
+    ).rejects.toEqual(
+      new InspectDelegateException(
+        InspectDelegateExceptionCode.UnsupportedVersionRange,
+        "暂不支持版本范围“^1.0.0”，请提供精确版本号或 tag。",
+      ),
+    );
+  });
+
   it("should propagate target determination errors", async () => {
     const scheduler = {
       async run() {
-        throw new PackageNotFound("missing");
+        throw new InspectTargetException(
+          InspectTargetExceptionCode.PackageNotFound,
+          "npm Registry 中未找到 package“missing”，请确认名称是否正确以及该 package 是否已发布。",
+        );
       },
     } satisfies InspectNpmPackageQualityWorkflow;
 
@@ -119,6 +159,11 @@ describe("createInspectNpmPackageTool", () => {
         scheduler,
         new InspectResultSummarizer(),
       ).callback({ packageName: "missing" }),
-    ).rejects.toBeInstanceOf(PackageNotFound);
+    ).rejects.toEqual(
+      new InspectTargetException(
+        InspectTargetExceptionCode.PackageNotFound,
+        "npm Registry 中未找到 package“missing”，请确认名称是否正确以及该 package 是否已发布。",
+      ),
+    );
   });
 });

@@ -7,10 +7,14 @@ import { QualityDimensionFailureRecorder } from "../core/quality/quality-dimensi
 import { InspectTargetDeterminer } from "../core/target/inspect-target-determiner";
 import { PackageVersionIdentifierInterpreter } from "../core/target/package-version-identifier-interpreter";
 import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
+import { InspectDelegationInterpreter } from "../facade/inspect-delegation-interpreter";
+import { InspectExceptionFormatter } from "../facade/report/inspect-exception-formatter";
 import { NodeNpmPackageRegistry } from "../infrastructure/registry/node-npm-package-registry";
 
 export const npmPackageQualityModule = new ContainerModule(({ bind }) => {
   bind(NpmPackageRegistry).to(NodeNpmPackageRegistry).inSingletonScope();
+  bind(InspectDelegationInterpreter).toSelf().inSingletonScope();
+  bind(InspectExceptionFormatter).toSelf().inSingletonScope();
   bind(PackageVersionIdentifierInterpreter).toSelf().inSingletonScope();
   bind(InspectTargetDeterminer).toSelf().inSingletonScope();
   bind(DependencyScaleQualityInspector).toSelf().inSingletonScope();
