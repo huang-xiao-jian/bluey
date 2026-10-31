@@ -12,5 +12,6 @@
 
 ## 相关文档
 
+- [Worker 异常契约](worker-exceptions.md)定义接入层与业务层 Worker 的职责边界及其稳定异常语义。
 - [npm-plus 接入层设计](interfaces/spec.md)定义 CLI 和 MCP 使用方如何访问本规范规定的能力。
 - [面向对象设计](design.md)将本规范转换为候选类、职责及协作关系。
