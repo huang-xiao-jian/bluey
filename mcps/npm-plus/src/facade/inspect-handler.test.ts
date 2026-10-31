@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import chalk, { chalkStderr } from "chalk";
+import { afterEach, describe, expect, it } from "vitest";
 import {
   type NpmPackageManifestResolution,
   NpmPackageRegistry,
@@ -8,6 +9,7 @@ import { InspectTargetQualityFabricator } from "../core/quality/inspect-target-q
 import { InspectTargetQualityInspector } from "../core/quality/inspect-target-quality-inspector";
 import { QualityDimensionFailureRecorder } from "../core/quality/quality-dimension-failure-recorder";
 import { InspectTargetDeterminer } from "../core/target/inspect-target-determiner";
+import { InspectTargetFailureExplainer } from "../core/target/inspect-target-failure-explainer";
 import { PackageVersionIdentifierInterpreter } from "../core/target/package-version-identifier-interpreter";
 import { InspectNpmPackageQualityWorkflowScheduler } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
 import {
@@ -15,9 +17,10 @@ import {
   InspectHandlerDependencies,
 } from "./inspect-handler";
 import { InspectDelegationInterpreter } from "./inspect-delegation-interpreter";
-import { InspectExceptionFormatter } from "./report/inspect-exception-formatter";
+import type { InspectExceptionFormatter } from "./report/inspect-exception-formatter";
 import { InspectResultFormatterPicker } from "./report/inspect-result-formatter-picker";
 import { JSONInspectResultFormatter } from "./report/json-inspect-result-formatter";
+import { TerminalInspectExceptionFormatter } from "./report/terminal-inspect-exception-formatter";
 import { TerminalInspectResultFormatter } from "./report/terminal-inspect-result-formatter";
 
 class CapturingDependencies extends InspectHandlerDependencies {
@@ -62,6 +65,7 @@ function createScheduler(
     new InspectTargetDeterminer(
       registry,
       new PackageVersionIdentifierInterpreter(),
+      new InspectTargetFailureExplainer(),
     ),
     new InspectTargetQualityInspector(
       dependencyScaleInspector,
@@ -78,7 +82,19 @@ function createFormatterPicker(): InspectResultFormatterPicker {
   );
 }
 
+function createExceptionFormatter(): InspectExceptionFormatter {
+  return new TerminalInspectExceptionFormatter();
+}
+
 describe("InspectHandler", () => {
+  const colorLevel = chalk.level;
+  const stderrColorLevel = chalkStderr.level;
+
+  afterEach(() => {
+    chalk.level = colorLevel;
+    chalkStderr.level = stderrColorLevel;
+  });
+
   it("should preserve an explicit version identifier in the result", async () => {
     const dependencies = new CapturingDependencies();
     const handler = new InspectHandler(
@@ -86,7 +102,7 @@ describe("InspectHandler", () => {
       createFormatterPicker(),
       dependencies,
       new InspectDelegationInterpreter(),
-      new InspectExceptionFormatter(),
+      createExceptionFormatter(),
     );
 
     await handler.run("example-package", "stable", { json: true });
@@ -102,7 +118,7 @@ describe("InspectHandler", () => {
       createFormatterPicker(),
       dependencies,
       new InspectDelegationInterpreter(),
-      new InspectExceptionFormatter(),
+      createExceptionFormatter(),
     );
 
     await handler.run("example-package", undefined, { json: true });
@@ -145,7 +161,7 @@ describe("InspectHandler", () => {
       createFormatterPicker(),
       dependencies,
       new InspectDelegationInterpreter(),
-      new InspectExceptionFormatter(),
+      createExceptionFormatter(),
     );
 
     await handler.run("example-package", undefined, {});
@@ -170,7 +186,7 @@ describe("InspectHandler", () => {
       createFormatterPicker(),
       dependencies,
       new InspectDelegationInterpreter(),
-      new InspectExceptionFormatter(),
+      createExceptionFormatter(),
     );
 
     await handler.run("example-package", undefined, {});
@@ -193,7 +209,7 @@ describe("InspectHandler", () => {
       createFormatterPicker(),
       dependencies,
       new InspectDelegationInterpreter(),
-      new InspectExceptionFormatter(),
+      createExceptionFormatter(),
     );
 
     await expect(handler.run("", undefined, {})).resolves.toBe(false);
@@ -205,6 +221,22 @@ describe("InspectHandler", () => {
 `);
   });
 
+  it("should highlight CLI errors when terminal colors are enabled", async () => {
+    chalkStderr.level = 1;
+    const dependencies = new CapturingDependencies();
+    const handler = new InspectHandler(
+      createScheduler(),
+      createFormatterPicker(),
+      dependencies,
+      new InspectDelegationInterpreter(),
+      createExceptionFormatter(),
+    );
+
+    await handler.run("", undefined, {});
+
+    expect(dependencies.errorOutput).toContain("\u001B[31m");
+  });
+
   it("should explain an unsupported version range without throwing", async () => {
     const dependencies = new CapturingDependencies();
     const handler = new InspectHandler(
@@ -212,7 +244,7 @@ describe("InspectHandler", () => {
       createFormatterPicker(),
       dependencies,
       new InspectDelegationInterpreter(),
-      new InspectExceptionFormatter(),
+      createExceptionFormatter(),
     );
 
     await expect(handler.run("example-package", "^1.0.0", {})).resolves.toBe(
@@ -241,7 +273,7 @@ describe("InspectHandler", () => {
       createFormatterPicker(),
       dependencies,
       new InspectDelegationInterpreter(),
-      new InspectExceptionFormatter(),
+      createExceptionFormatter(),
     );
 
     await expect(

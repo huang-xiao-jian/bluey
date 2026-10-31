@@ -6,6 +6,15 @@ import {
 } from "./inspect-delegation-interpreter";
 
 describe("InspectDelegationInterpreter", () => {
+  it("should expose delegation failures as standard errors", () => {
+    expect(
+      new InspectDelegateException(
+        InspectDelegateExceptionCode.PackageNameRequired,
+        "package name required",
+      ),
+    ).toBeInstanceOf(Error);
+  });
+
   const interpreter = new InspectDelegationInterpreter();
 
   it("should create a delegation from supported input", () => {

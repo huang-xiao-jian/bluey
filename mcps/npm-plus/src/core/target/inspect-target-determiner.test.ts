@@ -16,6 +16,7 @@ import {
   NpmPackageRegistry,
 } from "../ports/npm-package-registry";
 import { InspectTargetDeterminer } from "./inspect-target-determiner";
+import { InspectTargetFailureExplainer } from "./inspect-target-failure-explainer";
 import { PackageVersionIdentifierInterpreter } from "./package-version-identifier-interpreter";
 
 class StubRegistry implements NpmPackageRegistry {
@@ -63,6 +64,7 @@ function createDeterminer(registry: NpmPackageRegistry): InspectTargetDeterminer
   return new InspectTargetDeterminer(
     registry,
     new PackageVersionIdentifierInterpreter(),
+    new InspectTargetFailureExplainer(),
   );
 }
 

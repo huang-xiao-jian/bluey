@@ -7,6 +7,7 @@ import { InspectTargetQualityFabricator } from "../core/quality/inspect-target-q
 import { InspectTargetQualityInspector } from "../core/quality/inspect-target-quality-inspector";
 import { QualityDimensionFailureRecorder } from "../core/quality/quality-dimension-failure-recorder";
 import { InspectTargetDeterminer } from "../core/target/inspect-target-determiner";
+import { InspectTargetFailureExplainer } from "../core/target/inspect-target-failure-explainer";
 import { PackageVersionIdentifierInterpreter } from "../core/target/package-version-identifier-interpreter";
 import {
   type InspectNpmPackageQualityWorkflow,
@@ -60,6 +61,7 @@ function createScheduler(): InspectNpmPackageQualityWorkflowScheduler {
     new InspectTargetDeterminer(
       new UnusedRegistry(),
       new PackageVersionIdentifierInterpreter(),
+      new InspectTargetFailureExplainer(),
     ),
     new InspectTargetQualityInspector(
       new DependencyScaleQualityInspector(),

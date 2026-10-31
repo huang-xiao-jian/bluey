@@ -9,11 +9,15 @@ export enum InspectDelegateExceptionCode {
   InspectDelegationFailed = "INSPECT_DELEGATION_FAILED",
 }
 
-export class InspectDelegateException {
+export class InspectDelegateException extends Error {
+  public override readonly name = "InspectDelegateException";
+
   public constructor(
     public readonly code: InspectDelegateExceptionCode,
-    public readonly message: string,
-  ) {}
+    message: string,
+  ) {
+    super(message);
+  }
 }
 
 @injectable()

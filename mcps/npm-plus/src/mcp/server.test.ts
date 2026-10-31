@@ -11,6 +11,9 @@ import {
   InspectTargetQualityException,
 } from "../core/model/inspect-target-quality";
 import type { InspectNpmPackageQualityWorkflow } from "../core/workflow/inspect-npm-package-quality-workflow-scheduler";
+import { InspectDelegationInterpreter } from "../facade/inspect-delegation-interpreter";
+import type { InspectExceptionFormatter } from "../facade/report/inspect-exception-formatter";
+import { PlainInspectExceptionFormatter } from "../facade/report/plain-inspect-exception-formatter";
 import { InspectResultSummarizer } from "./report/inspect-result-summarizer";
 import { DefaultNpmPlusMcpServerFactory, setupMcpServer } from "./server";
 
@@ -30,17 +33,28 @@ function successfulScheduler(): InspectNpmPackageQualityWorkflow {
   };
 }
 
+function createPlainExceptionFormatter(): InspectExceptionFormatter {
+  return new PlainInspectExceptionFormatter();
+}
+
 describe.each([
   {
     name: "setupMcpServer",
     create: (workflow: InspectNpmPackageQualityWorkflow) =>
-      setupMcpServer(workflow, new InspectResultSummarizer()),
+      setupMcpServer(
+        workflow,
+        new InspectResultSummarizer(),
+        new InspectDelegationInterpreter(),
+        createPlainExceptionFormatter(),
+      ),
   },
   {
     name: "DefaultNpmPlusMcpServerFactory",
     create: (workflow: InspectNpmPackageQualityWorkflow) =>
       new DefaultNpmPlusMcpServerFactory(
         new InspectResultSummarizer(),
+        new InspectDelegationInterpreter(),
+        createPlainExceptionFormatter(),
       ).create(workflow),
   },
 ])("$name", ({ create }) => {

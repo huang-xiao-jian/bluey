@@ -7,9 +7,13 @@ export enum InspectTargetExceptionCode {
   InspectTargetDeterminationFailed = "INSPECT_TARGET_DETERMINATION_FAILED",
 }
 
-export class InspectTargetException {
+export class InspectTargetException extends Error {
+  public override readonly name = "InspectTargetException";
+
   public constructor(
     public readonly code: InspectTargetExceptionCode,
-    public readonly message: string,
-  ) {}
+    message: string,
+  ) {
+    super(message);
+  }
 }

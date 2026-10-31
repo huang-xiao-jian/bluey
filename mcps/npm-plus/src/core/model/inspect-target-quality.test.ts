@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { InspectTarget } from "./inspect-target";
 import {
+  DirectDependencyKind,
   InspectTargetDependencyScaleQuality,
   InspectTargetQuality,
   InspectTargetQualityException,
@@ -42,5 +43,53 @@ describe("npm inspection domain objects", () => {
       },
       exceptions: [{ name: "ExampleError", message: "example" }],
     });
+  });
+
+  it("should isolate dependency facts from mutable constructor input", () => {
+    const declarations = [
+      {
+        packageName: "runtime-helper",
+        kind: DirectDependencyKind.Runtime,
+        declaredRange: "^1.0.0",
+        bundled: false,
+      },
+    ];
+    const counts = {
+      runtimeCount: 1,
+      optionalCount: 0,
+      peerCount: 0,
+      bundledCount: 0,
+    };
+    const dependencyScale = new InspectTargetDependencyScaleQuality(
+      declarations,
+      counts,
+    );
+
+    declarations.push({
+      packageName: "late-mutation",
+      kind: DirectDependencyKind.Runtime,
+      declaredRange: "^2.0.0",
+      bundled: false,
+    });
+    counts.runtimeCount = 2;
+
+    expect(dependencyScale.directDependencyDeclarations).toHaveLength(1);
+    expect(dependencyScale.directDependencyCounts.runtimeCount).toBe(1);
+    expect(Object.isFrozen(dependencyScale.directDependencyDeclarations)).toBe(
+      true,
+    );
+    expect(Object.isFrozen(dependencyScale.directDependencyCounts)).toBe(true);
+  });
+
+  it("should isolate quality exceptions from mutable constructor input", () => {
+    const exceptions = [
+      new InspectTargetQualityException("ExampleError", "example"),
+    ];
+    const quality = new InspectTargetQuality(undefined, exceptions);
+
+    exceptions.push(new InspectTargetQualityException("LateError", "late"));
+
+    expect(quality.exceptions).toHaveLength(1);
+    expect(Object.isFrozen(quality.exceptions)).toBe(true);
   });
 });

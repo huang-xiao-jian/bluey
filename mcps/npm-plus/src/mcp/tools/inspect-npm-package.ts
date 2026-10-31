@@ -66,7 +66,7 @@ export type InspectNpmPackageInput = z.infer<
 export function createInspectNpmPackageTool(
   scheduler: InspectNpmPackageQualityWorkflow,
   summarizer: InspectResultSummarizer,
-  delegationInterpreter = new InspectDelegationInterpreter(),
+  delegationInterpreter: InspectDelegationInterpreter,
 ) {
   return {
     name: "inspect_npm_package",

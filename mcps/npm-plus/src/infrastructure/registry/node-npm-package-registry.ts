@@ -21,8 +21,8 @@ const AbbreviatedMetadataAccept =
 
 export class NodeNpmPackageRegistry extends NpmPackageRegistry {
   public constructor(
-    private readonly fetcher: typeof fetch = globalThis.fetch,
-    registryUrl = process.env.NPM_CONFIG_REGISTRY ?? "https://registry.npmjs.org",
+    private readonly fetcher: typeof fetch,
+    registryUrl: string,
   ) {
     super();
     this.registryUrl = registryUrl.replace(/\/+$/, "");

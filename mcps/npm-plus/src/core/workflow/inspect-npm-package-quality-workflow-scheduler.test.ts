@@ -18,6 +18,7 @@ import { InspectTargetQualityFabricator } from "../quality/inspect-target-qualit
 import { InspectTargetQualityInspector } from "../quality/inspect-target-quality-inspector";
 import { QualityDimensionFailureRecorder } from "../quality/quality-dimension-failure-recorder";
 import { InspectTargetDeterminer } from "../target/inspect-target-determiner";
+import { InspectTargetFailureExplainer } from "../target/inspect-target-failure-explainer";
 import { PackageVersionIdentifierInterpreter } from "../target/package-version-identifier-interpreter";
 import { InspectNpmPackageQualityWorkflowScheduler } from "./inspect-npm-package-quality-workflow-scheduler";
 
@@ -56,6 +57,7 @@ describe("InspectNpmPackageQualityWorkflowScheduler", () => {
           },
         }),
         new PackageVersionIdentifierInterpreter(),
+        new InspectTargetFailureExplainer(),
       ),
       new InspectTargetQualityInspector(
         new DependencyScaleQualityInspector(),
@@ -109,6 +111,7 @@ describe("InspectNpmPackageQualityWorkflowScheduler", () => {
       new InspectTargetDeterminer(
         new StubRegistry(targetError),
         new PackageVersionIdentifierInterpreter(),
+        new InspectTargetFailureExplainer(),
       ),
       new UnexpectedQualityInspector(
         new DependencyScaleQualityInspector(),

@@ -12,6 +12,7 @@ import type { InspectNpmPackageQualityWorkflow } from "../../core/workflow/inspe
 import {
   InspectDelegateException,
   InspectDelegateExceptionCode,
+  InspectDelegationInterpreter,
 } from "../../facade/inspect-delegation-interpreter";
 import { InspectResultSummarizer } from "../report/inspect-result-summarizer";
 import {
@@ -75,6 +76,7 @@ describe("createInspectNpmPackageTool", () => {
       createInspectNpmPackageTool(
         schedulerWithResult(),
         new InspectResultSummarizer(),
+        new InspectDelegationInterpreter(),
       ).annotations,
     ).toEqual({
         readOnlyHint: true,
@@ -88,6 +90,7 @@ describe("createInspectNpmPackageTool", () => {
     const tool = createInspectNpmPackageTool(
       schedulerWithResult(),
       new InspectResultSummarizer(),
+      new InspectDelegationInterpreter(),
     );
 
     const result = await tool.callback({
@@ -129,6 +132,7 @@ describe("createInspectNpmPackageTool", () => {
     const tool = createInspectNpmPackageTool(
       schedulerWithResult(),
       new InspectResultSummarizer(),
+      new InspectDelegationInterpreter(),
     );
 
     await expect(
@@ -158,6 +162,7 @@ describe("createInspectNpmPackageTool", () => {
       createInspectNpmPackageTool(
         scheduler,
         new InspectResultSummarizer(),
+        new InspectDelegationInterpreter(),
       ).callback({ packageName: "missing" }),
     ).rejects.toEqual(
       new InspectTargetException(

@@ -1,5 +1,7 @@
 import { Container } from "inversify";
 import { McpHandler } from "../facade/mcp-handler";
+import { InspectExceptionFormatter } from "../facade/report/inspect-exception-formatter";
+import { PlainInspectExceptionFormatter } from "../facade/report/plain-inspect-exception-formatter";
 import {
   DefaultNpmPlusMcpServerFactory,
   NpmPlusMcpServerFactory,
@@ -11,6 +13,7 @@ import { npmPackageQualityModule } from "./npm-package-quality-module";
 export function createMcpHandler(): McpHandler {
   const container = new Container({ defaultScope: "Singleton" });
   container.load(npmPackageQualityModule);
+  container.bind(InspectExceptionFormatter).to(PlainInspectExceptionFormatter);
   container.bind(InspectResultSummarizer).toSelf();
   container.bind(NpmPlusMcpServerFactory).to(DefaultNpmPlusMcpServerFactory);
   container.bind(McpTransportFactory).to(StdioMcpTransportFactory);

@@ -20,10 +20,20 @@ export interface DirectDependencyCountFact {
 }
 
 export class InspectTargetDependencyScaleQuality {
+  public readonly directDependencyDeclarations: readonly DirectDependencyDeclarationFact[];
+  public readonly directDependencyCounts: DirectDependencyCountFact;
+
   public constructor(
-    public readonly directDependencyDeclarations: readonly DirectDependencyDeclarationFact[],
-    public readonly directDependencyCounts: DirectDependencyCountFact,
-  ) {}
+    directDependencyDeclarations: readonly DirectDependencyDeclarationFact[],
+    directDependencyCounts: DirectDependencyCountFact,
+  ) {
+    this.directDependencyDeclarations = Object.freeze([
+      ...directDependencyDeclarations,
+    ]);
+    this.directDependencyCounts = Object.freeze({
+      ...directDependencyCounts,
+    });
+  }
 }
 
 export class InspectTargetQualityException {
@@ -34,8 +44,16 @@ export class InspectTargetQualityException {
 }
 
 export class InspectTargetQuality {
+  public readonly dependencyScale:
+    | InspectTargetDependencyScaleQuality
+    | undefined;
+  public readonly exceptions: readonly InspectTargetQualityException[];
+
   public constructor(
-    public readonly dependencyScale: InspectTargetDependencyScaleQuality | undefined,
-    public readonly exceptions: readonly InspectTargetQualityException[],
-  ) {}
+    dependencyScale: InspectTargetDependencyScaleQuality | undefined,
+    exceptions: readonly InspectTargetQualityException[],
+  ) {
+    this.dependencyScale = dependencyScale;
+    this.exceptions = Object.freeze([...exceptions]);
+  }
 }

@@ -21,8 +21,8 @@ export abstract class NpmPlusMcpServerFactory {
 export class DefaultNpmPlusMcpServerFactory extends NpmPlusMcpServerFactory {
   public constructor(
     private readonly summarizer: InspectResultSummarizer,
-    private readonly delegationInterpreter = new InspectDelegationInterpreter(),
-    private readonly exceptionFormatter = new InspectExceptionFormatter(),
+    private readonly delegationInterpreter: InspectDelegationInterpreter,
+    private readonly exceptionFormatter: InspectExceptionFormatter,
   ) {
     super();
   }
@@ -40,8 +40,8 @@ export class DefaultNpmPlusMcpServerFactory extends NpmPlusMcpServerFactory {
 export function setupMcpServer(
   scheduler: InspectNpmPackageQualityWorkflow,
   summarizer: InspectResultSummarizer,
-  delegationInterpreter = new InspectDelegationInterpreter(),
-  exceptionFormatter = new InspectExceptionFormatter(),
+  delegationInterpreter: InspectDelegationInterpreter,
+  exceptionFormatter: InspectExceptionFormatter,
 ): McpServer {
   const server = new McpServer({ name: "bluey-npm-plus", version: "0.1.0" });
   const tool = createInspectNpmPackageTool(
