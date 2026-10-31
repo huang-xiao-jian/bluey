@@ -10,7 +10,7 @@
 
 接入层通过 `CLI` 和 `MCP` 适配器，对外提供检查 `npm package` 质量的能力，适配器共享核心工作流与原始 **InspectResult**。
 
-接入层通过 [InspectDelegationInterpreter](inspect-delegation-interpreter.md) 建立有效检查委托。
+接入层通过 [InspectDelegationInterpreter](./workers/inspect-delegation-interpreter.md) 建立有效检查委托。
 
 ## 架构设计
 

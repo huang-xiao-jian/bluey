@@ -10,8 +10,11 @@
 - [InspectTarget](glossary/inspect-target.md)描述已经确定精确版本的实际检查目标。
 - [InspectTargetQuality](glossary/inspect-target-quality.md)描述系统为检查目标提供的核心质量支撑数据。
 
+## Workers
+
+- [InspectTargetDeterminer](workers/inspect-target-determiner.md)定义业务层目标确定 Worker 的职责与运行机制。
+
 ## 相关文档
 
-- [InspectTargetDeterminer](inspect-target-determiner.md)定义业务层目标确定 Worker 的职责与运行机制。
 - [npm-plus 接入层设计](interfaces/spec.md)定义 CLI 和 MCP 使用方如何访问本规范规定的能力。
 - [面向对象设计](design.md)将本规范转换为候选类、职责及协作关系。

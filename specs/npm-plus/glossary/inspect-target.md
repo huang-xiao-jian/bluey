@@ -51,12 +51,3 @@ interface InspectTarget {
 1. **组合标识约束：** `Package` 名称和精确版本共同唯一确定一个检查目标。
 2. **非空标识约束：** `Package` 名称和精确版本不能为空。
 3. **Tag 记录约束：** 如果精确版本通过 `tag` 确定时，记录所使用的 `tag`，否则忽略。
-
-## 业务异常
-
-转换 **InspectDelegation** 过程中，可能抛出以下业务异常：
-
-- `PackageNotFound`：`package` 不存在。
-- `ExactVersionNotFound`：精确版本不存在。
-- `TagNotFound`：`tag` 不存在。
-- `TagUnresolvable`：`tag` 无法确定为存在的精确版本。

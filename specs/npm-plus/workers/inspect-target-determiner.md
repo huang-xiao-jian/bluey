@@ -2,9 +2,9 @@
 
 ## 关联文档
 
-- [检查 npm package 质量](use-case/inspect-npm-package-quality.md)
-- [InspectDelegation](glossary/inspect-delegation.md)
-- [InspectTarget](glossary/inspect-target.md)
+- [检查 npm package 质量](../use-case/inspect-npm-package-quality.md)
+- [InspectDelegation](../glossary/inspect-delegation.md)
+- [InspectTarget](../glossary/inspect-target.md)
 
 ## 定义
 
@@ -67,6 +67,3 @@ enum InspectTargetExceptionCode {
 
 Registry 请求或响应异常必须转换为 `REGISTRY_ERROR`。其他未识别内部异常必须转换为
 `INSPECT_TARGET_DETERMINATION_FAILED`。能够识别具体语义的失败不得转换为该兜底错误码。
-
-成功建立 **InspectTarget** 后发生的质量维度异常继续记录在 `InspectTargetQuality.exceptions` 中，
-不得转换为 **InspectTargetException**。
