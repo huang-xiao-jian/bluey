@@ -16,7 +16,7 @@
 
 ## 输出产物
 
-成功场景：**InspectTarget** 及对应的 `manifest`。
+成功场景：**InspectTarget**。
 失败场景：**InspectTargetException**。
 
 ## 运行机制
@@ -25,7 +25,7 @@
 flowchart LR
     Delegation[InspectDelegation]
     Worker[InspectTargetDeterminer]
-    Target["InspectTarget + manifest"]
+    Target[InspectTarget]
     Exception[InspectTargetException]
 
     Delegation --> Worker
